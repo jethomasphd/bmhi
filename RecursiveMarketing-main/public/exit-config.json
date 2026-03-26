@@ -1,0 +1,7 @@
+{
+  "redirectTemplate": "https://www.usajobs.gov/Search/Results?k={{interest}}&l={{location}}",
+  "fallbackInterest": "jobs",
+  "fallbackLocation": "",
+  "title": "Exit",
+  "finalLine": "Federal positions. Verified. Real. Go."
+}

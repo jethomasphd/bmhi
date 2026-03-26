@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050510">
+<title>&#x25CA; Exit</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--void:#050510;--white:#f0f0f8;--grey:#8888aa;--dim:#4a4a6a;
+    --gold:#ffd740;--green:#00e85a;--cyan:#00d4ff}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--void);
+    color:var(--white);font-family:'Space Grotesk',sans-serif}
+
+  .seal{height:100dvh;width:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:20px;position:relative}
+
+  .sigil{font-size:56px;margin-bottom:16px;color:var(--cyan);
+    opacity:0;animation:in .5s .2s ease both}
+  .name{font-size:20px;font-weight:600;margin-bottom:8px;
+    opacity:0;animation:in .4s .4s ease both;
+    text-shadow:0 0 20px rgba(0,212,255,.15)}
+  .sig-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;
+    opacity:0;animation:in .4s .5s ease both}
+  .sig-label{font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--grey);letter-spacing:1px;text-transform:uppercase}
+  .sig-val{font-family:'JetBrains Mono',monospace;font-size:18px;
+    font-weight:700;color:var(--green)}
+  .line{font-size:16px;color:var(--gold);font-style:italic;
+    max-width:320px;line-height:1.5;
+    opacity:0;animation:in .5s .6s ease both;
+    text-shadow:0 0 15px rgba(255,215,64,.1)}
+  .sub{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;
+    letter-spacing:2px;text-transform:uppercase;margin-top:20px;
+    opacity:0;animation:in .4s .9s ease both}
+  .bar{position:absolute;bottom:0;left:0;right:0;height:3px;
+    background:var(--dim);overflow:hidden}
+  .bar-fill{height:100%;width:0;
+    background:linear-gradient(90deg,var(--cyan),var(--green),var(--gold));
+    animation:fill 1.8s .3s ease-in-out both}
+
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fill{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+<div class="seal">
+  <div class="sigil">&#x25CA;</div>
+  <div class="name" id="sealName"></div>
+  <div class="sig-row" id="sigRow">
+    <span class="sig-label">signal</span>
+    <span class="sig-val" id="sigVal"></span>
+  </div>
+  <div class="line" id="sealLine">If the market is a maze, you are the knife.</div>
+  <div class="sub">redirecting to real jobs...</div>
+  <div class="bar"><div class="bar-fill"></div></div>
+</div>
+
+<script>
+(function () {
+  var FALLBACK_URL = 'https://www.usajobs.gov/Search/Results';
+  var p = new URLSearchParams(window.location.search);
+  var interest = p.get('interest') || 'jobs';
+  var location = p.get('location') || 'near me';
+  var name = p.get('name') || '';
+  var sig = p.get('signal') || '';
+  var directUrl = p.get('url') || '';
+  var jobTitle = p.get('job') || '';
+
+  document.getElementById('sealName').textContent =
+    name && name !== 'friend' ? 'You crossed the gate, ' + name + '.' : 'You crossed the gate.';
+
+  if (sig) {
+    document.getElementById('sigVal').textContent = sig + '%';
+  } else {
+    document.getElementById('sigRow').style.display = 'none';
+  }
+
+  if (jobTitle) {
+    document.getElementById('sealLine').textContent = 'Your match: ' + jobTitle + '. Go get it.';
+  }
+
+  function loadConfig() {
+    return new Promise(function (resolve) {
+      var c; try { c = new AbortController(); setTimeout(function(){c.abort()},500); } catch(e){}
+      fetch('exit-config.json', c ? {signal:c.signal} : {})
+        .then(function(r){return r.json()}).then(resolve)
+        .catch(function(){resolve(null)});
+    });
+  }
+
+  async function run() {
+    if (directUrl) {
+      setTimeout(function(){window.location.href=directUrl},2000);
+      return;
+    }
+
+    var cfg = await loadConfig();
+    if (cfg) {
+      if (!jobTitle && cfg.finalLine) document.getElementById('sealLine').textContent = cfg.finalLine;
+      if (interest === 'jobs' && cfg.fallbackInterest) interest = cfg.fallbackInterest;
+      if (location === 'near me' && cfg.fallbackLocation) location = cfg.fallbackLocation;
+    }
+    var url = cfg && cfg.redirectTemplate
+      ? cfg.redirectTemplate.replace('{{interest}}',encodeURIComponent(interest)).replace('{{location}}',encodeURIComponent(location))
+      : FALLBACK_URL + '?k=' + encodeURIComponent(interest) + '&l=' + encodeURIComponent(location);
+    setTimeout(function(){window.location.href=url},2000);
+  }
+  run();
+})();
+</script>
+</body>
+</html>

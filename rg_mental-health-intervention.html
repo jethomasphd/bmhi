@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Results Generation — The Accidental Health Company</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #090c11;
+  --bg2:        #0d1018;
+  --bg3:        #111520;
+  --surface:    #141820;
+  --surface2:   #1a1f2e;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.12);
+  --orange:     #e8572a;
+  --orange2:    #f06b3a;
+  --orange-dim: rgba(232,87,42,0.12);
+  --orange-glow:rgba(232,87,42,0.05);
+  --amber:      #f0a035;
+  --amber-dim:  rgba(240,160,53,0.12);
+  --green:      #2ec98e;
+  --green-dim:  rgba(46,201,142,0.12);
+  --red:        #e05050;
+  --red-dim:    rgba(224,80,80,0.12);
+  --teal:       #3ecfcf;
+  --text:       #f0f2f6;
+  --dim:        #7a8599;
+  --faint:      #3a4055;
+  --serif:      'Cormorant Garamond', Georgia, serif;
+  --sans:       'DM Sans', system-ui, sans-serif;
+  --mono:       'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.35;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 48px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(9,12,17,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo svg { flex-shrink: 0; }
+.nav-brand {
+  font-weight: 800; font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.2;
+}
+.nav-brand span { color: var(--orange); }
+.nav-tag {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--dim); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav-acts {
+  display: flex; gap: 24px;
+}
+.nav-act {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--faint); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-act:hover { color: var(--orange); }
+
+/* ─── SECTION WRAPPER ─── */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 2; }
+
+/* ─── ACT TITLE SLIDES ─── */
+.act-slide {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 120px 0 80px;
+  position: relative; overflow: hidden;
+}
+
+.act-eyebrow {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 12px;
+  opacity: 0; animation: rise 0.8s ease forwards;
+}
+.act-eyebrow::before {
+  content: ''; width: 40px; height: 1px; background: var(--orange);
+}
+
+/* ─── HERO ─── */
+#act0 {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(232,87,42,0.04), transparent);
+}
+
+.opening-lines {
+  display: flex; flex-direction: column; gap: 0;
+  margin-bottom: 64px;
+}
+.ol {
+  font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 400; font-style: italic;
+  color: var(--dim); line-height: 1.3;
+  opacity: 0; transform: translateY(12px);
+}
+.ol strong { color: var(--text); font-style: normal; font-weight: 600; }
+.ol .num { font-family: var(--mono); color: var(--orange); font-style: normal; }
+.ol:nth-child(1) { animation: rise 0.7s ease 0.2s forwards; }
+.ol:nth-child(2) { animation: rise 0.7s ease 0.8s forwards; }
+.ol:nth-child(3) { animation: rise 0.7s ease 1.4s forwards; }
+
+.opening-turn {
+  font-family: var(--serif); font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+  line-height: 1.7; color: var(--text); max-width: 660px;
+  border-left: 3px solid var(--orange);
+  padding-left: 24px;
+  opacity: 0; animation: rise 1s ease 2.2s forwards;
+}
+.opening-turn p + p { margin-top: 16px; }
+
+.scroll-cue {
+  margin-top: 48px; display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  opacity: 0; animation: rise 0.8s ease 3.2s forwards;
+}
+.scroll-line {
+  width: 48px; height: 1px; background: var(--faint);
+  animation: grow 2s ease 3.5s infinite;
+}
+@keyframes grow {
+  0%,100% { transform: scaleX(1); opacity: 0.4; }
+  50% { transform: scaleX(1.5); opacity: 1; }
+}
+
+/* ─── SECTION DIVIDER ─── */
+.act-divider {
+  height: 1px; background: var(--border); position: relative; z-index: 2;
+  margin: 0;
+}
+.act-label {
+  position: absolute; left: 48px; top: -10px;
+  font-family: var(--mono); font-size: 9px; color: var(--faint);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  background: var(--bg); padding: 0 12px;
+}
+
+/* ─── CONTENT SECTIONS ─── */
+.content-section {
+  padding: 96px 0;
+  position: relative; z-index: 2;
+}
+
+.s-kicker {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 14px;
+}
+
+h2.s-title {
+  font-family: var(--sans); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 1.0;
+  margin-bottom: 16px;
+}
+h2.s-title .hl { color: var(--orange); }
+h2.s-title .soft { color: var(--dim); font-weight: 300; }
+
+.s-sub {
+  font-size: 15px; line-height: 1.75; color: var(--dim);
+  max-width: 580px; font-weight: 300;
+}
+.s-sub strong { color: var(--text); font-weight: 600; }
+
+/* ─── REVEAL ─── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1); }
+.reveal.vis { opacity: 1; transform: none; }
+.reveal.d1 { transition-delay: 0.1s; }
+.reveal.d2 { transition-delay: 0.2s; }
+.reveal.d3 { transition-delay: 0.3s; }
+.reveal.d4 { transition-delay: 0.4s; }
+
+/* ─── STAT COUNTERS ─── */
+.counter-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); margin-top: 48px;
+  border-radius: 4px; overflow: hidden;
+}
+.counter {
+  background: var(--surface); padding: 28px 20px;
+  transition: background 0.2s;
+}
+.counter:hover { background: var(--surface2); }
+.c-val {
+  font-family: var(--mono); font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 700; letter-spacing: -0.04em; margin-bottom: 6px;
+}
+.c-val.neg { color: var(--red); }
+.c-val.pos { color: var(--green); }
+.c-val.pri { color: var(--orange); }
+.c-val.neutral { color: var(--text); }
+.c-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--dim); margin-bottom: 4px;
+}
+.c-note { font-size: 10px; color: var(--faint); line-height: 1.4; }
+
+/* ─── CHART CARD ─── */
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 28px;
+}
+.chart-card + .chart-card { margin-top: 20px; }
+.cc-title {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim);
+  margin-bottom: 4px;
+}
+.cc-source {
+  font-family: var(--mono); font-size: 9px; color: var(--faint);
+  margin-bottom: 16px;
+}
+.chart-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+
+/* ─── COLLISION SECTION ─── */
+.collision-grid {
+  display: grid; grid-template-columns: 1fr 56px 1fr;
+  gap: 0; margin-top: 48px; border: 1px solid var(--border);
+  border-radius: 4px; overflow: hidden;
+}
+.col-side { padding: 36px 32px; }
+.col-left { background: linear-gradient(135deg, rgba(232,87,42,0.07), rgba(232,87,42,0.02)); }
+.col-right { background: linear-gradient(225deg, rgba(46,201,142,0.07), rgba(46,201,142,0.02)); }
+.col-mid {
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+}
+.col-mid-label {
+  writing-mode: vertical-rl;
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--faint);
+}
+.col-indicator {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; color: var(--amber);
+  position: absolute;
+}
+.col-tag {
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 4px 10px; border-radius: 3px;
+  margin-bottom: 16px; display: inline-block;
+}
+.tag-orange { background: var(--orange-dim); color: var(--orange); }
+.tag-green { background: var(--green-dim); color: var(--green); }
+.col-big {
+  font-family: var(--mono); font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800; letter-spacing: -0.05em; margin-bottom: 8px;
+}
+.col-big.orange { color: var(--orange); }
+.col-big.green { color: var(--green); }
+.col-body { font-size: 13px; color: var(--dim); line-height: 1.65; }
+.col-cite {
+  margin-top: 12px; font-family: var(--mono); font-size: 9px;
+  color: var(--faint);
+}
+
+/* ─── THE RECOGNITION BOX ─── */
+.recognition {
+  margin-top: 40px; padding: 40px 44px;
+  border: 1px solid rgba(232,87,42,0.25);
+  border-left: 4px solid var(--orange);
+  background: linear-gradient(90deg, var(--orange-glow), transparent 50%);
+  border-radius: 0 4px 4px 0;
+}
+.rec-label {
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 16px;
+}
+.rec-body {
+  font-family: var(--serif); font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+  font-style: italic; line-height: 1.6; color: var(--text);
+}
+.rec-body strong { font-style: normal; font-weight: 700; color: var(--orange); }
+
+/* ─── ACQ COST CALLOUT ─── */
+.acq-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px; background: var(--border); margin-top: 48px;
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+}
+.acq-cell { background: var(--surface); padding: 28px 24px; }
+.acq-label { font-family: var(--mono); font-size: 9px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+.acq-val { font-family: var(--mono); font-size: clamp(1.6rem, 2.5vw, 2.1rem); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 6px; }
+.acq-desc { font-size: 12px; color: var(--dim); line-height: 1.55; }
+
+/* ─── EVIDENCE GRID ─── */
+.ev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+.ev-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 28px;
+}
+.ev-tag {
+  display: inline-block; margin-bottom: 12px;
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 3px 9px; border-radius: 3px;
+}
+.et-red { background: var(--red-dim); color: var(--red); }
+.et-blue { background: rgba(96,165,250,0.12); color: #60a5fa; }
+.et-green { background: var(--green-dim); color: var(--green); }
+.et-amber { background: var(--amber-dim); color: var(--amber); }
+.ev-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+.ev-card p { font-size: 12px; color: var(--dim); line-height: 1.65; }
+.ev-cite { margin-top: 12px; font-family: var(--mono); font-size: 9px; color: var(--faint); line-height: 1.4; }
+
+/* ─── MECHANISM FLOW ─── */
+.flow {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+  margin-top: 40px;
+}
+.flow-step { background: var(--surface); padding: 28px 20px; position: relative; }
+.flow-step:not(:last-child)::after {
+  content: '→';
+  position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; color: var(--faint); z-index: 5;
+}
+.fs-num {
+  font-family: var(--mono); font-size: 48px; font-weight: 800;
+  color: rgba(255,255,255,0.04); line-height: 1; margin-bottom: 12px;
+}
+.fs-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.fs-body { font-size: 11px; color: var(--dim); line-height: 1.55; }
+.fs-highlight { background: linear-gradient(135deg, rgba(232,87,42,0.06), transparent); }
+
+/* ─── TRIPLE GUARD ─── */
+.guard-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-top: 32px; }
+.guard { background: var(--surface); padding: 28px 20px; text-align: center; }
+.g-icon { font-size: 28px; margin-bottom: 12px; }
+.g-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.g-body { font-size: 11px; color: var(--dim); line-height: 1.55; }
+
+/* ─── PILOT DOMAINS ─── */
+.pilot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+.pilot-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 28px; position: relative; overflow: hidden;
+}
+.pilot-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--amber));
+}
+.p-domain { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--orange); margin-bottom: 16px; }
+.p-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.ps { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 3px; padding: 10px 12px; }
+.ps-v { font-family: var(--mono); font-size: 14px; font-weight: 700; }
+.ps-l { font-size: 8px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+.p-note { font-size: 11px; color: var(--dim); line-height: 1.6; }
+.p-recovery { margin-top: 14px; padding: 12px 14px; background: var(--orange-dim); border-radius: 3px; font-family: var(--mono); font-size: 11px; color: var(--orange); font-weight: 600; }
+
+/* ─── MARKET × RG MERGER VISUAL ─── */
+.merger-box {
+  margin-top: 48px; padding: 48px;
+  background: linear-gradient(135deg, rgba(232,87,42,0.05) 0%, rgba(62,207,207,0.03) 100%);
+  border: 1px solid rgba(232,87,42,0.2);
+  border-radius: 4px; text-align: center;
+}
+.merger-headline {
+  font-family: var(--serif); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-style: italic; line-height: 1.3; margin-bottom: 24px;
+}
+.merger-headline em { font-style: normal; color: var(--orange); }
+.merger-sub { font-size: 14px; color: var(--dim); line-height: 1.75; max-width: 640px; margin: 0 auto 32px; }
+.merger-sub strong { color: var(--text); }
+
+/* ─── CTA ─── */
+#act5 {
+  padding: 120px 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(232,87,42,0.06), transparent);
+  text-align: center;
+  position: relative; z-index: 2;
+}
+.cta-statement {
+  font-family: var(--serif); font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+  font-style: italic; color: var(--dim); max-width: 680px;
+  margin: 0 auto 36px; line-height: 1.6;
+}
+.cta-statement strong { color: var(--text); font-style: normal; font-weight: 700; }
+.cta-h2 {
+  font-family: var(--sans); font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 1.1;
+  max-width: 640px; margin: 0 auto 16px;
+}
+.cta-p { font-size: 14px; color: var(--dim); max-width: 480px; margin: 0 auto 36px; line-height: 1.65; }
+.cta-btns { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: 4px;
+  font-family: var(--sans); font-size: 13px; font-weight: 700;
+  text-decoration: none; transition: all 0.2s; border: none; cursor: pointer;
+}
+.btn-primary { background: var(--orange); color: #fff; }
+.btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+.btn-ghost { background: var(--surface); color: var(--dim); border: 1px solid var(--border2); }
+.btn-ghost:hover { color: var(--text); transform: translateY(-1px); }
+
+/* ─── METRICS GRID ─── */
+.metrics-row { display: grid; grid-template-columns: repeat(6,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-top: 32px; }
+.metric { background: var(--surface); padding: 20px 12px; text-align: center; }
+.m-icon { font-size: 18px; opacity: 0.7; margin-bottom: 8px; }
+.m-label { font-size: 9px; color: var(--dim); line-height: 1.4; font-weight: 500; }
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 24px 48px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  position: relative; z-index: 2;
+}
+.foot-main { font-size: 11px; color: var(--dim); }
+.foot-note { font-size: 9px; color: var(--faint); line-height: 1.5; max-width: 780px; }
+
+/* ─── LARGE EPIGRAPH ─── */
+.epigraph {
+  margin-top: 48px; padding: 36px 40px;
+  border-left: 3px solid var(--orange);
+  background: linear-gradient(90deg, var(--orange-glow), transparent 40%);
+}
+.epigraph p {
+  font-family: var(--serif); font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-style: italic; line-height: 1.65; color: var(--text);
+}
+.epigraph p strong { font-style: normal; font-weight: 700; }
+.epigraph .attr {
+  margin-top: 14px; font-family: var(--mono); font-size: 9px;
+  color: var(--faint); letter-spacing: 0.06em; font-style: normal;
+}
+
+/* ─── TENSION SPLIT ─── */
+.tension {
+  display: grid; grid-template-columns: 1fr 40px 1fr;
+  border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+  margin-top: 40px;
+}
+.t-side { padding: 32px 28px; background: var(--surface); }
+.t-mid {
+  background: var(--surface2); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.t-vs { font-family: var(--mono); font-size: 11px; color: var(--faint); writing-mode: vertical-rl; letter-spacing: 0.2em; }
+.t-tag2 { display: inline-block; margin-bottom: 10px; font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 3px; }
+.t-val { font-family: var(--mono); font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800; letter-spacing: -0.04em; margin-bottom: 6px; }
+.t-desc { font-size: 12px; color: var(--dim); line-height: 1.55; }
+
+/* ─── TOOLTIPS ─── */
+.tt-wrap { position: relative; cursor: help; }
+.tt-wrap:hover { background: rgba(255,255,255,0.05); }
+.tt {
+  display: none; position: absolute; bottom: calc(100% + 10px); left: 50%;
+  transform: translateX(-50%);
+  background: #1a1f2e; border: 1px solid rgba(232,87,42,0.3);
+  color: var(--text); font-size: 12px; line-height: 1.6;
+  padding: 12px 14px; border-radius: 4px; width: 240px;
+  z-index: 200; pointer-events: none; font-family: var(--sans);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.tt::after {
+  content: ''; position: absolute; top: 100%; left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: rgba(232,87,42,0.3);
+}
+.tt-wrap:hover .tt { display: block; }
+.tt strong { color: var(--orange); }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 860px) {
+  nav { padding: 0 20px; }
+  .nav-acts { display: none; }
+  .wrap { padding: 0 24px; }
+  .counter-row { grid-template-columns: 1fr 1fr; }
+  .collision-grid { grid-template-columns: 1fr; }
+  .col-mid { display: none; }
+  .acq-strip { grid-template-columns: 1fr; }
+  .ev-grid { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr 1fr; }
+  .pilot-grid { grid-template-columns: 1fr; }
+  .chart-2col { grid-template-columns: 1fr; }
+  .guard-row { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: repeat(3,1fr); }
+  .tension { grid-template-columns: 1fr; }
+  .t-mid { display: none; }
+  footer { padding: 20px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg width="26" height="26" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 32L20 8L32 32" stroke="#e8572a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 22L20 10L26 22" stroke="#e8572a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="nav-brand"><span>RESULTS</span><br/>GENERATION</div>
+  </div>
+  <div class="nav-acts">
+    <a class="nav-act" href="#act0">The Person</a>
+    <a class="nav-act" href="#act1">The Market</a>
+    <a class="nav-act" href="#act2">The Intersection</a>
+    <a class="nav-act" href="#act3">The Science</a>
+    <a class="nav-act" href="#act4">The Mechanism</a>
+    <a class="nav-act" href="#act5">The Decision</a>
+  </div>
+  <div class="nav-tag">Strategic Brief · March 2026</div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT I: THE PERSON
+══════════════════════════════════════════════════════ -->
+<section id="act0">
+  <div class="wrap act-slide">
+    <div class="act-eyebrow">Act I — The Person</div>
+
+    <div class="opening-lines">
+      <p class="ol">She searched for eleven minutes.</p>
+      <p class="ol">She clicked <strong>nothing</strong>.</p>
+      <p class="ol">She was one of <span class="num">4,536,963</span> this week.</p>
+    </div>
+
+    <div class="opening-turn">
+      <p>We know this because we were there. We served the page. We watched the session end. We let her leave with less hope than she arrived with.</p>
+      <p>And we did this four and a half million times — in six days — across 292 job sites we operate. The bounce rate sits neatly in our dashboards. The weight of it does not.</p>
+      <p>This is not a traffic report.<br/><strong>This is a behavioral health exposure at population scale.</strong></p>
+    </div>
+
+    <div class="scroll-cue">
+      <div class="scroll-line"></div>
+      Continue
+    </div>
+  </div>
+</section>
+
+<div class="act-divider"><span class="act-label">Act I → Act II</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT II: THE MARKET
+══════════════════════════════════════════════════════ -->
+<section id="act1" style="background: radial-gradient(ellipse 70% 40% at 80% 20%, rgba(46,201,142,0.03), transparent);">
+  <div class="wrap content-section">
+    <div class="s-kicker reveal">Act II — The Market</div>
+    <h2 class="s-title reveal d1">While she searched,<br/>the world was building<br/><span class="hl">a $153 billion industry</span><br/><span class="soft">for people like her.</span></h2>
+    <p class="s-sub reveal d2">
+      The digital mental health market exists because the world finally admitted what epidemiologists knew for decades: <strong>economic stress, job insecurity, and fruitless searching are psychiatric exposures</strong>. Investors have bet $153 billion that digital intervention at scale is not just possible — it's the only solution large enough to match the problem.
+    </p>
+
+    <!-- ACT 2 MARKET STATS WITH HANDHOLDS -->
+    <div class="counter-row reveal d3">
+      <div class="counter">
+        <div class="c-label">Today's Market Size</div>
+        <div class="c-val neutral">$27.8B</div>
+        <div class="c-note" style="margin-bottom:8px">The digital mental health market right now — larger than the entire US gym membership industry. Built from apps, teletherapy, employer programs, and AI tools.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px">Source: MRFR / Towards Healthcare 2024</div>
+      </div>
+      <div class="counter">
+        <div class="c-label">Market in 10 Years</div>
+        <div class="c-val pos">$153B</div>
+        <div class="c-note" style="margin-bottom:8px"><strong style="color:var(--text)">5.5× growth</strong> in a decade. Growing at 18.6% per year — that means it <strong style="color:var(--text)">doubles every 4 years</strong>. For context: the US pharmaceutical market grows at ~5% annually.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px">CAGR 18.6% · 2025–2034 · Multiple analyst consensus</div>
+      </div>
+      <div class="counter">
+        <div class="c-label">The AI Sub-Segment</div>
+        <div class="c-val pri">24% / yr</div>
+        <div class="c-note" style="margin-bottom:8px"><strong style="color:var(--text)">Growing even faster than the market itself.</strong> AI-powered mental health tools — chatbots, matching engines, digital therapeutics — are the hottest corner of an already-hot space. $1.8B today → $11.8B by 2034.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px">AI in Mental Health sub-segment · MRFR 2025</div>
+      </div>
+      <div class="counter">
+        <div class="c-label">Employer Buy-In</div>
+        <div class="c-val neutral">3 in 4</div>
+        <div class="c-note" style="margin-bottom:8px"><strong style="color:var(--text)">74% of large US employers</strong> already offer mental wellness tools — up from 52% in 2020. Mental health benefits have crossed the threshold from "perk" to "expected." Employers are paying for access to this population.</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:4px">US large employers ≥500 staff · 2024 · Up from 52% in 2020</div>
+      </div>
+    </div>
+
+    <!-- PLAIN ENGLISH EXPLAINER ROW -->
+    <div class="reveal d3" style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+      <div style="background:var(--surface); padding:20px 22px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px">In plain English</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">The top-funded companies — Lyra Health ($910M), Spring Health ($466M), Cerebral ($487M) — have collectively raised <strong>over $1.8 billion</strong> from the world's best investors. That capital is almost entirely a bet on one thing: <em>distribution</em>. Finding the people who need this.</div>
+      </div>
+      <div style="background:var(--surface); padding:20px 22px; border-left:1px solid var(--border);">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px">The problem they're solving</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">Customer acquisition in digital mental health runs <strong>$50–$300+ per user</strong> in the consumer segment. Even employer partnerships require years of sales cycles, HR relationships, and compliance overhead. The population is vast. Finding it is hard.</div>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--orange-dim),transparent); padding:20px 22px; border-left:1px solid rgba(232,87,42,0.2);">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px">Why RG is different</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">We don't have a distribution problem. <strong>7.34 million of those exact people arrive voluntarily, every single week.</strong> At the peak of their economic stress. On sites we already own and operate. The industry's hardest problem is our default state.</div>
+      </div>
+    </div>
+
+    <div class="chart-2col reveal d2">
+      <div class="chart-card">
+        <div class="cc-title">Digital Mental Health — Global Market Growth (USD Billions)</div>
+        <div class="cc-source">Sources: MRFR · Towards Healthcare · Mordor Intelligence · Precedence Research</div>
+        <div style="position:relative;height:260px"><canvas id="chartMarket"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-title">Sub-Segment CAGR Race (2025–2034)</div>
+        <div class="cc-source">Sources: MRFR · Grand View · Towards Healthcare</div>
+        <div style="position:relative;height:260px"><canvas id="chartCAGR"></canvas></div>
+      </div>
+    </div>
+
+    <div class="epigraph reveal">
+      <p>The companies building this industry — BetterHelp, Lyra Health, Headspace, Spring Health, Woebot — have collectively raised <strong>billions of dollars</strong> to solve a single problem: how to reach economically distressed, time-pressured, screen-first adults at their most vulnerable moment and deliver a brief, scalable, evidence-based intervention.</p>
+      <p style="margin-top:14px">Results Generation already reaches those people. 7.34 million of them, per week. <strong>For free.</strong></p>
+      <div class="attr">— Market context synthesized from MRFR, Towards Healthcare, Mordor Intelligence, Grand View Research; Funding data: MedicalStartups.org</div>
+    </div>
+  </div>
+</section>
+
+<div class="act-divider"><span class="act-label">Act II → Act III</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT III: THE INTERSECTION
+══════════════════════════════════════════════════════ -->
+<section id="act2" style="position:relative; z-index:2;">
+  <div class="wrap content-section">
+    <div class="s-kicker reveal">Act III — The Intersection</div>
+    <h2 class="s-title reveal d1">Two industries.<br/>One population.<br/><span class="hl">One platform that has them both.</span></h2>
+    <p class="s-sub reveal d2">
+      The digital mental health industry is a massive customer acquisition problem. Every dollar these companies raise is partly a bet that they can find their population — anxious, employed or unemployed, digitally active adults at moments of stress. <strong>Results Generation doesn't have that problem.</strong> The population arrives voluntarily. Every day.
+    </p>
+
+    <div class="collision-grid reveal d2">
+      <div class="col-side col-left">
+        <span class="col-tag tag-green">$153B Industry</span>
+        <div class="col-big green">$153B</div>
+        <div class="col-body">
+          The digital mental health industry's projected 2034 valuation — built on the premise that millions of economically anxious adults need brief, scalable, digital intervention. The top players have collectively raised over <strong>$3 billion</strong> in venture capital chasing this population.
+          <br/><br/>
+          They are looking for her. They spend enormous sums trying to find her: search ads, social targeting, employer partnerships, insurance integrations. Customer acquisition costs run $50–300+ per user in the consumer segment.
+        </div>
+        <div class="col-cite">Sources: MRFR · Mordor · MedicalStartups.org · Mordor Intelligence CAC analysis</div>
+      </div>
+      <div class="col-mid">
+        <div class="col-indicator">∩</div>
+        <div class="col-mid-label">Intersection Point</div>
+      </div>
+      <div class="col-side col-right">
+        <span class="col-tag tag-orange">RG Population</span>
+        <div class="col-big orange">4.54M</div>
+        <div class="col-body">
+          Economically stressed adults who arrive on RG job sites every week actively seeking financial relief — and leave without finding it. Each is at peak emotional vulnerability. Each is digitally engaged. Each is precisely the profile every mental health platform is trying to reach.
+          <br/><br/>
+          RG already has them. At the moment of maximum need. At zero marginal cost of acquisition. The only question is: <strong>what do we do with that moment?</strong>
+        </div>
+        <div class="col-cite">Source: UtmReport via IJAPI · 292 qualified domains (≥500 visitors) · Week of Mar 14–19, 2026</div>
+      </div>
+    </div>
+
+    <div class="acq-strip reveal d3">
+      <div class="acq-cell">
+        <div class="acq-label">Lyra Health's Approach</div>
+        <div class="acq-val" style="color:var(--green)">$910M raised</div>
+        <div class="acq-desc">To build a mental health platform that serves employer populations at their moment of need. Valued at $5.58B. Still building distribution, still spending to reach people.</div>
+      </div>
+      <div class="acq-cell">
+        <div class="acq-label">Spring Health's Approach</div>
+        <div class="acq-val" style="color:var(--green)">$466M raised</div>
+        <div class="acq-desc">To reach 10M+ people through employer contracts and AI matching. Remarkable scale — achieved through years of capital-intensive distribution building.</div>
+      </div>
+      <div class="acq-cell" style="border-left: 3px solid var(--orange); background: linear-gradient(135deg, var(--orange-dim), transparent);">
+        <div class="acq-label">Results Generation's Approach</div>
+        <div class="acq-val" style="color:var(--orange)">$0 in acquisition</div>
+        <div class="acq-desc">7.34M people arrive every week because they are looking for jobs — the most economically vulnerable, most mentally stressed moment in a person's week. They come to us. We built something they already want.</div>
+      </div>
+    </div>
+
+    <div class="recognition reveal">
+      <div class="rec-label">The Recognition</div>
+      <div class="rec-body">
+        "We are not entering the digital mental health market. We are recognizing that we have been operating <strong>inside it</strong> for years — serving the exact population it was built for, at exactly the moment it was designed to reach. The only thing missing was the intervention."
+      </div>
+    </div>
+
+    <div class="chart-card reveal" style="margin-top:40px">
+      <div class="cc-title">RG Weekly Dead Zone — Job Clicks vs. Lost Exits (Mar 14–19, 2026)</div>
+      <div class="cc-source">Source: UtmReport via IJAPI · 292 qualified domains · The red is not bounce rate. It is a psychiatric exposure.</div>
+      <div style="position:relative;height:280px"><canvas id="chartDead"></canvas></div>
+    </div>
+
+    <div class="tension reveal d2">
+      <div class="t-side">
+        <span class="t-tag2" style="background:var(--orange-dim);color:var(--orange)">They Keep Coming</span>
+        <div class="t-val" style="color:var(--orange)">7.34M</div>
+        <div class="t-desc">Unique visitors in six days. Job searches are up 31% year-over-year (Indeed Hiring Lab, Jan 2026). The seekers haven't given up. The market has given up on them.</div>
+      </div>
+      <div class="t-mid"><div class="t-vs">vs</div></div>
+      <div class="t-side">
+        <span class="t-tag2" style="background:var(--red-dim);color:var(--red)">The Jobs Aren't There</span>
+        <div class="t-val" style="color:var(--red)">6.9M</div>
+        <div class="t-desc">Total U.S. job openings (BLS JOLTS, Jan 2026). Openings per unemployed person have fallen below 1.0 for the first time since 2018. The math is broken. They don't know yet.</div>
+      </div>
+    </div>
+
+    <div class="epigraph reveal" style="margin-top:32px; border-left-color: var(--red);">
+      <p>In epidemiology, when a population is <strong>repeatedly exposed to a stressor</strong> — hope followed by nothing, hope followed by nothing, hope followed by nothing — we do not call that a bounce rate. We call it a <strong>risk factor</strong>. And when the exposure is at population scale, the question ceases to be <em>can we afford to intervene</em>.</p>
+      <p style="margin-top:12px">The question becomes: <strong>how do we explain not doing so?</strong></p>
+      <div class="attr">— Framing from behavioral epidemiology; see Literature section below</div>
+    </div>
+  </div>
+</section>
+
+<div class="act-divider"><span class="act-label">Act III → Act IV</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT IV: THE SCIENCE
+══════════════════════════════════════════════════════ -->
+<section id="act3" style="background: radial-gradient(ellipse 60% 40% at 20% 0%, rgba(96,165,250,0.03), transparent);">
+  <div class="wrap content-section">
+    <div class="s-kicker reveal">Act IV — The Science</div>
+    <h2 class="s-title reveal d1">This is not speculation.<br/><span class="hl">The literature is settled.</span></h2>
+    <p class="s-sub reveal d2">
+      Three peer-reviewed findings sit at the foundation of this intervention. The exposure is documented. The harm is real. And — crucially — <strong>the remedy works</strong>.
+    </p>
+
+    <div class="ev-grid reveal d2">
+      <div class="ev-card">
+        <span class="ev-tag et-red">The Exposure</span>
+        <h3>Unemployment is a documented psychiatric risk factor</h3>
+        <p>A fixed-effects analysis across 201 countries and five decades found significant, consistent associations between unemployment and anxiety, depression, and bipolar disorder — across every demographic studied. The effect is not marginal. It is structural. Each fruitless search session is a micro-dose of this exposure.</p>
+        <div class="ev-cite">Yang et al. (2024) · Frontiers in Public Health · 201-country model, 1970–2020 · N > 3.2 billion person-years</div>
+      </div>
+      <div class="ev-card">
+        <span class="ev-tag et-red">The Compounding</span>
+        <h3>The search itself deepens the wound</h3>
+        <p>68% of job seekers in 2026 expect their search to take longer than any previous one. 54% report job insecurity significantly impacts their stress and mental health. Each failed session — each tab closed without a click — is not a neutral event. It is an additive exposure in a dose-response relationship with distress.</p>
+        <div class="ev-cite">Robert Half Hiring Trends (Feb 2026) · APA Workplace Mental Health Survey (2025)</div>
+      </div>
+      <div class="ev-card">
+        <span class="ev-tag et-blue">The Intervention</span>
+        <h3>Even brief digital games measurably reduce distress</h3>
+        <p>A controlled study with EEG and heart rate variability monitoring found that casual game play reduced depressive symptoms and physiological stress markers — with brainwave patterns biometrically confirming improved mood. Not self-reported. Measured. At the neurophysiological level. The intervention doesn't need to be clinical to be effective.</p>
+        <div class="ev-cite">Russoniello et al. (2009) · Journal of CyberTherapy & Rehabilitation · RCT with EEG/HRV · Replicated 2011, 2014</div>
+      </div>
+      <div class="ev-card">
+        <span class="ev-tag et-green">The Evidence at Scale</span>
+        <h3>Mental health interventions work for unemployed populations</h3>
+        <p>A 2025 BMJ systematic review found that mental health interventions for unemployed populations demonstrate measurable value at both treatment and prevention levels — and may improve job readiness and re-employment likelihood. The intervention is not a consolation prize. It is potentially part of the solution.</p>
+        <div class="ev-cite">BMJ Occupational & Environmental Medicine (2025) · Systematic review & meta-analysis · 1990–2024 literature</div>
+      </div>
+    </div>
+
+    <div class="recognition reveal" style="border-left-color: var(--green);">
+      <div class="rec-label">The Synthesis</div>
+      <div class="rec-body">
+        The same literature that the $153 billion digital mental health industry was built on — the same science that justifies Lyra Health's $910 million in funding, Spring Health's 10 million covered lives, and Woebot's clinical trials — <strong>applies directly to Results Generation's population.</strong> We are not proposing an untested intervention. We are proposing to apply what the field already knows works, to the population that most needs it, at the moment they most need it.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="act-divider"><span class="act-label">Act IV → Act V</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT V: THE MECHANISM
+══════════════════════════════════════════════════════ -->
+<section id="act4" style="background: radial-gradient(ellipse 60% 40% at 90% 50%, rgba(232,87,42,0.04), transparent);">
+  <div class="wrap content-section">
+    <div class="s-kicker reveal">Act V — The Mechanism</div>
+    <h2 class="s-title reveal d1">The intervention is built.<br/><span class="soft">Elegant. Harmless.</span><br/><span class="hl">Entirely additional.</span></h2>
+    <p class="s-sub reveal d2">
+      Results Generation designs and deploys a brief, mood-lifting micro-experience that fires at the exit moment — when the session is already over and the revenue is already zero. Ezoic independently handles all ad monetization. <strong>We build the human moment. Ezoic fills the inventory. No existing revenue is touched.</strong>
+    </p>
+
+    <div class="flow reveal d2">
+      <div class="flow-step">
+        <div class="fs-num">01</div>
+        <div class="fs-title">Seeker Arrives</div>
+        <div class="fs-body">User browses jobs. The full search experience runs completely uninterrupted. Nothing changes. Active seekers never see anything different.</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">02</div>
+        <div class="fs-title">Session Dies</div>
+        <div class="fs-body">No job click. The user is already leaving. One of 4.54M weekly. Revenue: zero. The moment that previously returned nothing — for anyone.</div>
+      </div>
+      <div class="flow-step fs-highlight">
+        <div class="fs-num" style="color:rgba(232,87,42,0.15)">03</div>
+        <div class="fs-title" style="color:var(--orange)">Intervention Fires</div>
+        <div class="fs-body">The exit moment triggers a brief, mood-supporting micro-experience. <em>How</em> it fires is a test variable — multiple delivery mechanisms are available, each with different UX tradeoffs.</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">04</div>
+        <div class="fs-title">Value Is Generated</div>
+        <div class="fs-body">The recovered session creates value. <em>What kind</em> of value is also a test variable — ad revenue, lead generation, research partnerships, or direct relationships with the mental health industry itself.</div>
+      </div>
+    </div>
+
+    <!-- DELIVERY MECHANISM OPTIONS -->
+    <div class="s-kicker reveal" style="margin-top:56px; color:var(--dim)">Delivery — Test Variables</div>
+    <div style="font-size:14px;color:var(--dim);max-width:620px;line-height:1.7;margin-bottom:24px;font-weight:300">Step 03 is not a fixed decision — it is an experimental design space. These are the four primary delivery mechanisms we can test, each activating at the moment of exit intent:</div>
+
+    <div class="reveal d1" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:12px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:4px;padding:24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:20px">🪟</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--orange)">Pop-up / Overlay</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px">On-page modal before tab closes</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">Fires within the browser window on exit intent. Highest engagement potential — user is still on the page. Can display the micro-experience directly. Requires careful timing and a single clear dismiss path to feel supportive rather than intrusive.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Risk: low · Engagement: high · UX sensitivity: moderate</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:4px;padding:24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:20px">📄</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--amber)">Pop-under</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px">Background window behind the browser</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">Opens a new window behind the active session — user discovers it after closing the main tab. Non-intrusive by design. Lower immediate engagement but zero disruption to the core search experience. The original proof-of-concept mechanism.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Risk: very low · Engagement: moderate · UX sensitivity: low</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #60a5fa;border-radius:4px;padding:24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:20px">📧</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#60a5fa">Email Trigger</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px">Post-session outreach to known users</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">For users with email addresses in our system (registration flows, existing lists), a triggered message can arrive within minutes of a failed session. "We saw you searching — here's something that might help." Enables ongoing relationship beyond the single session.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Risk: low · Engagement: variable · Requires: email permission</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:4px;padding:24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:20px">🧩</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--green)">Embedded Content Unit</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px">On-page module after zero-click session</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">After detecting that a user has browsed with no clicks, a subtle content module surfaces within the page: "Nothing matched today — try this." Purely in-page. No new windows. Most UX-safe option. Lower session time but highest platform trust preservation.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Risk: minimal · Engagement: low-moderate · UX sensitivity: minimal</div>
+      </div>
+    </div>
+
+    <!-- MONETIZATION / VALUE OPTIONS -->
+    <div class="s-kicker reveal" style="margin-top:56px; color:var(--dim)">Revenue — Test Variables</div>
+    <div style="font-size:14px;color:var(--dim);max-width:620px;line-height:1.7;margin-bottom:24px;font-weight:300">Step 04 is equally flexible. The recovered session can generate value through multiple channels — and these are not mutually exclusive. The right mix emerges from pilot data.</div>
+
+    <div class="reveal d1" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px">
+      <div style="background:var(--surface);padding:24px 20px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--teal);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Display Advertising</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">Programmatic ad revenue</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">Google AdSense, Ezoic, Mediavine, Raptive, and others can monetize recovered sessions through standard display inventory. Platform choice affects CPM rates, fill rates, and revenue share. This is the simplest path to pilot — no new relationships required.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Complexity: low · Speed to revenue: fast</div>
+      </div>
+      <div style="background:var(--surface);padding:24px 20px;border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Mental Health Lead Gen</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">Direct partnerships with MH services</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">BetterHelp, Talkspace, Cerebral, Spring Health, and similar platforms pay significant amounts for qualified mental health leads — distressed adults who have demonstrated intent. Our exit population is exactly that. Cost-per-lead arrangements could substantially outperform CPM.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Complexity: moderate · Revenue upside: high</div>
+      </div>
+      <div style="background:var(--surface);padding:24px 20px;border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Platform Partnerships</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">MH tech companies need populations</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.6">The $153B market is full of companies that need exactly what we have: a validated, at-risk population for product testing, clinical research, outcomes measurement, and user acquisition. Licensing access to our population — anonymized, consented, instrumented — opens an entirely new B2B revenue category.</div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--faint)">Complexity: high · Strategic value: highest</div>
+      </div>
+    </div>
+
+    <div class="reveal d2" style="padding:20px 24px;background:var(--orange-dim);border:1px solid rgba(232,87,42,0.2);border-radius:4px;margin-top:4px">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em">Note on Strategy</span>
+      <div style="font-size:13px;color:var(--text);margin-top:6px;line-height:1.65">These are not competing paths — they are a <strong>phased roadmap</strong>. Start with programmatic ads (fast, zero-friction proof of concept). Validate the session economics. Then approach MH services with data in hand. Then, with a credentialed team and demonstrated outcomes, position for platform partnerships. Each phase compounds the last.</div>
+    </div>
+
+    <div class="guard-row reveal d3">
+      <div class="guard">
+        <div class="g-icon">🛡</div>
+        <div class="g-title">Cannot Disrupt</div>
+        <div class="g-body">The pop-under fires <em>after</em> exit intent. The job search is already over. Active seekers never see it. The core experience is architecturally untouched.</div>
+      </div>
+      <div class="guard">
+        <div class="g-icon">💙</div>
+        <div class="g-title">May Actually Help</div>
+        <div class="g-body">Peer-reviewed evidence confirms brief digital interactions reduce distress for exactly this population. This is a micro-intervention at the moment of highest need. It may strengthen the seeker-platform bond.</div>
+      </div>
+      <div class="guard">
+        <div class="g-icon">📈</div>
+        <div class="g-title">100% Additional</div>
+        <div class="g-body">Every impression is net-new. Generated from a session that ended at zero. No existing revenue cannibalized. No existing inventory displaced. Something from nothing — every single time.</div>
+      </div>
+    </div>
+
+    <!-- PILOT SECTION -->
+    <div class="s-kicker reveal" style="margin-top:72px">The Pilot</div>
+    <h2 class="s-title reveal d1" style="font-size:clamp(1.5rem, 2.8vw, 2.2rem)">Two domains. One test.<br/><span class="hl">12,500 recoverable exits per week.</span></h2>
+    <p class="s-sub reveal d2">Both pass the ≥500-visitor threshold. Both show real engagement with RPVM below ecosystem peaks — enough audience to matter, enough headroom to justify the experiment.</p>
+
+    <div class="pilot-grid reveal d2">
+      <div class="pilot-card">
+        <div class="p-domain">thesejobs.net</div>
+        <div class="p-stats">
+          <div class="ps tt-wrap">
+            <div class="ps-v">19,903</div>
+            <div class="ps-l">Visitors/wk</div>
+            <div class="tt">19,903 unique people visited this domain in one week — a real, active audience, not a test environment.</div>
+          </div>
+          <div class="ps tt-wrap">
+            <div class="ps-v" style="color:var(--amber)">$70.46</div>
+            <div class="ps-l">RPVM ⓘ</div>
+            <div class="tt"><strong>Revenue Per Thousand Visitors.</strong> For every 1,000 people who visit this site, we earn ~$70. The ecosystem ceiling (best-performing domains) is $189. We have $119 of headroom.</div>
+          </div>
+          <div class="ps tt-wrap">
+            <div class="ps-v">15,764</div>
+            <div class="ps-l">Job Clicks</div>
+            <div class="tt">15,764 visitors clicked on at least one job listing. These are the "successful" sessions — they found something worth pursuing. Revenue is generated primarily from these users.</div>
+          </div>
+        </div>
+        <div class="p-note">
+          <strong style="color:var(--text)">What these numbers mean together:</strong> 19,903 people came. 15,764 found a job to click — we earned from them. <span style="color:var(--orange)">4,139 found nothing and left.</span> Those 4,139 sessions currently generate $0 in revenue and $0 in wellbeing. Both numbers can change.
+        </div>
+        <div class="p-recovery">⟶ 4,139 recoverable exits per week on this domain alone</div>
+      </div>
+      <div class="pilot-card">
+        <div class="p-domain">jobcafes.com</div>
+        <div class="p-stats">
+          <div class="ps tt-wrap">
+            <div class="ps-v">23,611</div>
+            <div class="ps-l">Visitors/wk</div>
+            <div class="tt">23,611 unique visitors — larger audience than thesejobs.net, making this the higher-volume pilot domain.</div>
+          </div>
+          <div class="ps tt-wrap">
+            <div class="ps-v" style="color:var(--amber)">$98.83</div>
+            <div class="ps-l">RPVM ⓘ</div>
+            <div class="tt"><strong>Revenue Per Thousand Visitors.</strong> Nearly $99 per 1,000 visitors — stronger monetization than thesejobs.net, but still $90 below the $189 ecosystem ceiling. Strong base, clear upside.</div>
+          </div>
+          <div class="ps tt-wrap">
+            <div class="ps-v">15,162</div>
+            <div class="ps-l">Job Clicks</div>
+            <div class="tt">15,162 successful sessions — visitors who engaged with at least one job listing. Despite more visitors than thesejobs.net, the absolute click count is similar, meaning a larger share left without clicking.</div>
+          </div>
+        </div>
+        <div class="p-note">
+          <strong style="color:var(--text)">What these numbers mean together:</strong> 23,611 people came. 15,162 clicked a job. <span style="color:var(--orange)">8,449 — 36% of all visitors — left with nothing.</span> This is the largest single-domain recovery opportunity in the cohort. More than 1,200 people per day on this domain alone who currently disappear into silence.
+        </div>
+        <div class="p-recovery">⟶ 8,449 recoverable exits per week on this domain alone</div>
+      </div>
+    </div>
+
+    <div class="chart-2col reveal d2">
+      <div class="chart-card">
+        <div class="cc-title">Site Revenue & RPVM — Current (Without Recovery)</div>
+        <div class="cc-source">Source: UtmReport via IJAPI · 292 domains · Revenue from clickers only · Recovery sessions contribute $0 currently</div>
+        <div style="position:relative;height:240px"><canvas id="chartRV"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="cc-title">RPVM Distribution — Where Pilot Domains Sit</div>
+        <div class="cc-source">Source: UtmReport via IJAPI · 238 domains with ≥500 visitors & revenue > $0</div>
+        <div style="position:relative;height:240px"><canvas id="chartRPVM"></canvas></div>
+      </div>
+    </div>
+
+    <div class="s-kicker reveal" style="margin-top:64px">Measurement</div>
+    <div class="metrics-row reveal d1">
+      <div class="metric"><div class="m-icon">📊</div><div class="m-label">Recovered sessions / 1K exits</div></div>
+      <div class="metric"><div class="m-icon">⏱</div><div class="m-label">Avg time in recovery</div></div>
+      <div class="metric"><div class="m-icon">💰</div><div class="m-label">Revenue / recovered session</div></div>
+      <div class="metric"><div class="m-icon">🔄</div><div class="m-label">Return-to-domain rate</div></div>
+      <div class="metric"><div class="m-icon">📅</div><div class="m-label">24h & 7d re-entry rate</div></div>
+      <div class="metric"><div class="m-icon">🛡</div><div class="m-label">Zero harm to core KPIs</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="act-divider"><span class="act-label">Act V → The Decision</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACT VI: THE DECISION
+══════════════════════════════════════════════════════ -->
+<section id="act5">
+  <div class="wrap">
+    <!-- THE CREDENTIAL SECTION -->
+    <div class="act-divider" style="margin: 0 -48px;"><span class="act-label" style="left:48px">The Credential</span></div>
+
+    <div class="content-section" style="padding-top:72px">
+      <div class="s-kicker reveal">The Latent Variable</div>
+      <h2 class="s-title reveal d1" style="font-size:clamp(1.5rem,2.8vw,2.2rem)">The industry needs<br/><span class="hl">someone who can speak both languages.</span></h2>
+      <p class="s-sub reveal d2">Advertising operations and behavioral epidemiology rarely share a zip code. The person who can sit at the intersection — who understands population health risk <em>and</em> digital product monetization — is not easy to find. Results Generation has one.</p>
+
+      <div class="reveal d2" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px">
+        <div style="background:var(--surface);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--amber))"></div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--orange);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px">Clinical & Research Training</div>
+          <div style="font-size:22px;font-family:var(--serif);font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.2">The clinical vocabulary to be taken seriously</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:16px">
+            A PhD in Health Behavior (UT Austin) and MA in Clinical Psychology (Columbia) are not common credentials in the job board industry. They are common in the rooms where digital mental health strategy gets made — journal review panels, academic conferences, IRB applications, clinical advisory boards.
+          </div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.65;border-top:1px solid var(--border);padding-top:14px">
+            When we approach a mental health platform about a partnership, we are not a job board with an idea. We are a research team with data, a principal investigator who understands outcomes measurement, and a behavioral health framework grounded in published literature. That changes the conversation.
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),#60a5fa)"></div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--teal);text-transform:uppercase;letter-spacing:0.18em;margin-bottom:16px">Academic Network & Access</div>
+          <div style="font-size:22px;font-family:var(--serif);font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.2">The relationships to open doors that don't open for vendors</div>
+          <div style="font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:16px">
+            Active research collaborations with institutions including the University of Toronto and Ferkauf/Yeshiva University put this work in front of clinical academics. An ongoing pursuit of a faculty position at UT Austin's iSchool creates connective tissue between the industry, the academy, and the population we serve.
+          </div>
+          <div style="font-size:12px;color:var(--dim);line-height:1.65;border-top:1px solid var(--border);padding-top:14px">
+            The $153 billion digital mental health industry is not only a commercial market — it is a field with journals, conferences, ethics boards, and grant cycles. Having someone inside that world, with active scholarly identity, is the difference between a vendor pitch and a legitimate seat at the table.
+          </div>
+        </div>
+      </div>
+
+      <div class="recognition reveal" style="margin-top:28px; border-left-color:var(--teal)">
+        <div class="rec-label" style="color:var(--teal)">The Compounding Asset</div>
+        <div class="rec-body">Most companies looking at digital mental health have either the clinical credentialing <em>or</em> the population. Very few have both. Fewer still have them organically — without a capital raise, without a pivot, without having to explain why they belong. <strong>We didn't acquire this positioning. We grew into it.</strong> The intervention is the moment we acknowledge what we already are.
+        </div>
+      </div>
+    </div>
+
+    <!-- BIG MERGER STATEMENT -->
+    <div class="merger-box reveal" style="margin-top:0">
+      <div class="merger-headline">
+        "Results Generation is already a<br/><em>digital mental health company.</em><br/>We just haven't named it yet."
+      </div>
+      <div class="merger-sub">
+        We serve the core population of a $153 billion industry. At the peak moment of their distress. At zero cost of acquisition. With 7.34 million touchpoints per week. The industry's best companies have spent billions to get where we already stand. <strong>All we need is the intervention.</strong> The intervention is built.
+      </div>
+      <div class="cta-btns">
+        <a class="btn btn-primary" href="https://recursive-marketing.pages.dev/mhi/" target="_blank">Experience the Intervention →</a>
+        <a class="btn btn-ghost" href="#act0" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">Read Again from the Top</a>
+      </div>
+    </div>
+
+    <!-- TRIPLE WIN CLOSE -->
+    <div class="reveal" style="margin-top:28px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;">
+      <div style="background:var(--surface);padding:32px 26px;border-top:3px solid var(--green);text-align:center">
+        <div style="font-size:32px;margin-bottom:12px">📈</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">New Revenue</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">Something from nothing</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.65">4.54 million sessions per week currently earn $0. The intervention turns a dead asset into a live one — without touching a single dollar of existing revenue. Every cent is incremental. The floor is zero. There is no downside scenario where we lose money we currently have.</div>
+      </div>
+      <div style="background:var(--surface);padding:32px 26px;border-top:3px solid var(--orange);text-align:center;border-left:1px solid var(--border)">
+        <div style="font-size:32px;margin-bottom:12px">💙</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Help People</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">Give them a better ending</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.65">The intervention isn't a distraction. It's the moral inverse of the problem we've been describing. Every session that ends with something — even two minutes of calm — is one less person who leaves our platform worse than they arrived. The science is clear. The need is real. The act is ours to take.</div>
+      </div>
+      <div style="background:var(--surface);padding:32px 26px;border-top:3px solid #60a5fa;text-align:center;border-left:1px solid var(--border)">
+        <div style="font-size:32px;margin-bottom:12px">🤝</div>
+        <div style="font-family:var(--mono);font-size:10px;color:#60a5fa;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:10px">Don't Piss Off Clients</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">The core experience is untouched</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.65">Active job seekers never see it. Employer clients never know it's there. The intervention fires <em>after</em> the session is over — after the user has already left, after the job click opportunity has already passed. The job board is the job board. The recovery layer is invisible to everyone who doesn't need it.</div>
+      </div>
+    </div>
+
+    <!-- CLOSE STATEMENT -->
+    <section style="padding: 80px 0; text-align: center;">
+      <div class="cta-statement reveal">
+        Every morning, millions of people open a browser and search for a way to feed their families. Many of them land on our sites. Most of them leave with nothing. We cannot give them jobs that don't exist. But we can give them <strong>a better ending</strong> — a small, human pause before they close the tab — and in doing so, open a revenue channel, serve a population, and never once compromise the platform our clients rely on.
+      </div>
+      <h2 class="cta-h2 reveal d1">New revenue. Real help. No disruption. That is the rarest kind of idea — one where every stakeholder wins.</h2>
+      <p class="cta-p reveal d2">Two domains. The mechanism is flexible. The monetization is layered. The science is settled. The population is already here. The only remaining question is whether we act.</p>
+      <div class="cta-btns reveal d3">
+        <a class="btn btn-primary" href="https://recursive-marketing.pages.dev/mhi/" target="_blank">View the Intervention →</a>
+      </div>
+    </section>
+    </div><!-- close .wrap -->
+</section>
+
+<footer>
+  <div>
+    <div class="foot-main"><strong style="color:var(--text)">Results Generation</strong> · Exit Recovery Layer · Austin, TX · March 2026</div>
+  </div>
+  <div class="foot-note">
+    Site data: UtmReport pulled from IJAPI, broken down by domain · 292 qualified domains (≥500 unique visitors) · Week of Mar 14–19, 2026 · 495 sub-threshold domains excluded<br/>
+    Market data: MRFR · Towards Healthcare · Grand View Research · Mordor Intelligence · MedicalStartups.org · Arizton<br/>
+    Clinical evidence: Yang et al. (2024) Frontiers in Public Health · Russoniello et al. (2009) Journal of CyberTherapy & Rehabilitation · BMJ Occupational & Environmental Medicine (2025)<br/>
+    Labor market context: BLS JOLTS (Jan 2026) · Indeed Hiring Lab · Robert Half (Feb 2026) · APA Workplace Survey (2025)
+  </div>
+</footer>
+
+<!-- ═══════ CHARTS ═══════ -->
+<script>
+// ─ Observer ─
+const obs = new IntersectionObserver(e => {
+  e.forEach(el => { if (el.isIntersecting) { el.target.classList.add('vis'); obs.unobserve(el.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ─ Chart defaults ─
+const G = 'rgba(255,255,255,0.04)';
+const T = '#56647a';
+const FN = { family: "'JetBrains Mono'", size: 10 };
+const O = '#e8572a', O55 = 'rgba(232,87,42,0.55)';
+const RED35 = 'rgba(224,80,80,0.35)';
+const GR55 = 'rgba(46,201,142,0.55)';
+const AM = '#f0a035';
+const TL = '#3ecfcf';
+const W08 = 'rgba(255,255,255,0.08)';
+const W14 = 'rgba(255,255,255,0.14)';
+
+// ─── MARKET GROWTH ───
+const mktYears = ['2024','2025','2026','2027','2028','2029','2030','2031','2032','2033','2034'];
+const mktGlobal = [27.8, 33.0, 39.1, 46.4, 55.1, 65.4, 77.6, 92.1, 109.3, 129.8, 153.0];
+const mktUS = [5.6, 7.5, 8.9, 10.6, 12.6, 14.9, 17.8, 21.1, 25.0, 29.8, 35.5];
+const mktAI = [1.45, 1.80, 2.23, 2.77, 3.44, 4.27, 5.30, 6.58, 8.16, 9.85, 11.84];
+
+new Chart(document.getElementById('chartMarket'), {
+  type: 'line',
+  data: {
+    labels: mktYears,
+    datasets: [
+      { label: 'Global Market', data: mktGlobal, borderColor: TL, backgroundColor: 'rgba(62,207,207,0.07)', fill: true, borderWidth: 2.5, pointRadius: 3, tension: 0.4 },
+      { label: 'US Market', data: mktUS, borderColor: AM, backgroundColor: 'rgba(240,160,53,0.06)', fill: true, borderWidth: 2, pointRadius: 2, tension: 0.4 },
+      { label: 'AI Sub-Segment', data: mktAI, borderColor: O, backgroundColor: 'transparent', fill: false, borderWidth: 1.5, pointRadius: 2, tension: 0.4, borderDash: [4,3] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: T, font: FN, boxWidth: 18, padding: 14, usePointStyle: true } },
+      tooltip: { backgroundColor: '#0d1018', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8f0ff', bodyColor: T, titleFont: FN, bodyFont: FN, callbacks: { label: c => ` ${c.dataset.label}: $${c.parsed.y.toFixed(1)}B` } }
+    },
+    scales: {
+      x: { grid: { color: G }, ticks: { color: T, font: FN } },
+      y: { grid: { color: G }, ticks: { color: T, font: FN, callback: v => '$' + v + 'B' } }
+    }
+  }
+});
+
+// ─── CAGR BARS ───
+new Chart(document.getElementById('chartCAGR'), {
+  type: 'bar',
+  data: {
+    labels: ['AI in Mental Health', 'Chatbots / DTx', 'Digital MH Market', 'Mental Health Apps', 'Wearables / Other'],
+    datasets: [{
+      label: 'CAGR (%)',
+      data: [24.15, 21.3, 18.58, 14.6, 11.2],
+      backgroundColor: [O55, 'rgba(240,160,53,0.6)', 'rgba(62,207,207,0.55)', W14, W08],
+      borderRadius: 2, borderWidth: 0
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { backgroundColor: '#0d1018', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8f0ff', bodyColor: T, titleFont: FN, bodyFont: FN, callbacks: { label: c => ` ${c.parsed.x}% CAGR (2025–2034)` } }
+    },
+    scales: {
+      x: { grid: { color: G }, ticks: { color: T, font: FN, callback: v => v + '%' }, max: 30 },
+      y: { grid: { display: false }, ticks: { color: '#9ba8b4', font: FN } }
+    }
+  }
+});
+
+// ─── DEAD ZONE ───
+const LBL = ['Mar 14','Mar 15','Mar 16','Mar 17','Mar 18','Mar 19'];
+new Chart(document.getElementById('chartDead'), {
+  type: 'bar',
+  data: {
+    labels: LBL,
+    datasets: [
+      { label: 'Job Clicks', data: [408655,452588,480549,484277,488769,486929], backgroundColor: O55, borderRadius: 2, order: 2 },
+      { label: 'Left Without Clicking', data: [715419,791412,741850,782987,702165,803130], backgroundColor: RED35, borderRadius: 2, order: 1 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: T, font: FN, boxWidth: 10, padding: 10 } },
+      tooltip: { backgroundColor: '#0d1018', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8f0ff', bodyColor: T, titleFont: FN, bodyFont: FN, callbacks: { label: c => ' ' + c.dataset.label + ': ' + c.raw.toLocaleString() } }
+    },
+    scales: {
+      x: { stacked: true, grid: { color: G }, ticks: { color: T, font: FN } },
+      y: { stacked: true, grid: { color: G }, ticks: { color: T, font: FN, callback: v => (v/1e6).toFixed(1) + 'M' } }
+    }
+  }
+});
+
+// ─── REVENUE + RPVM ───
+new Chart(document.getElementById('chartRV'), {
+  type: 'bar',
+  data: {
+    labels: LBL,
+    datasets: [
+      { label: 'eRevenue', data: [61614,68030,72816,70894,70259,66223], backgroundColor: GR55, borderRadius: 2, yAxisID: 'y' },
+      { label: 'RPVM', data: [54.81,54.69,59.57,55.94,58.99,51.33], type: 'line', borderColor: AM, backgroundColor: 'transparent', tension: 0.3, pointRadius: 4, pointBackgroundColor: AM, borderWidth: 2.5, yAxisID: 'y2' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: T, font: FN, boxWidth: 10, padding: 8 } }, tooltip: { backgroundColor: '#0d1018', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8f0ff', bodyColor: T, titleFont: FN, bodyFont: FN } },
+    scales: {
+      x: { grid: { color: G }, ticks: { color: T, font: FN } },
+      y: { grid: { color: G }, ticks: { color: T, font: FN, callback: v => '$' + (v/1e3).toFixed(0) + 'K' }, title: { display: true, text: 'Revenue', color: T, font: FN } },
+      y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: T, font: FN, callback: v => '$' + v }, title: { display: true, text: 'RPVM', color: T, font: FN } }
+    }
+  }
+});
+
+// ─── RPVM HISTOGRAM ───
+new Chart(document.getElementById('chartRPVM'), {
+  type: 'bar',
+  data: {
+    labels: ['$0–25','$25–50','$50–75','$75–100','$100–125','$125–150','$150–200'],
+    datasets: [{ label: 'Domains', data: [58,22,24,37,57,34,6], backgroundColor: [W08,W08,O55,O55,W14,W14,GR55], borderRadius: 2 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0d1018', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, titleColor: '#e8f0ff', bodyColor: T, titleFont: FN, bodyFont: FN,
+        callbacks: { afterLabel: c => (['','','← thesejobs.net ($70)','← jobcafes.com ($99)','','','← Top performers'][c.dataIndex]||'') }
+      }
+    },
+    scales: {
+      x: { grid: { color: G }, ticks: { color: T, font: FN } },
+      y: { grid: { color: G }, ticks: { color: T, font: FN }, title: { display: true, text: '# Domains', color: T, font: FN } }
+    }
+  }
+});
+</script>
+</body>
+</html>

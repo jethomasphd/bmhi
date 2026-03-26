@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0c0f14">
+<title>A Moment &middot; Federal Job Search</title>
+<meta name="description" content="Take a breath before you search. An evidence-based pause for job seekers, followed by AI-powered federal job matching.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   MHI — Museum-quality mindful job search
+   Eastern / contemplative aesthetic
+   ═══════════════════════════════════════════════════ */
+:root {
+  --void: #0c0f14;
+  --surface: #141820;
+  --surface2: #1a1f2a;
+  --border: #252a38;
+  --stone: #d4cdc0;
+  --ink: #9a9484;
+  --dim: #5a554a;
+  --gold: #c4a35a;
+  --gold-glow: rgba(196,163,90,0.10);
+  --sage: #7a9e8e;
+  --sage-glow: rgba(122,158,142,0.08);
+  --water: #6a8fa7;
+  --clay: #b8856e;
+  --rose: #b07a7a;
+  --plum: #8e7299;
+  --mist: #8a9eae;
+  --green: #6aaa8e;
+  --green-glow: rgba(106,170,142,0.10);
+  --red: #c47a7a;
+  --serif: 'Cormorant Garamond', 'Georgia', serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  height:100%;background:var(--void);color:var(--stone);
+  font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+::selection{background:rgba(196,163,90,0.2);color:var(--stone)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.app{height:100dvh;width:100%;position:relative;overflow:hidden}
+
+/* ═══════ TABS ═══════ */
+.tabs{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  gap:2px;padding:10px 16px 8px;
+  background:rgba(12,15,20,0.88);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(37,42,56,0.6);
+}
+.tab{
+  padding:5px 16px;font-family:var(--sans);font-size:11px;
+  font-weight:400;letter-spacing:0.8px;
+  color:var(--dim);background:transparent;border:1px solid transparent;
+  border-radius:16px;cursor:pointer;transition:all .3s ease;
+}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--gold);border-color:rgba(196,163,90,0.3)}
+
+/* ═══════ SCREENS ═══════ */
+.screen{
+  position:absolute;inset:0;top:38px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  transition:opacity .5s ease;
+}
+.screen.hidden{opacity:0;pointer-events:none}
+
+/* ═══════════════════════════════════════════
+   LANDING — cinematic slow reveal
+   ═══════════════════════════════════════════ */
+.landing{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:40px 32px;overflow:hidden;
+}
+
+/* Enso circle */
+.enso{width:72px;height:72px;margin-bottom:36px;color:var(--gold);opacity:0}
+.enso-path{
+  stroke-dasharray:280;stroke-dashoffset:280;
+  transition:stroke-dashoffset 2.5s cubic-bezier(0.4,0,0.2,1);
+}
+.enso.draw .enso-path{stroke-dashoffset:0}
+.enso.draw{opacity:1;transition:opacity .6s ease}
+
+/* Reveal lines */
+.r{
+  opacity:0;transform:translateY(16px);
+  transition:opacity 1s ease, transform 1s ease;
+}
+.r.vis{opacity:1;transform:translateY(0)}
+
+.r1{
+  font-family:var(--serif);font-size:28px;font-weight:300;
+  color:var(--stone);line-height:1.3;margin-bottom:40px;
+  letter-spacing:-0.3px;
+}
+.r2{
+  font-family:var(--serif);font-size:18px;font-weight:300;
+  font-style:italic;color:var(--ink);line-height:1.5;
+  margin-bottom:8px;
+}
+.r3{
+  font-family:var(--serif);font-size:18px;font-weight:300;
+  font-style:italic;color:var(--ink);line-height:1.5;
+  margin-bottom:36px;
+}
+.r4{
+  font-size:13px;font-weight:300;color:var(--dim);
+  line-height:1.7;margin-bottom:10px;letter-spacing:0.2px;
+}
+.r5{
+  font-family:var(--serif);font-size:20px;font-weight:400;
+  color:var(--gold);line-height:1.4;margin-bottom:40px;
+  letter-spacing:0.2px;
+}
+.begin{
+  font-family:var(--serif);font-size:16px;font-weight:400;
+  font-style:italic;color:var(--gold);
+  background:rgba(196,163,90,0.06);
+  border:1px solid rgba(196,163,90,0.3);
+  border-radius:24px;cursor:pointer;letter-spacing:0.5px;
+  padding:13px 32px;opacity:0;transform:translateY(10px);
+  transition:opacity 1s ease, transform 1s ease, background .3s, border-color .3s, color .3s;
+}
+.begin.vis{opacity:1;transform:translateY(0)}
+.begin:hover{color:var(--stone);background:rgba(196,163,90,0.10);border-color:rgba(196,163,90,0.5)}
+.begin:active{transform:scale(0.96)}
+
+.skip{
+  font-family:var(--sans);font-size:10px;font-weight:300;
+  color:rgba(90,85,74,0.5);background:none;border:none;
+  cursor:pointer;margin-top:20px;letter-spacing:1px;
+  opacity:0;transition:opacity 1s ease, color .3s;
+}
+.skip.vis{opacity:1}
+.skip:hover{color:var(--dim)}
+
+/* Landing exit — soft fade */
+.landing.exiting{opacity:0;transition:opacity 1s ease}
+
+/* ═══════════════════════════════════════════
+   BREATH — single guided breath
+   ═══════════════════════════════════════════ */
+.breath-stage{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:40px 32px;
+  opacity:0;pointer-events:none;
+  transition:opacity .8s ease;
+}
+.breath-stage.active{opacity:1;pointer-events:auto}
+
+.breath-guide{
+  width:100px;height:100px;
+  color:var(--sage);
+  opacity:0.4;
+  transform:scale(0.5);
+  margin-bottom:32px;
+}
+.breath-guide.expanding{
+  transform:scale(1);opacity:0.85;
+  transition:transform 4s cubic-bezier(0.4,0,0.2,1), opacity 4s ease;
+}
+.breath-guide.contracting{
+  transform:scale(0.5);opacity:0.3;
+  transition:transform 4.5s cubic-bezier(0.4,0,0.2,1), opacity 4.5s ease;
+}
+
+.breath-text{
+  font-family:var(--serif);font-size:20px;font-weight:300;
+  font-style:italic;color:var(--ink);letter-spacing:0.3px;
+  line-height:1.5;
+  opacity:0;transition:opacity 1s ease;
+}
+.breath-text.vis{opacity:1}
+
+/* ═══════════════════════════════════════════
+   GAME — meditative Tetris
+   ═══════════════════════════════════════════ */
+.game{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:12px 16px;
+  opacity:0;pointer-events:none;
+  transition:opacity .8s ease .3s;
+}
+.game.active{opacity:1;pointer-events:auto}
+
+.game-board{position:relative;margin-bottom:10px}
+.game-canvas{
+  display:block;border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--surface);
+}
+
+.game-word{
+  position:absolute;left:0;right:0;
+  text-align:center;pointer-events:none;
+  font-family:var(--serif);font-size:16px;font-weight:300;
+  font-style:italic;color:var(--gold);
+  opacity:0;transition:opacity .8s ease, transform .8s ease;
+  transform:translateY(4px);
+}
+.game-word.vis{opacity:1;transform:translateY(0)}
+
+.timer-track{
+  width:160px;height:2px;background:var(--surface2);
+  border-radius:1px;overflow:hidden;margin-bottom:16px;
+}
+.timer-fill{
+  height:100%;width:0;border-radius:1px;
+  background:linear-gradient(90deg,rgba(196,163,90,0.4),var(--gold));
+  transition:width .3s linear;
+}
+
+/* 3 Controls */
+.controls{
+  display:flex;gap:24px;align-items:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.ctrl{
+  width:56px;height:56px;border-radius:50%;
+  background:transparent;border:1px solid var(--border);
+  color:var(--ink);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s ease;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.ctrl:active{
+  background:rgba(196,163,90,0.06);
+  border-color:var(--gold);color:var(--gold);
+  transform:scale(0.92);
+}
+.ctrl svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* Game complete overlay */
+.game-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  background:rgba(12,15,20,0.85);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease;
+  border-radius:8px;padding:20px;
+}
+.game-overlay.vis{opacity:1;pointer-events:auto}
+.game-overlay .ov-line{
+  font-family:var(--serif);font-size:18px;font-weight:300;
+  font-style:italic;color:var(--stone);margin-bottom:28px;
+  line-height:1.5;
+}
+.game-overlay .ov-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.ov-btn{
+  font-family:var(--serif);font-size:14px;font-weight:400;
+  font-style:italic;color:var(--ink);background:none;
+  border:1px solid var(--border);border-radius:20px;
+  padding:10px 22px;cursor:pointer;transition:all .25s;
+  letter-spacing:0.3px;
+}
+.ov-btn:hover,.ov-btn:active{color:var(--gold);border-color:rgba(196,163,90,0.4)}
+.ov-btn.primary{color:var(--gold);border-color:rgba(196,163,90,0.4)}
+.ov-btn.primary:hover,.ov-btn.primary:active{color:var(--stone);border-color:var(--gold)}
+
+/* Free-play bar */
+.freeplay-bar{
+  display:flex;gap:16px;align-items:center;justify-content:center;
+  margin-top:14px;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease;
+}
+.freeplay-bar.vis{opacity:1;pointer-events:auto}
+
+.freeplay-next{
+  font-family:var(--serif);font-size:12px;font-weight:300;
+  font-style:italic;color:var(--ink);background:none;
+  border:1px solid var(--border);border-radius:16px;
+  padding:8px 16px;cursor:pointer;letter-spacing:0.3px;
+  transition:all .3s;
+}
+.freeplay-next:hover{color:var(--gold);border-color:rgba(196,163,90,0.3)}
+
+.freeplay-exit{
+  font-family:var(--serif);font-size:13px;font-weight:400;
+  font-style:italic;color:var(--gold);
+  background:rgba(196,163,90,0.06);
+  border:1px solid rgba(196,163,90,0.4);
+  border-radius:20px;padding:8px 20px;
+  cursor:pointer;letter-spacing:0.3px;
+  animation:glow-pulse 2.5s ease-in-out infinite;
+  transition:all .3s;
+}
+.freeplay-exit:hover{color:var(--stone);border-color:var(--gold);background:rgba(196,163,90,0.12)}
+@keyframes glow-pulse{
+  0%,100%{box-shadow:0 0 8px rgba(196,163,90,0.15)}
+  50%{box-shadow:0 0 18px rgba(196,163,90,0.35)}
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH — picks + chat
+   ═══════════════════════════════════════════ */
+.search{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;height:100%;
+  opacity:0;pointer-events:none;
+  transition:opacity .6s ease;
+}
+.search.active{opacity:1;pointer-events:auto}
+
+/* Picks */
+.picks{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  flex:1;padding:24px 20px;
+}
+.picks-prompt{
+  font-family:var(--serif);font-size:20px;font-weight:300;
+  color:var(--ink);margin-bottom:20px;line-height:1.4;
+  font-style:italic;
+}
+.picks-prompt em{color:var(--stone);font-style:normal;font-weight:400}
+
+.picks-label{
+  font-size:9px;font-weight:400;
+  color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;
+  margin-bottom:8px;margin-top:4px;
+}
+
+.name-input{
+  width:100%;max-width:260px;padding:12px 16px;margin-bottom:20px;
+  font-family:var(--serif);font-size:20px;font-weight:400;
+  color:var(--stone);background:transparent;
+  border:none;border-bottom:1px solid var(--border);
+  border-radius:0;text-align:center;outline:none;
+  caret-color:var(--gold);transition:border-color .4s;
+}
+.name-input:focus{border-bottom-color:var(--gold)}
+.name-input::placeholder{color:var(--dim);font-style:italic;font-weight:300}
+
+.chips{
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  max-width:340px;margin-bottom:14px;
+}
+.chip{
+  padding:7px 14px;font-family:var(--sans);
+  font-size:11px;font-weight:400;color:var(--ink);
+  background:transparent;border:1px solid var(--border);
+  border-radius:18px;cursor:pointer;transition:all .25s;
+  -webkit-tap-highlight-color:transparent;letter-spacing:0.2px;
+}
+.chip:active{transform:scale(0.95)}
+.chip.selected{color:var(--gold);border-color:rgba(196,163,90,0.4)}
+.chip.detected{border-color:var(--sage);color:var(--sage)}
+.chip.detected.selected{color:var(--sage);border-color:var(--sage)}
+
+.loc-input{
+  width:100%;max-width:260px;padding:8px 14px;margin-bottom:18px;
+  font-family:var(--sans);font-size:12px;font-weight:300;
+  color:var(--stone);background:transparent;
+  border:none;border-bottom:1px solid var(--border);
+  border-radius:0;text-align:center;outline:none;
+  caret-color:var(--gold);transition:border-color .4s;
+}
+.loc-input:focus{border-bottom-color:var(--gold)}
+.loc-input::placeholder{color:rgba(90,85,74,0.6);font-size:11px}
+
+.go-btn{
+  width:100%;max-width:260px;padding:13px;
+  font-family:var(--serif);font-size:15px;font-weight:400;
+  font-style:italic;letter-spacing:0.3px;
+  color:var(--void);background:var(--gold);
+  border:none;border-radius:8px;cursor:pointer;
+  transition:all .3s;margin-top:4px;
+}
+.go-btn:active{transform:scale(0.97)}
+.go-btn:disabled{opacity:.25;cursor:default}
+.go-btn.pulse{animation:softPulse 2.5s ease-in-out infinite}
+
+.skip-picks{
+  margin-top:12px;font-size:10px;font-weight:300;
+  color:rgba(90,85,74,0.5);cursor:pointer;
+  border:none;background:none;font-family:var(--sans);
+  letter-spacing:0.8px;transition:color .3s;
+}
+.skip-picks:hover{color:var(--dim)}
+
+/* ═══════ CHAT ═══════ */
+.chat-view{display:none;flex-direction:column;height:100%}
+.chat-view.active{display:flex;animation:fadeUp .5s ease both}
+
+.chat-header{padding:12px 16px 4px;text-align:center;flex-shrink:0}
+.greeting{
+  font-size:9px;font-weight:400;color:var(--dim);
+  letter-spacing:2.5px;text-transform:uppercase;
+}
+.big-name{
+  font-family:var(--serif);font-size:24px;font-weight:400;
+  color:var(--stone);
+}
+
+.signal{
+  margin:6px 16px 0;padding:8px 14px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;flex-shrink:0;
+}
+.signal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.signal-title{font-size:9px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase}
+.signal-pct{font-size:15px;font-weight:600;color:var(--gold)}
+.signal-bar{width:100%;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.signal-fill{width:0;height:100%;border-radius:2px;background:var(--gold);transition:width .3s}
+.signal-label{font-size:8px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.results-count{font-size:9px;color:var(--sage);letter-spacing:.3px;margin-top:3px;display:none}
+
+.chat-area{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:10px 16px;min-height:0;
+}
+
+.chat-bubble{
+  padding:10px 14px;margin-bottom:8px;border-radius:14px;
+  max-width:88%;line-height:1.6;font-size:14px;
+  animation:bubbleIn .3s ease both;
+}
+.assistant-bubble{
+  background:var(--surface);border:1px solid var(--border);
+  border-top-left-radius:4px;
+}
+.user-bubble{
+  background:rgba(196,163,90,0.04);border:1px solid rgba(196,163,90,0.12);
+  margin-left:auto;text-align:right;border-top-right-radius:4px;
+  color:var(--gold);font-size:13px;font-weight:400;max-width:75%;
+}
+.error-bubble{
+  background:rgba(176,122,122,0.06);border:1px solid rgba(176,122,122,0.2);
+  border-top-left-radius:4px;color:var(--red);font-size:12px;
+}
+
+.bmark{
+  display:inline-block;width:6px;height:6px;
+  background:var(--gold);border-radius:50%;
+  margin-right:8px;vertical-align:middle;
+  opacity:0.6;
+}
+.btxt{color:var(--stone)}
+.btxt .hl{color:var(--gold);font-weight:500}
+.cur{
+  display:inline-block;width:1.5px;height:14px;background:var(--gold);
+  vertical-align:middle;margin-left:2px;animation:blink .9s step-end infinite;
+}
+
+.thinking .dots{display:inline-flex;gap:3px;margin-left:4px}
+.thinking .dots span{
+  display:inline-block;width:4px;height:4px;border-radius:50%;
+  background:var(--ink);animation:dot 1.4s ease-in-out infinite;
+}
+.thinking .dots span:nth-child(2){animation-delay:.2s}
+.thinking .dots span:nth-child(3){animation-delay:.4s}
+
+/* Job cards */
+.job-cards{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;animation:bubbleIn .3s ease both}
+.job-card{
+  display:block;padding:10px 14px;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  text-decoration:none;color:var(--stone);transition:all .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.job-card:hover,.job-card:active{border-color:var(--sage);box-shadow:0 0 12px var(--sage-glow)}
+.job-card:active{transform:scale(0.98)}
+.jc-title{font-size:13px;font-weight:500;color:var(--stone);margin-bottom:2px}
+.jc-org{font-size:11px;color:var(--gold);margin-bottom:1px}
+.jc-loc{font-size:10px;color:var(--ink)}
+.jc-salary{font-size:12px;font-weight:600;color:var(--sage);margin-top:4px}
+.jc-meta{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:.2px}
+.jc-apply{font-size:9px;font-weight:500;color:var(--sage);margin-top:5px;letter-spacing:.3px;text-transform:uppercase}
+
+/* Featured job */
+.featured-job{
+  display:block;margin:10px 0;padding:14px 16px;
+  background:linear-gradient(135deg,rgba(106,170,142,.04),rgba(196,163,90,.03));
+  border:1.5px solid var(--sage);border-radius:12px;
+  text-decoration:none;color:var(--stone);transition:all .3s;
+  animation:bubbleIn .4s ease both;
+  box-shadow:0 0 20px var(--sage-glow);
+  -webkit-tap-highlight-color:transparent;
+}
+.featured-job:hover,.featured-job:active{box-shadow:0 0 30px rgba(106,170,142,.18);border-color:var(--gold)}
+.featured-job:active{transform:scale(0.98)}
+.fj-badge{font-size:9px;font-weight:600;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.fj-title{font-size:15px;font-weight:600;color:var(--stone);margin-bottom:3px}
+.fj-org{font-size:12px;color:var(--gold);font-weight:400}
+.fj-dept{font-size:10px;color:var(--ink);margin-bottom:2px}
+.fj-loc{font-size:11px;color:var(--ink)}
+.fj-salary{font-size:14px;font-weight:600;color:var(--sage);margin-top:6px}
+.fj-closing{font-size:9px;color:var(--gold);margin-top:4px;letter-spacing:.2px}
+.fj-apply{
+  font-size:11px;font-weight:600;
+  color:var(--void);background:var(--sage);
+  padding:8px 16px;border-radius:6px;margin-top:8px;
+  text-align:center;letter-spacing:.5px;text-transform:uppercase;
+}
+
+/* Footer */
+.chat-footer{flex-shrink:0;padding:6px 16px 10px;background:linear-gradient(transparent,var(--void) 20%)}
+.suggest-row{
+  display:flex;flex-wrap:wrap;gap:5px;justify-content:center;
+  margin-bottom:6px;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.suggest-row.visible{opacity:1;pointer-events:auto}
+.suggest-chip{
+  padding:6px 12px;font-family:var(--sans);
+  font-size:10px;color:var(--ink);background:transparent;
+  border:1px solid var(--border);border-radius:14px;cursor:pointer;
+  transition:all .2s;letter-spacing:.2px;
+  -webkit-tap-highlight-color:transparent;
+}
+.suggest-chip:hover,.suggest-chip:active{color:var(--gold);border-color:rgba(196,163,90,0.3)}
+.suggest-chip:active{transform:scale(0.95)}
+
+.chat-input-row{display:flex;gap:8px;align-items:center}
+.chat-input{
+  flex:1;padding:10px 14px;
+  font-family:var(--sans);font-size:14px;font-weight:300;
+  color:var(--stone);background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;outline:none;
+  caret-color:var(--gold);transition:border-color .3s;
+}
+.chat-input:focus{border-color:rgba(196,163,90,0.3)}
+.chat-input::placeholder{color:var(--dim);font-size:12px;font-weight:300}
+.chat-input:disabled{opacity:.3}
+
+.send-btn{
+  width:40px;height:40px;border-radius:10px;border:1px solid var(--border);
+  background:transparent;color:var(--ink);font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;
+}
+.send-btn:active{background:rgba(196,163,90,0.06);color:var(--gold);border-color:rgba(196,163,90,0.3);transform:scale(0.92)}
+.send-btn:disabled{opacity:.2;cursor:default}
+
+/* CTA */
+.cta-section{
+  flex-shrink:0;padding:0 16px 10px;text-align:center;
+  opacity:0;pointer-events:none;transition:opacity .5s;
+}
+.cta-section.visible{opacity:1;pointer-events:auto}
+.cta-btn{
+  display:block;width:100%;padding:12px;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  letter-spacing:.3px;text-align:center;text-decoration:none;
+  color:var(--void);background:var(--sage);border:none;border-radius:8px;
+  cursor:pointer;transition:all .3s;
+}
+.cta-btn:active{transform:scale(0.97)}
+.cta-btn.hot{animation:softPulse 2.5s ease-in-out infinite;font-weight:600}
+.cta-fine{font-size:8px;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;margin-top:5px}
+
+/* ═══════════════════════════════════════════
+   ABOUT — museum exhibition text
+   ═══════════════════════════════════════════ */
+.about{padding:32px 24px 80px;max-width:580px;margin:0 auto}
+
+.about h2{
+  font-family:var(--serif);font-size:24px;font-weight:400;
+  color:var(--stone);margin-top:44px;margin-bottom:16px;
+  line-height:1.3;letter-spacing:-0.2px;
+}
+.about h2:first-child{margin-top:12px}
+
+.about h3{
+  font-family:var(--serif);font-size:17px;font-weight:400;
+  font-style:italic;color:var(--gold);
+  margin-top:32px;margin-bottom:12px;
+}
+
+.about p{
+  font-family:var(--sans);font-size:14px;font-weight:300;
+  color:var(--ink);line-height:1.85;margin-bottom:16px;
+  letter-spacing:0.1px;
+}
+.about p strong{color:var(--stone);font-weight:400}
+
+.about .lead{
+  font-family:var(--serif);font-size:17px;font-weight:300;
+  font-style:italic;color:var(--ink);line-height:1.7;
+}
+
+/* Separator */
+.about .sep{
+  width:32px;height:1px;background:var(--border);
+  margin:36px auto;
+}
+
+/* Tooltipped citations */
+.cite{
+  color:var(--stone);font-weight:400;
+  border-bottom:1px dotted var(--gold);
+  cursor:help;transition:border-color .2s;
+}
+.cite:hover{border-bottom-color:var(--stone)}
+
+/* Citation bottom sheet */
+.cite-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(0.4,0,0.2,1);
+  padding:20px 24px 28px;max-width:580px;margin:0 auto;
+  background:var(--surface);
+  border:1px solid var(--border);border-bottom:none;
+  border-radius:14px 14px 0 0;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.3);
+}
+.cite-sheet.vis{transform:translateY(0)}
+.cite-sheet-dismiss{
+  position:absolute;top:12px;right:16px;
+  font-size:11px;color:var(--dim);background:none;border:none;
+  cursor:pointer;font-family:var(--sans);letter-spacing:0.5px;
+}
+.cite-sheet-label{
+  font-size:9px;color:var(--dim);letter-spacing:2px;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.cite-sheet-title{
+  font-family:var(--serif);font-size:16px;font-weight:400;
+  color:var(--stone);margin-bottom:6px;line-height:1.4;
+}
+.cite-sheet-text{
+  font-size:13px;font-weight:300;color:var(--ink);
+  line-height:1.7;
+}
+
+/* Evidence blocks */
+.evidence{
+  margin:20px 0;padding:16px 18px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;
+}
+.ev-label{font-size:9px;color:var(--dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.ev-title{font-family:var(--serif);font-size:15px;font-weight:400;color:var(--stone);margin-bottom:6px}
+.ev-detail{font-size:13px;font-weight:300;color:var(--ink);line-height:1.7}
+.ev-result{margin-top:8px;font-size:13px;font-weight:400;color:var(--sage)}
+
+.about blockquote{
+  margin:20px 0;padding:16px 20px;
+  border-left:2px solid rgba(196,163,90,0.3);
+  font-family:var(--serif);font-size:16px;font-weight:300;
+  font-style:italic;color:var(--ink);line-height:1.7;
+}
+
+/* Mechanism list */
+.mechanism{margin:20px 0}
+.mechanism .mech-num{
+  font-family:var(--serif);font-size:13px;font-weight:400;
+  color:var(--gold);margin-bottom:4px;letter-spacing:0.5px;
+}
+.mechanism .mech-title{
+  font-family:var(--serif);font-size:16px;font-weight:400;
+  color:var(--stone);margin-bottom:6px;
+}
+.mechanism .mech-text{
+  font-size:13px;font-weight:300;color:var(--ink);line-height:1.7;
+}
+
+/* Support section */
+.support-box{
+  margin:24px 0;padding:16px 18px;
+  border:1px solid var(--border);border-radius:10px;
+  text-align:center;
+}
+.support-box .sb-num{
+  font-family:var(--serif);font-size:32px;font-weight:400;
+  color:var(--gold);margin-bottom:4px;letter-spacing:2px;
+}
+.support-box .sb-label{
+  font-size:11px;font-weight:300;color:var(--ink);
+  line-height:1.6;
+}
+
+.about .refs{margin-top:40px;padding-top:20px;border-top:1px solid var(--border)}
+.about .refs h3{color:var(--dim);font-size:13px;font-style:normal;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
+.about .refs p{font-size:11px;color:var(--dim);line-height:1.8;margin-bottom:4px}
+
+.about .colophon{
+  margin-top:36px;text-align:center;
+  font-size:11px;color:var(--dim);line-height:1.8;
+}
+
+/* ═══════ ANIMATIONS ═══════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes dot{0%,80%,100%{opacity:.15;transform:scale(.7)}40%{opacity:.8;transform:scale(1.1)}}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes softPulse{0%,100%{opacity:1}50%{opacity:.75}}
+
+/* ═══════ REDUCED MOTION ═══════ */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
+  .r,.enso,.begin,.skip{opacity:1 !important;transform:none !important}
+}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media(max-height:640px){
+  .r1{font-size:22px;margin-bottom:24px}
+  .r2,.r3{font-size:15px}
+  .r5{font-size:17px;margin-bottom:28px}
+  .game-canvas{max-height:260px}
+  .ctrl{width:48px;height:48px}
+  .controls{gap:18px}
+}
+@media(min-width:768px){
+  .about{padding:40px 48px 80px}
+  .about h2{font-size:28px}
+  .r1{font-size:34px}
+  .controls{gap:32px}
+  .ctrl{width:60px;height:60px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- TAB BAR -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="search">Search</button>
+    <button class="tab" data-tab="about">What is this?</button>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       SEARCH SCREEN
+       ═══════════════════════════════════════════ -->
+  <div class="screen" id="screenSearch">
+
+    <!-- Landing -->
+    <div class="landing" id="stageLanding">
+      <svg class="enso" id="enso" viewBox="0 0 100 100" aria-hidden="true">
+        <path class="enso-path" d="M 58 8 C 78 6, 96 24, 96 48 C 96 74, 76 96, 50 96 C 24 96, 4 74, 4 48 C 4 24, 22 8, 44 6" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+
+      <p class="r r1" id="r1">Pause.</p>
+
+      <p class="r r2" id="r2">You came here looking for work.</p>
+      <p class="r r3" id="r3">Before you begin, we want to offer you something.</p>
+
+      <p class="r r4" id="r4">Not a pitch. Not a trick. Not a sales funnel.</p>
+
+      <p class="r r5" id="r5">A moment of quiet.</p>
+
+      <button class="begin" id="beginBtn">Take a moment</button>
+      <button class="skip" id="skipBtn">go straight to search</button>
+
+    </div>
+
+    <!-- Guided breath -->
+    <div class="breath-stage" id="stageBreath">
+      <svg class="breath-guide" id="breathGuide" viewBox="0 0 100 100" fill="none">
+        <path d="M 52 8 C 82 9, 96 32, 94 52 C 92 76, 72 96, 48 95 C 24 94, 4 74, 6 48 C 8 26, 24 8, 47 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div class="breath-text" id="breathText"></div>
+    </div>
+
+    <!-- Game -->
+    <div class="game" id="stageGame">
+      <div class="game-board" id="gameBoard">
+        <canvas class="game-canvas" id="gameCanvas"></canvas>
+        <div class="game-word" id="gameWord"></div>
+        <div class="game-overlay" id="gameOverlay">
+          <p class="ov-line">How do you feel?</p>
+          <div class="ov-actions">
+            <button class="ov-btn" id="keepPlayingBtn">keep playing</button>
+            <button class="ov-btn" id="tryDifferentBtn">try a different break</button>
+            <button class="ov-btn primary" id="readyBtn">ready to search</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="timer-track" id="timerTrack"><div class="timer-fill" id="timerFill"></div></div>
+
+      <div class="controls" id="controlsBar">
+        <button class="ctrl" aria-label="Control 1">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="ctrl" aria-label="Control 2">
+          <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+        <button class="ctrl" aria-label="Control 3">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="ctrl" aria-label="Control 4">
+          <svg viewBox="0 0 24 24"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="freeplay-bar" id="freeplayBar">
+        <button class="freeplay-next" id="freeplayNext">try another</button>
+        <button class="freeplay-exit" id="freeplayExit">ready to search</button>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search" id="stageSearch">
+
+      <!-- Picks -->
+      <div class="picks" id="picksView">
+        <p class="picks-handhold" style="font-size:12px;font-weight:300;color:var(--ink);letter-spacing:0.2px;margin-bottom:20px;line-height:1.7;max-width:300px;font-family:var(--serif);font-style:italic;">Now let's find something worth applying to.</p>
+        <p class="picks-prompt">What shall we call you?</p>
+        <input class="name-input" id="nameInput" type="text"
+          placeholder="your name" maxlength="20"
+          autocomplete="off" autocapitalize="words" spellcheck="false">
+
+        <div class="picks-label">looking for</div>
+        <div class="chips" id="interestChips">
+          <button class="chip" data-value="Administrative">Administrative</button>
+          <button class="chip" data-value="Information Technology">IT / Cyber</button>
+          <button class="chip" data-value="Healthcare">Healthcare</button>
+          <button class="chip" data-value="Law Enforcement">Law Enforcement</button>
+          <button class="chip" data-value="Engineering">Engineering</button>
+          <button class="chip" data-value="Accounting">Finance</button>
+          <button class="chip" data-value="Human Resources">HR</button>
+          <button class="chip" data-value="Anything">Anything</button>
+        </div>
+
+        <div class="picks-label">where</div>
+        <div class="chips" id="locationChips">
+          <button class="chip" data-value="Remote">Remote</button>
+          <button class="chip" data-value="Anywhere">Anywhere</button>
+        </div>
+        <input class="loc-input" id="locationInput" type="text"
+          placeholder="or type a city"
+          maxlength="40" autocomplete="off" spellcheck="false">
+
+        <button class="go-btn" id="goBtn" disabled>find my match</button>
+        <button class="skip-picks" id="skipPicks">skip</button>
+      </div>
+
+      <!-- Chat -->
+      <div class="chat-view" id="chatView">
+        <div class="chat-header">
+          <div class="greeting">searching for</div>
+          <div class="big-name" id="bigName"></div>
+        </div>
+        <div class="signal">
+          <div class="signal-top">
+            <span class="signal-title">match signal</span>
+            <span class="signal-pct" id="signalPct">0%</span>
+          </div>
+          <div class="signal-bar"><div class="signal-fill" id="signalFill"></div></div>
+          <div class="signal-label" id="signalLabel">initializing</div>
+          <div class="results-count" id="resultsCount"></div>
+        </div>
+        <div class="chat-area" id="chatArea"></div>
+        <div class="chat-footer">
+          <div class="suggest-row" id="suggestRow"></div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" type="text"
+              placeholder="type something..."
+              maxlength="200" autocomplete="off" spellcheck="false" disabled>
+            <button class="send-btn" id="chatSend" disabled>&#x2191;</button>
+          </div>
+        </div>
+        <div class="cta-section" id="ctaSection">
+          <button class="cta-btn" id="ctaBtn">Search USAJobs.gov</button>
+          <div class="cta-fine" id="ctaFine">verified federal positions</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ABOUT SCREEN — exhibition text
+       ═══════════════════════════════════════════ -->
+  <div class="screen hidden" id="screenAbout">
+    <div class="about">
+
+      <h2>Why a job board asked you to pause</h2>
+
+      <p class="lead">
+        You came here to search for a job. We asked you to play a game first.
+        That wasn't a gimmick. Here is why.
+      </p>
+
+      <div class="sep"></div>
+
+      <h2>The weight of searching</h2>
+
+      <p>
+        Job searching is one of the most psychologically taxing routine
+        activities in modern life. It combines uncertainty, rejection,
+        financial pressure, and threats to identity into a single sustained
+        experience.
+      </p>
+      <p>
+        The mental health consequences are well-documented.
+        <span class="cite" data-title="Unemployment and Mental Health" data-cite="Sterud, T. et al. (2025). Unemployment and health outcomes: An umbrella review of 46 meta-analyses of 60+ longitudinal studies. Scandinavian Journal of Work, Environment &amp; Health.">Umbrella reviews spanning 46 meta-analyses</span>
+        confirm that job loss and prolonged searching are associated with increased rates of
+        depression, anxiety, and diminished well-being. The psychological burden
+        <span class="cite" data-title="Economic Stress and Mental Health" data-cite="Arena, A. F. et al. (2023). Mental health and unemployment: A systematic review and meta-analysis of interventions. International Journal of Environmental Research and Public Health, 20(4), 2611.">persists across demographic groups and geographies</span>,
+        and compounds with search duration.
+      </p>
+      <p>
+        Most job boards ignore this entirely. They optimize for clicks and
+        applications &mdash; not for the person sitting at the screen.
+      </p>
+
+      <div class="sep"></div>
+
+      <h2>Small moments, measured impact</h2>
+
+      <p>
+        Over the past decade, researchers have documented a striking and
+        counterintuitive pattern:
+        <strong><span class="cite" data-title="Single-Session Interventions" data-cite="Schleider, J. L. et al. (2025). Single-session interventions for youth mental health: A review of the science and its translation. Annual Review of Clinical Psychology, 21.">brief interventions</span>,
+        sometimes lasting only minutes, can produce measurable and lasting
+        improvements</strong> when delivered at the right moment through
+        the right channel.
+      </p>
+      <p>
+        The evidence base has grown rapidly.
+        <span class="cite" data-title="Digital Mental Health Interventions" data-cite="Moshe, I. et al. (2021). Digital interventions for the treatment of depression: A meta-analytic review. Psychological Bulletin, 147(8), 749&ndash;786.">Meta-analyses of digital mental health interventions</span>
+        now show effect sizes comparable to face-to-face therapy for mild-to-moderate
+        symptoms. What these interventions share is a principle:
+        <strong>timing and context matter more than dose.</strong>
+      </p>
+
+      <h3>The evidence</h3>
+
+      <div class="evidence">
+        <div class="ev-label">Nature Human Behaviour &middot; 2024</div>
+        <div class="ev-title">Visual-spatial games interrupt rumination</div>
+        <div class="ev-detail">
+          <span class="cite" data-title="Visuospatial Interference" data-cite="Varma, M. M. et al. (2024). Reducing intrusive memories through a brief visuospatial task: A mega-analysis of Tetris studies. Nature Human Behaviour, 8, 1242&ndash;1252.">A mega-analysis across multiple Tetris studies</span>
+          confirmed that visuospatial gameplay significantly reduces
+          intrusive memories. The mechanism:
+          <span class="cite" data-title="Tetris and Trauma" data-cite="Iyadurai, L. et al. (2018). Preventing intrusive memories after trauma via a brief intervention involving Tetris computer game play in the emergency department. Molecular Psychiatry, 23, 674&ndash;682.">spatial-cognitive tasks</span>
+          compete with the brain's ability to consolidate distressing imagery,
+          temporarily interrupting the rumination loop.
+        </div>
+        <div class="ev-result">Robust effect confirmed across pooled RCT data</div>
+      </div>
+
+      <div class="evidence">
+        <div class="ev-label">Systematic review &middot; Cell Reports Medicine</div>
+        <div class="ev-title">Controlled breathing and stress physiology</div>
+        <div class="ev-detail">
+          <span class="cite" data-title="Cyclic Sighing" data-cite="Yilmaz Balban, M. et al. (2023). Brief structured respiration practices enhance mood and reduce physiological arousal. Cell Reports Medicine, 4(1), 100895.">Brief structured breathing</span>
+          &mdash; even a single deliberate breath cycle &mdash; reduces
+          physiological arousal and improves mood. Cyclic sighing outperformed
+          mindfulness meditation in a Stanford RCT.
+          <span class="cite" data-title="Breathing Systematic Review" data-cite="Fincham, G. W. et al. (2023). Effect of breathwork on stress and mental health: A meta-analysis of randomised-controlled trials. Scientific Reports, 13, 432.">Meta-analytic evidence</span>
+          confirms large effect sizes for breathwork on stress reduction.
+        </div>
+        <div class="ev-result">Significant mood improvement from a single breath cycle</div>
+      </div>
+
+      <div class="evidence">
+        <div class="ev-label">Meta-analysis &middot; Casual games</div>
+        <div class="ev-title">Simple games reduce anxiety and improve mood</div>
+        <div class="ev-detail">
+          <span class="cite" data-title="Casual Games and Wellbeing" data-cite="Pallavicini, F. et al. (2021). Video games for well-being: A systematic review on the application of computer games for cognitive and emotional training in the adult population. Frontiers in Psychology, 12, 608814.">Systematic reviews of casual gaming</span>
+          show that simple, low-stakes games &mdash; puzzle, matching, and
+          rhythm games &mdash; reduce state anxiety and improve affect,
+          particularly when played in brief sessions.
+          <span class="cite" data-title="Casual Games and Anxiety" data-cite="Pine, R. et al. (2020). The effects of casual videogames on anxiety, depression, stress, and low mood: A systematic review. Games for Health Journal, 9(4), 255&ndash;264.">The effect is consistent</span>
+          across game types, suggesting the mechanism is cognitive engagement
+          itself, not any specific game.
+        </div>
+        <div class="ev-result">Consistent anxiety reduction across game types</div>
+      </div>
+
+      <div class="evidence">
+        <div class="ev-label">Flow state research &middot; 2024</div>
+        <div class="ev-title">Flow as a buffer against negative affect</div>
+        <div class="ev-detail">
+          When a game's challenge matches your skill level, you enter
+          <span class="cite" data-title="Flow and Wellbeing" data-cite="Gaston, A. et al. (2024). Flow state and well-being: A systematic review. Journal of Happiness Studies, 25, 61.">flow state</span>
+          &mdash; a condition of absorbed, effortless attention.
+          Flow is associated with reduced self-referential thinking, the
+          cognitive pattern that drives worry and rumination. Each game here
+          is designed to invite flow through immediate challenge and clear feedback.
+        </div>
+        <div class="ev-result">Flow correlates with reduced rumination and improved well-being</div>
+      </div>
+
+      <div class="sep"></div>
+
+      <h2>What the games do</h2>
+
+      <p>
+        Each game offered before your search targets overlapping
+        mechanisms from the research above. You don't need to play them all
+        &mdash; any one is a complete micro-intervention.
+      </p>
+
+      <div class="mechanism">
+        <div class="mech-num">i</div>
+        <div class="mech-title">Visual-spatial engagement</div>
+        <div class="mech-text">
+          Guiding falling blocks, tracking a ball, or aiming a shot requires
+          <span class="cite" data-title="Visuospatial Working Memory" data-cite="Varma, M. M. et al. (2024). Reducing intrusive memories through a brief visuospatial task: A mega-analysis of Tetris studies. Nature Human Behaviour, 8, 1242&ndash;1252.">visuospatial working memory</span>
+          &mdash; the same cognitive resource the brain uses to replay anxious
+          scenarios. When that resource is occupied, the rumination loop is
+          temporarily interrupted.
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mech-num">ii</div>
+        <div class="mech-title">Paced breathing</div>
+        <div class="mech-text">
+          Before gameplay begins, you take a single guided breath. During play,
+          a subtle breathing circle continues the rhythm.
+          <span class="cite" data-title="Breathing and Mood" data-cite="Yilmaz Balban, M. et al. (2023). Brief structured respiration practices enhance mood and reduce physiological arousal. Cell Reports Medicine, 4(1), 100895.">Even one deliberate breath cycle</span>
+          activates the parasympathetic nervous system, reducing physiological
+          arousal. You may not have noticed. That's by design.
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mech-num">iii</div>
+        <div class="mech-title">Flow and cognitive absorption</div>
+        <div class="mech-text">
+          Each game is calibrated to offer immediate, achievable challenge
+          &mdash; the conditions that
+          <span class="cite" data-title="Flow and Wellbeing" data-cite="Gaston, A. et al. (2024). Flow state and well-being: A systematic review. Journal of Happiness Studies, 25, 61.">elicit flow state</span>.
+          Flow reduces self-referential thinking &mdash; the mental habit that
+          sustains worry. A brief window of absorbed attention is enough to
+          shift your cognitive baseline before you search.
+        </div>
+      </div>
+
+      <div class="mechanism">
+        <div class="mech-num">iv</div>
+        <div class="mech-title">Brief positive anchoring</div>
+        <div class="mech-text">
+          Words that appear during gameplay are
+          <span class="cite" data-title="Gamified Wellbeing" data-cite="Cheng, V. W. S. &amp; Ebrahimi, O. V. (2023). Gamification in mental health apps: A systematic review of effectiveness and engagement. JMIR Mental Health, 10, e40831.">micro-affirmations</span>
+          delivered at a moment of small accomplishment &mdash; anchoring a
+          positive association at the point of action. Gamified delivery
+          increases engagement with mental health content.
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <h2>Why here</h2>
+
+      <p>
+        <strong>Because this is where people are when they need it most.</strong>
+      </p>
+      <p>
+        The core insight from
+        <span class="cite" data-title="Single-Session Interventions" data-cite="Schleider, J. L. et al. (2025). Single-session interventions for youth mental health: A review of the science and its translation. Annual Review of Clinical Psychology, 21.">single-session intervention research</span>
+        is that interventions work best when delivered at the moment of need,
+        through channels people are already using. A job board is a point of
+        convergence for a population under
+        <span class="cite" data-title="Unemployment and Health" data-cite="Arena, A. F. et al. (2023). Mental health and unemployment: A systematic review and meta-analysis of interventions. International Journal of Environmental Research and Public Health, 20(4), 2611.">active psychological strain</span>.
+      </p>
+      <p>
+        We are not a therapy app. We do not diagnose or treat clinical
+        conditions. We are saying something simpler: if a postcard can
+        measurably reduce suicide risk, a brief pause before a job search
+        might matter more than it seems.
+      </p>
+
+      <div class="sep"></div>
+
+      <h2>Your data</h2>
+      <p>
+        The game runs entirely in your browser. No gameplay data is
+        collected, transmitted, or stored. No mental health information is
+        inferred or recorded. The job search uses the same public federal
+        jobs API as USAJobs.gov.
+      </p>
+
+      <div class="sep"></div>
+
+      <h2>If you need support</h2>
+
+      <div class="support-box">
+        <div class="sb-num">988</div>
+        <div class="sb-label">
+          Suicide &amp; Crisis Lifeline<br>
+          Call or text. Free. Confidential. 24/7.
+        </div>
+      </div>
+      <p style="text-align:center">
+        Crisis Text Line: text HOME to 741741<br>
+        SAMHSA National Helpline: 1-800-662-4357
+      </p>
+
+      <div class="refs">
+        <h3>References</h3>
+        <p>Arena, A. F. et al. (2023). Mental health and unemployment: A systematic review and meta-analysis of interventions. <em>Int. J. Environmental Research and Public Health</em>, 20(4), 2611.</p>
+        <p>Cheng, V. W. S. &amp; Ebrahimi, O. V. (2023). Gamification in mental health apps: A systematic review of effectiveness and engagement. <em>JMIR Mental Health</em>, 10, e40831.</p>
+        <p>Fincham, G. W. et al. (2023). Effect of breathwork on stress and mental health: A meta-analysis of randomised-controlled trials. <em>Scientific Reports</em>, 13, 432.</p>
+        <p>Gaston, A. et al. (2024). Flow state and well-being: A systematic review. <em>Journal of Happiness Studies</em>, 25, 61.</p>
+        <p>Iyadurai, L. et al. (2018). Preventing intrusive memories after trauma via Tetris. <em>Molecular Psychiatry</em>, 23, 674&ndash;682.</p>
+        <p>Moshe, I. et al. (2021). Digital interventions for the treatment of depression: A meta-analytic review. <em>Psychological Bulletin</em>, 147(8), 749&ndash;786.</p>
+        <p>Pallavicini, F. et al. (2021). Video games for well-being: A systematic review. <em>Frontiers in Psychology</em>, 12, 608814.</p>
+        <p>Pine, R. et al. (2020). The effects of casual videogames on anxiety, depression, stress, and low mood: A systematic review. <em>Games for Health Journal</em>, 9(4), 255&ndash;264.</p>
+        <p>Schleider, J. L. et al. (2025). Single-session interventions for youth mental health: A review of the science and its translation. <em>Annual Review of Clinical Psychology</em>, 21.</p>
+        <p>Sterud, T. et al. (2025). Unemployment and health outcomes: An umbrella review of 46 meta-analyses. <em>Scand. J. Work, Environment &amp; Health</em>.</p>
+        <p>Varma, M. M. et al. (2024). Reducing intrusive memories through a brief visuospatial task: A mega-analysis. <em>Nature Human Behaviour</em>, 8, 1242&ndash;1252.</p>
+        <p>Yilmaz Balban, M. et al. (2023). Brief structured respiration practices enhance mood and reduce physiological arousal. <em>Cell Reports Medicine</em>, 4(1), 100895.</p>
+      </div>
+
+      <div class="colophon">
+        Built with care. Federal job data from USAJobs.gov.<br>
+        Powered by Claude (Anthropic).
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Citation bottom sheet -->
+  <div class="cite-sheet" id="citeSheet">
+    <button class="cite-sheet-dismiss" id="citeDismiss">close</button>
+    <div class="cite-sheet-label">source</div>
+    <div class="cite-sheet-title" id="citeTitle"></div>
+    <div class="cite-sheet-text" id="citeText"></div>
+  </div>
+
+</div>
+
+<script>
+  window.__WORKER_URL__ = 'https://recursive-marketing-worker.jethomasphd.workers.dev';
+</script>
+<script src="games.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

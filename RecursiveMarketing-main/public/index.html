@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#050510">
+<title>&#x25CA; Federal Job Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #050510;
+    --surface: #0c0c1a;
+    --surface2: #12122a;
+    --white: #f0f0f8;
+    --grey: #8888aa;
+    --dim: #4a4a6a;
+    --cyan: #00d4ff;
+    --cyan-glow: rgba(0,212,255,0.1);
+    --green: #00e85a;
+    --green-dim: #00a83f;
+    --green-glow: rgba(0,232,90,0.12);
+    --magenta: #e040fb;
+    --mag-glow: rgba(224,64,251,0.08);
+    --gold: #ffd740;
+    --red: #ff4444;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    height:100%;overflow:hidden;
+    background:var(--void);color:var(--white);
+    font-family:'Space Grotesk',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .screen{height:100dvh;width:100%;position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center}
+
+  /* ───── PORTAL ───── */
+  .stage-0{display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;
+    width:100%;height:100%;position:absolute;inset:0;z-index:10;
+    transition:opacity 0.8s ease;padding:20px}
+  .stage-0.gone{opacity:0;pointer-events:none}
+
+  .portal{width:140px;height:140px;border-radius:50%;
+    background:conic-gradient(from 0deg,var(--cyan),var(--magenta),var(--green),var(--cyan));
+    animation:spin 3s linear infinite;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;margin-bottom:28px;position:relative;
+    box-shadow:0 0 60px var(--cyan-glow),0 0 120px var(--mag-glow)}
+  .portal::after{content:'';position:absolute;inset:6px;
+    background:var(--void);border-radius:50%}
+  .portal-eye{position:relative;z-index:1;font-size:40px;
+    animation:pulse 2s ease-in-out infinite}
+  .portal-sub{font-size:13px;font-weight:300;color:var(--grey);
+    letter-spacing:3px;text-transform:uppercase;
+    animation:breathe 2s ease-in-out infinite}
+
+  /* ───── PICKS ───── */
+  .stage-1{display:none;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;
+    width:100%;height:100%;position:absolute;inset:0;z-index:10;
+    padding:16px 20px;overflow-y:auto}
+  .stage-1.active{display:flex;animation:up 0.6s ease both}
+
+  .prompt{font-size:18px;font-weight:300;color:var(--grey);
+    margin-bottom:14px;line-height:1.5}
+  .prompt em{color:var(--white);font-style:normal;font-weight:500}
+
+  .input-wrap{position:relative;width:100%;max-width:280px;margin-bottom:18px}
+  .name-input{width:100%;padding:12px 16px;
+    font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:500;
+    color:var(--white);background:var(--surface);
+    border:1px solid var(--dim);border-radius:12px;
+    text-align:center;outline:none;caret-color:var(--cyan);
+    transition:border-color .3s,box-shadow .3s}
+  .name-input:focus{border-color:var(--cyan);box-shadow:0 0 20px var(--cyan-glow)}
+  .name-input::placeholder{color:var(--dim)}
+
+  .label{font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+    max-width:340px;margin-bottom:12px}
+
+  .pick-chip{padding:8px 14px;font-family:'Space Grotesk',sans-serif;
+    font-size:12px;font-weight:500;color:var(--grey);background:var(--surface);
+    border:1px solid var(--dim);border-radius:20px;cursor:pointer;
+    transition:all .2s;-webkit-tap-highlight-color:transparent}
+  .pick-chip:active{transform:scale(0.95)}
+  .pick-chip.selected{color:var(--cyan);border-color:var(--cyan);
+    box-shadow:0 0 15px var(--cyan-glow)}
+  .detected-chip{border-color:var(--green-dim);color:var(--green)}
+  .detected-chip.selected{border-color:var(--green);color:var(--green);
+    box-shadow:0 0 15px var(--green-glow)}
+  .detected-chip.pop{animation:pop .4s ease both}
+
+  .loc-input{width:100%;max-width:280px;padding:8px 14px;margin-bottom:16px;
+    font-family:'Space Grotesk',sans-serif;font-size:13px;
+    color:var(--white);background:var(--surface);
+    border:1px solid var(--dim);border-radius:10px;
+    text-align:center;outline:none;caret-color:var(--cyan);
+    transition:border-color .3s}
+  .loc-input:focus{border-color:var(--cyan);box-shadow:0 0 12px var(--cyan-glow)}
+  .loc-input::placeholder{color:var(--dim);font-size:11px}
+
+  .go-btn{width:100%;max-width:280px;padding:14px;
+    font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
+    color:var(--void);background:var(--cyan);border:none;border-radius:12px;
+    cursor:pointer;letter-spacing:.5px;
+    box-shadow:0 0 20px var(--cyan-glow);margin-top:4px;transition:all .3s}
+  .go-btn:active{transform:scale(0.97)}
+  .go-btn:disabled{opacity:.3;cursor:default}
+  .go-btn.pulse{animation:btnPulse 1.5s ease-in-out infinite}
+  .skip-btn{margin-top:10px;font-size:11px;color:var(--dim);
+    cursor:pointer;border:none;background:none;letter-spacing:1px}
+
+  /* ───── CHAT ───── */
+  .stage-chat{display:none;flex-direction:column;
+    width:100%;height:100%;position:absolute;inset:0;z-index:10;padding:0}
+  .stage-chat.active{display:flex;animation:up .6s ease both}
+
+  .chat-header{padding:10px 16px 6px;text-align:center;flex-shrink:0}
+  .greeting{font-size:11px;color:var(--cyan);
+    font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase}
+  .big-name{font-size:22px;font-weight:700;color:var(--white);
+    text-shadow:0 0 30px var(--cyan-glow)}
+
+  .signal{margin:6px 16px 0;padding:8px 14px;
+    background:var(--surface);border:1px solid var(--dim);
+    border-radius:12px;flex-shrink:0}
+  .signal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+  .signal-title{font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--grey);letter-spacing:2px;text-transform:uppercase}
+  .signal-pct{font-family:'JetBrains Mono',monospace;font-size:16px;
+    font-weight:700;color:var(--cyan)}
+  .signal-bar{width:100%;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+  .signal-fill{width:0;height:100%;border-radius:2px;background:var(--cyan);transition:width .3s}
+  .signal-label{font-family:'JetBrains Mono',monospace;font-size:8px;
+    color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+  .results-count{font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--green);letter-spacing:.5px;margin-top:3px;display:none}
+
+  .chat-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:10px 16px;min-height:0}
+
+  .chat-bubble{padding:10px 14px;margin-bottom:8px;border-radius:14px;
+    max-width:90%;line-height:1.5;font-size:14px;animation:bubbleIn .3s ease both}
+  .portal-bubble{background:var(--surface);border:1px solid var(--dim);
+    border-top-left-radius:4px}
+  .user-bubble{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.15);
+    margin-left:auto;text-align:right;border-top-right-radius:4px;
+    color:var(--cyan);font-size:13px;font-weight:500;max-width:75%}
+  .error-bubble{background:rgba(255,68,68,0.06);border:1px solid rgba(255,68,68,0.2);
+    border-top-left-radius:4px;color:var(--red);font-size:12px}
+
+  .pmark{color:var(--magenta);font-size:10px;margin-right:6px}
+  .btxt{color:var(--white)}
+  .btxt .hl{color:var(--cyan);font-weight:600}
+  .cur{display:inline-block;width:2px;height:14px;background:var(--cyan);
+    vertical-align:middle;margin-left:2px;animation:blink .8s step-end infinite}
+
+  .thinking .dots{display:inline-flex;gap:2px}
+  .thinking .dots span{color:var(--grey);font-size:20px;font-weight:700;
+    animation:dot 1.2s ease-in-out infinite}
+  .thinking .dots span:nth-child(2){animation-delay:.2s}
+  .thinking .dots span:nth-child(3){animation-delay:.4s}
+
+  /* Job cards */
+  .job-cards{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;
+    animation:bubbleIn .3s ease both}
+  .job-card{display:block;padding:10px 14px;
+    background:var(--surface);border:1px solid var(--dim);border-radius:12px;
+    text-decoration:none;color:var(--white);transition:all .2s;
+    -webkit-tap-highlight-color:transparent}
+  .job-card:hover,.job-card:active{border-color:var(--green);
+    box-shadow:0 0 12px var(--green-glow)}
+  .job-card:active{transform:scale(0.98)}
+  .jc-title{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px}
+  .jc-org{font-size:11px;color:var(--cyan);margin-bottom:1px}
+  .jc-loc{font-size:10px;color:var(--grey)}
+  .jc-salary{font-size:12px;font-weight:600;color:var(--green);margin-top:4px}
+  .jc-meta{font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--dim);margin-top:2px;letter-spacing:.3px}
+  .jc-apply{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
+    color:var(--green);margin-top:5px;letter-spacing:.5px;text-transform:uppercase}
+
+  /* Featured job */
+  .featured-job{display:block;margin:10px 0;padding:14px 16px;
+    background:linear-gradient(135deg,rgba(0,232,90,.06),rgba(0,212,255,.04));
+    border:2px solid var(--green);border-radius:14px;
+    text-decoration:none;color:var(--white);transition:all .3s;
+    animation:bubbleIn .4s ease both;position:relative;
+    box-shadow:0 0 20px var(--green-glow);
+    -webkit-tap-highlight-color:transparent}
+  .featured-job:hover,.featured-job:active{
+    box-shadow:0 0 30px rgba(0,232,90,.25);border-color:var(--gold)}
+  .featured-job:active{transform:scale(0.98)}
+  .fj-badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+    color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+  .fj-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:3px}
+  .fj-org{font-size:12px;color:var(--cyan);font-weight:500}
+  .fj-dept{font-size:10px;color:var(--grey);margin-bottom:2px}
+  .fj-loc{font-size:11px;color:var(--grey)}
+  .fj-salary{font-size:14px;font-weight:700;color:var(--green);margin-top:6px}
+  .fj-closing{font-family:'JetBrains Mono',monospace;font-size:9px;
+    color:var(--gold);margin-top:4px;letter-spacing:.3px}
+  .fj-apply{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    color:var(--void);background:var(--green);
+    padding:8px 16px;border-radius:8px;margin-top:8px;
+    text-align:center;letter-spacing:1px;text-transform:uppercase;
+    box-shadow:0 0 12px var(--green-glow)}
+
+  /* Footer */
+  .chat-footer{flex-shrink:0;padding:6px 16px 10px;
+    background:linear-gradient(transparent,var(--void) 20%)}
+
+  .suggest-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;
+    margin-bottom:6px;opacity:0;pointer-events:none;transition:opacity .3s}
+  .suggest-row.visible{opacity:1;pointer-events:auto}
+
+  .suggest-chip{padding:6px 12px;font-family:'JetBrains Mono',monospace;
+    font-size:10px;color:var(--grey);background:var(--surface);
+    border:1px solid var(--dim);border-radius:16px;cursor:pointer;
+    transition:all .2s;letter-spacing:.3px;
+    -webkit-tap-highlight-color:transparent}
+  .suggest-chip:hover,.suggest-chip:active{color:var(--cyan);border-color:var(--cyan)}
+  .suggest-chip:active{transform:scale(0.95)}
+
+  .chat-input-row{display:flex;gap:8px;align-items:center}
+  .chat-input{flex:1;padding:10px 14px;
+    font-family:'Space Grotesk',sans-serif;font-size:14px;
+    color:var(--white);background:var(--surface);
+    border:1px solid var(--dim);border-radius:12px;outline:none;
+    caret-color:var(--cyan);transition:border-color .3s}
+  .chat-input:focus{border-color:var(--cyan);box-shadow:0 0 12px var(--cyan-glow)}
+  .chat-input::placeholder{color:var(--dim);font-size:12px}
+  .chat-input:disabled{opacity:.4}
+
+  .send-btn{width:42px;height:42px;border-radius:12px;border:none;
+    background:var(--cyan);color:var(--void);font-size:18px;font-weight:700;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:all .2s;flex-shrink:0}
+  .send-btn:active{transform:scale(0.92)}
+  .send-btn:disabled{opacity:.3;cursor:default}
+
+  /* CTA */
+  .cta-section{flex-shrink:0;padding:0 16px 10px;text-align:center;
+    opacity:0;pointer-events:none;transition:opacity .5s}
+  .cta-section.visible{opacity:1;pointer-events:auto}
+  .cta-btn{display:block;width:100%;padding:13px;
+    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+    letter-spacing:.5px;text-align:center;text-decoration:none;
+    color:var(--void);background:var(--green);border:none;border-radius:12px;
+    cursor:pointer;transition:all .3s;
+    box-shadow:0 0 20px var(--green-glow)}
+  .cta-btn:active{transform:scale(0.97)}
+  .cta-btn.hot{animation:btnPulse 2s ease-in-out infinite;font-size:14px;font-weight:700}
+  .cta-fine{font-family:'JetBrains Mono',monospace;font-size:8px;
+    color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-top:5px}
+
+  /* Ticker */
+  .live-ticker{position:fixed;bottom:0;left:0;right:0;
+    background:rgba(5,5,16,.92);backdrop-filter:blur(8px);
+    border-top:1px solid var(--dim);padding:7px 14px;z-index:50;display:none}
+  .live-ticker.show{display:flex;align-items:center;gap:8px;animation:slideUp .4s ease both}
+  .lt-dot{width:5px;height:5px;background:var(--green);border-radius:50%;
+    animation:proof 1s ease-in-out infinite;flex-shrink:0}
+  .lt-text{font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--grey);letter-spacing:.5px;overflow:hidden;white-space:nowrap}
+  .lt-text em{color:var(--green);font-style:normal}
+  .lt-close{margin-left:auto;font-size:14px;color:var(--dim);
+    cursor:pointer;padding:4px;flex-shrink:0}
+
+  /* BG mesh */
+  .mesh{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(ellipse at 20% 30%,rgba(0,212,255,.04) 0%,transparent 50%),
+      radial-gradient(ellipse at 80% 70%,rgba(224,64,251,.03) 0%,transparent 50%),
+      radial-gradient(ellipse at 50% 50%,rgba(0,232,90,.02) 0%,transparent 60%)}
+
+  /* Animations */
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+  @keyframes breathe{0%,100%{opacity:.5}50%{opacity:1}}
+  @keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes blink{50%{opacity:0}}
+  @keyframes btnPulse{
+    0%,100%{box-shadow:0 0 20px var(--green-glow)}
+    50%{box-shadow:0 0 40px rgba(0,232,90,.3)}}
+  @keyframes proof{0%,100%{opacity:1}50%{opacity:.3}}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes pop{0%{transform:scale(.8);opacity:0}50%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+  @keyframes bubbleIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes dot{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1.2)}}
+
+  @media(max-height:620px){
+    .big-name{font-size:18px}
+    .signal{padding:6px 12px;margin:4px 16px 0}
+    .signal-pct{font-size:14px}
+    .chat-bubble{padding:8px 12px;font-size:13px;margin-bottom:6px}
+    .chat-header{padding:6px 16px 2px}
+    .chat-footer{padding:4px 14px 8px}
+    .cta-btn{padding:10px;font-size:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="mesh"></div>
+
+<div class="screen">
+
+  <!-- PORTAL -->
+  <div class="stage-0" id="stage0">
+    <div class="portal" id="portal">
+      <div class="portal-eye">&#x1F441;</div>
+    </div>
+    <div class="portal-sub">tap to begin</div>
+  </div>
+
+  <!-- PICKS -->
+  <div class="stage-1" id="stage1">
+    <div class="prompt">Before we start &mdash;<br><em>what do they call you?</em></div>
+    <div class="input-wrap">
+      <input class="name-input" id="nameInput" type="text"
+        placeholder="your name" maxlength="20"
+        autocomplete="off" autocapitalize="words" spellcheck="false">
+    </div>
+
+    <div class="label">looking for</div>
+    <div class="chips" id="interestChips">
+      <button class="pick-chip" data-value="Administrative">Administrative</button>
+      <button class="pick-chip" data-value="Information Technology">IT / Cyber</button>
+      <button class="pick-chip" data-value="Healthcare">Healthcare</button>
+      <button class="pick-chip" data-value="Law Enforcement">Law Enforcement</button>
+      <button class="pick-chip" data-value="Engineering">Engineering</button>
+      <button class="pick-chip" data-value="Accounting">Finance</button>
+      <button class="pick-chip" data-value="Human Resources">HR</button>
+      <button class="pick-chip" data-value="Anything">Anything</button>
+    </div>
+
+    <div class="label">where</div>
+    <div class="chips" id="locationChips">
+      <button class="pick-chip" data-value="Remote">Remote</button>
+      <button class="pick-chip" data-value="Anywhere">Anywhere</button>
+    </div>
+    <input class="loc-input" id="locationInput" type="text"
+      placeholder="or type your city / state"
+      maxlength="40" autocomplete="off" spellcheck="false">
+
+    <button class="go-btn" id="goBtn" disabled>GO &#x2192;</button>
+    <button class="skip-btn" id="skipBtn">skip everything &#x2192;</button>
+  </div>
+
+  <!-- CHAT -->
+  <div class="stage-chat" id="stageChat">
+    <div class="chat-header">
+      <div class="greeting">signal for</div>
+      <div class="big-name" id="bigName"></div>
+    </div>
+
+    <div class="signal">
+      <div class="signal-top">
+        <span class="signal-title">signal</span>
+        <span class="signal-pct" id="signalPct">0%</span>
+      </div>
+      <div class="signal-bar"><div class="signal-fill" id="signalFill"></div></div>
+      <div class="signal-label" id="signalLabel">initializing</div>
+      <div class="results-count" id="resultsCount"></div>
+    </div>
+
+    <div class="chat-area" id="chatArea"></div>
+
+    <div class="chat-footer">
+      <div class="suggest-row" id="suggestRow"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text"
+          placeholder="type something..."
+          maxlength="200" autocomplete="off" spellcheck="false" disabled>
+        <button class="send-btn" id="chatSend" disabled>&#x2191;</button>
+      </div>
+    </div>
+
+    <div class="cta-section" id="ctaSection">
+      <button class="cta-btn" id="ctaBtn">Search USAJobs.gov &#x2192;</button>
+      <div class="cta-fine" id="ctaFine">real federal positions &#xb7; verified &#xb7; USAJobs.gov</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Ticker -->
+<div class="live-ticker" id="liveTicker">
+  <div class="lt-dot"></div>
+  <div class="lt-text" id="ltText"></div>
+  <div class="lt-close" onclick="document.getElementById('liveTicker').classList.remove('show')">&#x2715;</div>
+</div>
+
+<script>
+  window.__WORKER_URL__ = 'https://recursive-marketing-worker.jethomasphd.workers.dev';
+</script>
+<script src="app.js"></script>
+</body>
+</html>
