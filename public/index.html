@@ -74,8 +74,20 @@ html, body {
   text-align: center; padding: 40px 28px;
   opacity: 0; pointer-events: none;
   transition: opacity 0.8s ease;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
 .stage.active { opacity: 1; pointer-events: auto; }
+
+/* Intervention container needs positioning context for overlays */
+#interventionContent {
+  position: relative; width: 100%; max-width: 560px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 60vh;
+}
+
+/* Account for suite nav at bottom in demo mode */
+body.demo-mode .stage { padding-bottom: 80px; }
 
 /* ─── LANDING ─── */
 .landing { overflow: hidden; }
@@ -529,8 +541,8 @@ html, body {
   display: inline-block; font-family: var(--sans); font-size: 12px;
   font-weight: 500; color: var(--amber);
   border: 1px solid rgba(196,146,42,0.3); border-radius: 20px;
-  padding: 10px 24px; text-decoration: none;
-  transition: all 0.3s ease;
+  padding: 10px 24px; text-decoration: none; cursor: pointer;
+  background: transparent; transition: all 0.3s ease;
 }
 .post-link:hover { background: rgba(196,146,42,0.08); border-color: rgba(196,146,42,0.5); }
 
@@ -668,6 +680,7 @@ body::before {
 <script src="interventions/a2-body-scan.js"></script>
 <script src="interventions/a3-two-minute-reset.js"></script>
 <script src="interventions/b1-data-reframe.js"></script>
+<script src="interventions/b2-defusion.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
