@@ -312,40 +312,42 @@
 
   function showPost(closingMessage) {
     state.stage = 'post';
-    var container = $('postContent');
-    container.innerHTML = '';
 
-    // The intervention already displayed its closing text.
-    // Post screen provides the next action, not a repeat.
-
-    if (state.demoMode) {
-      // In demo mode: show the suite nav and let user pick next
-      showSuiteNav();
-      // Don't transition to a blank post stage — stay on
-      // intervention stage so closing text remains visible,
-      // and the suite nav at bottom lets them pick next.
-      return;
-    }
-
-    // Normal mode: return to landing after a gentle pause
-    setTimeout(function () {
-      hideSuiteNav();
-      var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
-      for (var i = 0; i < rvEls.length; i++) {
-        var el = $(rvEls[i]);
-        if (el) el.classList.remove('vis', 'draw');
-      }
-      showLanding();
-      setTimeout(revealLanding, 300);
-    }, 3000);
-
-    // Record completion
+    // Record completion (before any branching)
     if (state.activeIntervention) {
       emitEvent('MHIL_CLOSE', {
         intervention_id: state.activeIntervention,
         completion_status: 'complete'
       });
     }
+
+    if (state.demoMode) {
+      // Show suite nav over the intervention's closing text
+      showSuiteNav();
+      return;
+    }
+
+    // Normal mode: return to landing after a gentle pause
+    var postTimer = setTimeout(function () {
+      // Guard: only if we're still in post stage (user might have dismissed)
+      if (state.stage !== 'post') return;
+      resetToLanding();
+    }, 3000);
+    // Store so dismiss can clear it
+    state._postTimer = postTimer;
+  }
+
+  function resetToLanding() {
+    hideSuiteNav();
+    state.demoMode = false;
+    document.body.classList.remove('demo-mode');
+    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
+    for (var i = 0; i < rvEls.length; i++) {
+      var el = $(rvEls[i]);
+      if (el) el.classList.remove('vis', 'draw');
+    }
+    showLanding();
+    setTimeout(revealLanding, 300);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -415,7 +417,13 @@
   // LANDING — cinematic slow reveal
   // ═══════════════════════════════════════════════════════════
 
+  var landingTimers = [];
+
   function revealLanding() {
+    // Clear any previous landing timers
+    for (var j = 0; j < landingTimers.length; j++) clearTimeout(landingTimers[j]);
+    landingTimers = [];
+
     var timings = [
       { el: 'enso', cls: 'draw', delay: 800 },
       { el: 'rv1', cls: 'vis', delay: 3000 },
@@ -427,17 +435,18 @@
       { el: 'demoLink', cls: 'vis', delay: 13000 }
     ];
 
-    // Check for reduced motion preference
     var reducedMotion = window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     for (var i = 0; i < timings.length; i++) {
       (function (t) {
         var delay = reducedMotion ? 0 : t.delay;
-        setTimeout(function () {
+        landingTimers.push(setTimeout(function () {
+          // Only apply if we're still on the landing stage
+          if (state.stage !== 'landing') return;
           var el = $(t.el);
           if (el) el.classList.add(t.cls);
-        }, delay);
+        }, delay));
       })(timings[i]);
     }
   }
@@ -462,21 +471,14 @@
       });
     }
 
-    // Always return to landing — whether demo mode or normal mode.
-    // In production (embedded popup), the dismiss would close the window.
-    // In standalone mode, we return to the landing screen.
-    hideSuiteNav();
-    state.demoMode = false;
-    document.body.classList.remove('demo-mode');
+    // Clear any pending post-intervention timer
+    if (state._postTimer) { clearTimeout(state._postTimer); state._postTimer = null; }
 
-    // Reset landing elements so reveal can re-animate
-    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
-    for (var r = 0; r < rvEls.length; r++) {
-      var el = $(rvEls[r]);
-      if (el) { el.classList.remove('vis', 'draw'); }
-    }
-    showLanding();
-    setTimeout(revealLanding, 300);
+    // Stop ambient audio if playing
+    if (audioPlaying) stopAudio();
+
+    // Return to landing
+    resetToLanding();
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -580,39 +582,37 @@
     });
 
     // Wire up buttons
-    $('beginBtn').addEventListener('click', function () {
-      var id = selectIntervention(visitNumber);
-      if (id) {
-        // Fade out landing
-        $('stageLanding').style.transition = 'opacity 0.8s ease';
-        $('stageLanding').style.opacity = '0';
-        setTimeout(function () {
-          $('stageLanding').classList.remove('active');
-          $('stageLanding').style.opacity = '';
-          $('stageLanding').style.transition = '';
-          launchIntervention(id);
-        }, 800);
-      }
-    });
-
-    $('demoLink').addEventListener('click', function () {
-      // Fade out landing, show suite navigator
-      $('stageLanding').style.transition = 'opacity 0.6s ease';
+    function leaveLanding(callback) {
+      // Cancel pending landing reveal timers
+      for (var lt = 0; lt < landingTimers.length; lt++) clearTimeout(landingTimers[lt]);
+      landingTimers = [];
+      $('stageLanding').style.transition = 'opacity 0.8s ease';
       $('stageLanding').style.opacity = '0';
       setTimeout(function () {
         $('stageLanding').classList.remove('active');
         $('stageLanding').style.opacity = '';
         $('stageLanding').style.transition = '';
+        callback();
+      }, 800);
+    }
+
+    $('beginBtn').addEventListener('click', function () {
+      var id = selectIntervention(visitNumber);
+      if (id) {
+        leaveLanding(function () { launchIntervention(id); });
+      }
+    });
+
+    $('demoLink').addEventListener('click', function () {
+      leaveLanding(function () {
         showSuiteNav();
-        // Launch first available intervention
         var available = getAvailableInterventions();
         if (available.length > 0) {
           launchIntervention(available[0]);
-          // Mark first tab active
           var firstTab = $('suiteTabs').querySelector('.suite-tab');
           if (firstTab) firstTab.classList.add('active');
         }
-      }, 600);
+      });
     });
 
     $('dismissBtn').addEventListener('click', handleDismiss);
