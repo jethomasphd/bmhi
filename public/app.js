@@ -315,46 +315,29 @@
     var container = $('postContent');
     container.innerHTML = '';
 
-    var msg = document.createElement('div');
-    msg.className = 'closing-text';
-    msg.textContent = closingMessage || '';
-    container.appendChild(msg);
+    // The intervention already displayed its closing text.
+    // Post screen provides the next action, not a repeat.
 
-    // Post-intervention CTA (after delay)
-    var post = document.createElement('div');
-    post.className = 'post-intervention';
-    post.innerHTML =
-      '<p class="post-cta">Want to explore more?</p>' +
-      (state.demoMode
-        ? '<button class="post-link" id="postTryAnother">Try another intervention</button>'
-        : '');
-    container.appendChild(post);
+    if (state.demoMode) {
+      // In demo mode: show the suite nav and let user pick next
+      showSuiteNav();
+      // Don't transition to a blank post stage — stay on
+      // intervention stage so closing text remains visible,
+      // and the suite nav at bottom lets them pick next.
+      return;
+    }
 
-    transitionTo('stagePost');
-
-    setTimeout(function () { msg.classList.add('vis'); }, 400);
-    setTimeout(function () { post.classList.add('vis'); }, 3000);
-
-    // Wire up "try another"
+    // Normal mode: return to landing after a gentle pause
     setTimeout(function () {
-      var btn = $('postTryAnother');
-      if (btn) {
-        btn.addEventListener('click', function () {
-          showSuiteNav();
-          // Pick next intervention that's different from current
-          var available = getAvailableInterventions();
-          var next = selectByEngagement(available);
-          if (next) {
-            launchIntervention(next);
-            // Highlight the tab
-            var tabs = $('suiteTabs').querySelectorAll('.suite-tab');
-            for (var k = 0; k < tabs.length; k++) {
-              tabs[k].classList.toggle('active', tabs[k].getAttribute('data-id') === next);
-            }
-          }
-        });
+      hideSuiteNav();
+      var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
+      for (var i = 0; i < rvEls.length; i++) {
+        var el = $(rvEls[i]);
+        if (el) el.classList.remove('vis', 'draw');
       }
-    }, 100);
+      showLanding();
+      setTimeout(revealLanding, 300);
+    }, 3000);
 
     // Record completion
     if (state.activeIntervention) {
@@ -479,27 +462,21 @@
       });
     }
 
-    if (state.demoMode) {
-      // In demo mode, return to landing
-      state.activeIntervention = null;
-      hideSuiteNav();
-      state.demoMode = false;
-      document.body.classList.remove('demo-mode');
-      // Reset landing elements so reveal can re-animate
-      var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
-      for (var r = 0; r < rvEls.length; r++) {
-        var el = $(rvEls[r]);
-        if (el) { el.classList.remove('vis', 'draw'); }
-      }
-      showLanding();
-      setTimeout(revealLanding, 300);
-    } else {
-      // In normal mode, close the whole thing
-      document.body.style.transition = 'opacity 0.8s ease';
-      document.body.style.opacity = '0';
-      // In production, this would close the popup/window
-      log('Dismissed — in production, this closes the intervention window');
+    // Always return to landing — whether demo mode or normal mode.
+    // In production (embedded popup), the dismiss would close the window.
+    // In standalone mode, we return to the landing screen.
+    hideSuiteNav();
+    state.demoMode = false;
+    document.body.classList.remove('demo-mode');
+
+    // Reset landing elements so reveal can re-animate
+    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
+    for (var r = 0; r < rvEls.length; r++) {
+      var el = $(rvEls[r]);
+      if (el) { el.classList.remove('vis', 'draw'); }
     }
+    showLanding();
+    setTimeout(revealLanding, 300);
   }
 
   // ═══════════════════════════════════════════════════════════
