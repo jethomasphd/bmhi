@@ -74,57 +74,88 @@
 
   function makeRain() {
     var ctx = getAudioCtx();
-    var bufferSize = ctx.sampleRate * 4;
-    var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    var data = buffer.getChannelData(0);
 
-    // Shape noise to sound like rain: random amplitude bursts
-    for (var i = 0; i < bufferSize; i++) {
-      var t = i / ctx.sampleRate;
-      // Envelope: random bursts every ~50ms
-      var burst = Math.sin(t * 127.3) * Math.sin(t * 43.7);
-      var envelope = Math.max(0, burst) * 0.7 + 0.3;
-      data[i] = (Math.random() * 2 - 1) * envelope;
+    // Master gain
+    var master = ctx.createGain();
+    master.gain.value = 0;
+    master.connect(ctx.destination);
+
+    // Layer 1: soft broadband base (distant steady rain)
+    var buf1 = ctx.createBuffer(2, ctx.sampleRate * 3, ctx.sampleRate);
+    for (var ch = 0; ch < 2; ch++) {
+      var d = buf1.getChannelData(ch);
+      for (var i = 0; i < d.length; i++) {
+        d[i] = (Math.random() * 2 - 1) * 0.5;
+      }
     }
+    var src1 = ctx.createBufferSource();
+    src1.buffer = buf1; src1.loop = true;
 
-    var source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
+    var lp1 = ctx.createBiquadFilter();
+    lp1.type = 'lowpass'; lp1.frequency.value = 800; lp1.Q.value = 0.5;
 
-    // Bandpass to sound like rain drops
-    var bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 2400;
-    bp.Q.value = 0.4;
+    var g1 = ctx.createGain(); g1.gain.value = 0.6;
+    src1.connect(lp1); lp1.connect(g1); g1.connect(master);
+    src1.start();
 
-    // Second filter for body
-    var lp = ctx.createBiquadFilter();
-    lp.type = 'lowpass';
-    lp.frequency.value = 3500;
+    // Layer 2: gentle high shimmer (close rain on a surface)
+    var buf2 = ctx.createBuffer(2, ctx.sampleRate * 2, ctx.sampleRate);
+    for (var ch2 = 0; ch2 < 2; ch2++) {
+      var d2 = buf2.getChannelData(ch2);
+      for (var j = 0; j < d2.length; j++) {
+        // Gentle amplitude variation for texture
+        var env = 0.3 + 0.7 * Math.pow(Math.random(), 3);
+        d2[j] = (Math.random() * 2 - 1) * env * 0.3;
+      }
+    }
+    var src2 = ctx.createBufferSource();
+    src2.buffer = buf2; src2.loop = true;
 
-    var gain = ctx.createGain();
-    gain.gain.value = 0;
+    var bp2 = ctx.createBiquadFilter();
+    bp2.type = 'bandpass'; bp2.frequency.value = 3000; bp2.Q.value = 0.3;
 
-    source.connect(bp);
-    bp.connect(lp);
-    lp.connect(gain);
-    gain.connect(ctx.destination);
-    source.start();
+    var g2 = ctx.createGain(); g2.gain.value = 0.25;
+    src2.connect(bp2); bp2.connect(g2); g2.connect(master);
+    src2.start();
 
-    // Fade in
-    gain.gain.setTargetAtTime(0.08, ctx.currentTime, 0.8);
+    // Layer 3: very low rumble (distant thunder ambience)
+    var buf3 = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+    var d3 = buf3.getChannelData(0);
+    for (var k = 0; k < d3.length; k++) {
+      d3[k] = (Math.random() * 2 - 1);
+    }
+    var src3 = ctx.createBufferSource();
+    src3.buffer = buf3; src3.loop = true;
 
-    return { source: source, gain: gain };
+    var lp3 = ctx.createBiquadFilter();
+    lp3.type = 'lowpass'; lp3.frequency.value = 200; lp3.Q.value = 0.7;
+
+    var g3 = ctx.createGain(); g3.gain.value = 0.15;
+    src3.connect(lp3); lp3.connect(g3); g3.connect(master);
+    src3.start();
+
+    // Slow fade in
+    master.gain.setTargetAtTime(0.07, ctx.currentTime, 1.2);
+
+    return {
+      source: src1, // for stopSound compatibility
+      gain: master,
+      _extras: [src2, src3] // extra sources to stop
+    };
   }
 
   function stopSound() {
     if (audioNodes && audioNodes.gain) {
       var ctx = getAudioCtx();
-      audioNodes.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+      audioNodes.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
       var src = audioNodes.source;
+      var extras = audioNodes._extras || [];
       setTimeout(function () {
         try { src.stop(); } catch (e) { /* ok */ }
-      }, 2000);
+        for (var i = 0; i < extras.length; i++) {
+          try { extras[i].stop(); } catch (e2) { /* ok */ }
+        }
+      }, 3000);
     }
     audioNodes = null;
   }
