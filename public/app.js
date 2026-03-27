@@ -207,9 +207,20 @@
     var history = getEngagementHistory();
     var lastId = history.length > 0 ? history[history.length - 1].intervention : null;
 
+    // Filter out interventions with unmet requirements
+    var visitNumber = state.session ? state.session.visitNumber : 1;
+    var eligible = available.filter(function (id) {
+      var intervention = window.BMHI_INTERVENTIONS[id];
+      if (intervention && intervention.minVisits && visitNumber < intervention.minVisits) {
+        return false;
+      }
+      return true;
+    });
+    if (eligible.length === 0) eligible = available;
+
     // Filter out the last intervention (no back-to-back repeats)
-    var candidates = available.filter(function (id) { return id !== lastId; });
-    if (candidates.length === 0) candidates = available;
+    var candidates = eligible.filter(function (id) { return id !== lastId; });
+    if (candidates.length === 0) candidates = eligible;
 
     // Count engagement per intervention
     var counts = {};
