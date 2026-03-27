@@ -65,6 +65,13 @@
       input.style.transition = 'opacity 1s ease';
       container.appendChild(input);
 
+      // Closing text (hidden until finish)
+      var closing = document.createElement('div');
+      closing.className = 'closing-text';
+      closing.style.marginTop = '32px';
+      closing.textContent = CLOSING_TEXT;
+      container.appendChild(closing);
+
       // Fade in sequence
       timers.push(setTimeout(function () { prompt.style.opacity = '1'; }, 200));
       timers.push(setTimeout(function () { privacy.style.opacity = '1'; }, 1800));
@@ -83,10 +90,25 @@
       // Submit
       var submitted = false;
       function finish() {
-        if (submitted) return;
+        if (submitted || !running) return;
         submitted = true;
         var chars = input.value.trim().length;
-        helpers.complete(CLOSING_TEXT, chars > 0 ? 3 : 2, chars);
+
+        // Fade out input, show closing
+        input.style.transition = 'opacity 0.8s ease';
+        input.style.opacity = '0.3';
+        input.disabled = true;
+        privacy.style.opacity = '0';
+
+        timers.push(setTimeout(function () {
+          if (!running) return;
+          closing.classList.add('vis');
+        }, 800));
+
+        timers.push(setTimeout(function () {
+          if (!running) return;
+          helpers.complete(CLOSING_TEXT, chars > 0 ? 3 : 2, chars);
+        }, 4000));
       }
 
       input.addEventListener('keydown', function (e) {
