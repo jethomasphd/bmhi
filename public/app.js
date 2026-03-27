@@ -394,11 +394,15 @@
     });
 
     var startTime = Date.now();
+    var completed = false;
 
     // Provide the intervention with helpers
     intervention.render(container, {
       // Called when the intervention completes naturally
       complete: function (closingMessage, depthScore, textChars) {
+        // Guard: only fire once, and never after cleanup/dismiss
+        if (completed || state.activeIntervention !== interventionId) return;
+        completed = true;
         var elapsed = (Date.now() - startTime) / 1000;
         recordEngagement(interventionId, depthScore || 2, textChars || 0, elapsed);
         emitEvent('MHIL_ENGAGE', {
@@ -414,6 +418,7 @@
       },
       // For logging engagement mid-intervention
       engage: function (data) {
+        if (state.activeIntervention !== interventionId) return;
         emitEvent('MHIL_ENGAGE', Object.assign({
           intervention_id: interventionId
         }, data));
@@ -459,13 +464,17 @@
   // ═══════════════════════════════════════════════════════════
 
   function handleDismiss() {
-    // Clean up active intervention
-    if (state.activeIntervention) {
-      var intervention = window.BMHI_INTERVENTIONS[state.activeIntervention];
+    // Clean up active intervention — clear ID first to prevent
+    // any in-flight callbacks from re-triggering showPost
+    var prevId = state.activeIntervention;
+    state.activeIntervention = null;
+
+    if (prevId) {
+      var intervention = window.BMHI_INTERVENTIONS[prevId];
       if (intervention && intervention.cleanup) intervention.cleanup();
 
       emitEvent('MHIL_CLOSE', {
-        intervention_id: state.activeIntervention,
+        intervention_id: prevId,
         completion_status: state.stage === 'post' ? 'complete' : 'dismissed'
       });
     }
