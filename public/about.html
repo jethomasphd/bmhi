@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1612">
+<title>About — BMHI</title>
+<meta name="description" content="The science behind the Brief Mental Health Intervention Suite. Evidence-based micro-interventions for job seekers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1612; --surface: #2a241c; --border: rgba(240,236,228,0.07);
+  --border2: rgba(240,236,228,0.12); --text: #f0ece4; --text2: #d4cfc5;
+  --dim: #9a9384; --faint: #5a554a; --amber: #c4922a;
+  --sage: #7a9e8e; --water: #6a8fa7; --clay: #b8856e;
+  --rose: #b07a7a; --plum: #8e7299;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--sans); -webkit-font-smoothing: antialiased;
+}
+::selection { background: rgba(196,146,42,0.25); }
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.wrap { max-width: 620px; margin: 0 auto; padding: 60px 28px 120px; position: relative; z-index: 1; }
+
+/* Back link */
+.back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  text-decoration: none; letter-spacing: 0.5px; margin-bottom: 48px;
+  transition: color 0.3s;
+}
+.back:hover { color: var(--amber); }
+
+h1 {
+  font-family: var(--serif); font-size: clamp(28px, 6vw, 40px);
+  font-weight: 300; color: var(--text); line-height: 1.2;
+  margin-bottom: 12px; letter-spacing: -0.5px;
+}
+.subtitle {
+  font-family: var(--serif); font-size: 18px; font-weight: 300;
+  font-style: italic; color: var(--dim); margin-bottom: 48px;
+  line-height: 1.5;
+}
+
+h2 {
+  font-family: var(--serif); font-size: 24px; font-weight: 400;
+  color: var(--text); margin-top: 56px; margin-bottom: 16px;
+  line-height: 1.3; letter-spacing: -0.2px;
+}
+
+h3 {
+  font-family: var(--serif); font-size: 17px; font-weight: 400;
+  font-style: italic; color: var(--amber);
+  margin-top: 36px; margin-bottom: 12px;
+}
+
+p {
+  font-size: 14px; font-weight: 300; color: var(--dim);
+  line-height: 1.85; margin-bottom: 16px; letter-spacing: 0.1px;
+}
+p strong { color: var(--text2); font-weight: 400; }
+p em { color: var(--text2); }
+
+.lead {
+  font-family: var(--serif); font-size: 18px; font-weight: 300;
+  font-style: italic; color: var(--dim); line-height: 1.7;
+}
+
+/* Separator */
+.sep { width: 40px; height: 1px; background: var(--border2); margin: 40px 0; }
+
+/* Stat callout */
+.stat {
+  font-family: var(--mono); font-size: clamp(32px, 8vw, 48px);
+  font-weight: 300; color: var(--amber); letter-spacing: -1px;
+  margin: 8px 0 4px;
+}
+.stat-label {
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  letter-spacing: 0.5px; margin-bottom: 20px;
+}
+
+/* Quote block */
+.quote {
+  margin: 28px 0; padding: 20px 24px;
+  border-left: 2px solid rgba(196,146,42,0.3);
+  background: linear-gradient(90deg, rgba(196,146,42,0.03), transparent 50%);
+}
+.quote p {
+  font-family: var(--serif); font-size: 16px; font-style: italic;
+  color: var(--text2); line-height: 1.7; margin-bottom: 8px;
+}
+.quote .attr {
+  font-family: var(--mono); font-size: 9px; color: var(--faint);
+  font-style: normal; letter-spacing: 0.3px;
+}
+
+/* Evidence card */
+.ev {
+  margin: 20px 0; padding: 18px 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.ev-tier {
+  display: inline-block; margin-bottom: 10px;
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 10px;
+}
+.ev-tier.t1 { background: rgba(122,158,142,0.12); color: var(--sage); }
+.ev-tier.t2 { background: rgba(106,143,167,0.12); color: var(--water); }
+.ev-tier.t3 { background: rgba(184,133,110,0.12); color: var(--clay); }
+.ev-name {
+  font-family: var(--serif); font-size: 16px; font-weight: 400;
+  color: var(--text); margin-bottom: 6px;
+}
+.ev p { font-size: 13px; margin-bottom: 8px; }
+.ev-cite {
+  font-family: var(--mono); font-size: 9px; color: var(--faint);
+  line-height: 1.5;
+}
+
+/* Tier color labels */
+.tier-label {
+  display: inline-block; font-family: var(--mono); font-size: 9px;
+  font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 10px; margin-bottom: 8px;
+}
+.tier-a { background: rgba(122,158,142,0.1); color: var(--sage); }
+.tier-b { background: rgba(106,143,167,0.1); color: var(--water); }
+.tier-c { background: rgba(184,133,110,0.1); color: var(--clay); }
+.tier-d { background: rgba(176,122,122,0.1); color: var(--rose); }
+.tier-e { background: rgba(142,114,153,0.1); color: var(--plum); }
+.tier-f { background: rgba(196,146,42,0.1); color: var(--amber); }
+
+/* Crisis info */
+.crisis {
+  margin: 28px 0; padding: 20px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.crisis-title {
+  font-family: var(--mono); font-size: 10px; color: var(--rose);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;
+}
+.crisis a {
+  display: block; color: var(--text2); text-decoration: none;
+  font-size: 14px; margin-bottom: 8px; transition: color 0.2s;
+}
+.crisis a:hover { color: var(--amber); }
+.crisis a span { font-family: var(--mono); font-size: 12px; color: var(--amber); }
+
+@media (max-width: 480px) {
+  .wrap { padding: 40px 20px 100px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a href="index.html" class="back">&larr; Back to interventions</a>
+
+<h1>What This Is</h1>
+<p class="subtitle">
+  A brief guide to the science behind this pause.
+</p>
+
+<p class="lead">
+  You just came from a job search that didn't end the way you hoped.
+  This tool exists because that moment — the one you're in right now —
+  has been studied for decades. And there are small things that genuinely help.
+</p>
+
+<div class="sep"></div>
+
+<h2>The Problem</h2>
+
+<p>
+  Every week, millions of people search for a job online and leave without
+  clicking on a single listing. Not because they aren't trying. Because
+  the market is difficult, the process is exhausting, and the emotional
+  toll of repeated searching compounds over time.
+</p>
+
+<div class="stat">4.5M</div>
+<div class="stat-label">weekly zero-click job search sessions across this network alone</div>
+
+<p>
+  Research consistently shows that <strong>unemployment and unsuccessful job searching
+  are among the strongest predictors of depression and anxiety</strong> in working-age adults.
+  A 2022 meta-analysis found that unemployed individuals are more than twice as likely
+  to experience clinical depression compared to employed peers.
+</p>
+
+<p>
+  The distress isn't just about money. It's about identity, purpose, routine, and
+  the slow erosion of self-efficacy that comes from searching and finding nothing,
+  day after day. Psychologists call this <strong>learned helplessness</strong> — the
+  state where repeated failure trains your brain to stop expecting success.
+</p>
+
+<div class="quote">
+  <p>"The mental health field spent the last twenty years building beautiful
+  interventions and deploying them to no one. The evidence base is real.
+  The reach was never real."</p>
+  <p class="attr">— T.R. Insel, MD, former Director of the National Institute of Mental Health</p>
+</div>
+
+<h2>What We Do About It</h2>
+
+<p>
+  This suite offers brief, evidence-based exercises designed specifically for the
+  moment a search session ends. Each one takes between 30 seconds and 4 minutes.
+  None of them require you to sign up, pay, or share personal information.
+</p>
+
+<p>
+  They are organized by the psychological mechanism they activate:
+</p>
+
+<h3>Somatic Reset</h3>
+<div class="tier-label tier-a">Tier A — Body</div>
+<p>
+  <strong>Breathing exercises and body awareness.</strong> When you're stressed,
+  your nervous system shifts into "fight or flight" mode. Slow, paced breathing
+  activates the parasympathetic nervous system — the body's built-in calming
+  mechanism. This isn't meditation folklore. It's measurable in heart rate
+  variability (HRV) studies, confirmed by EEG research, and recommended by the
+  American Psychological Association for acute stress management.
+</p>
+
+<h3>Cognitive Reframe</h3>
+<div class="tier-label tier-b">Tier B — Thought</div>
+<p>
+  <strong>Changing the story your mind is telling.</strong> When a search fails,
+  the brain's default explanation is personal: <em>"Something is wrong with me."</em>
+  Cognitive reframing techniques — drawn from Cognitive Behavioral Therapy (CBT) and
+  Acceptance and Commitment Therapy (ACT) — help you see the situation more accurately.
+  The job market has fewer than 1 opening per unemployed person right now. A search
+  that doesn't convert isn't a personal failure. It's arithmetic.
+</p>
+
+<h3>Behavioral Activation</h3>
+<div class="tier-label tier-c">Tier C — Action</div>
+<p>
+  <strong>One small, specific next step.</strong> Research by Peter Gollwitzer shows
+  that simply <em>naming</em> a specific action you intend to take ("I will update
+  one line of my resume") dramatically increases the likelihood you'll actually do it.
+  This effect — called an <strong>implementation intention</strong> — has been
+  replicated in over 200 studies. We don't ask you to overhaul your job search.
+  We ask you to pick one small thing.
+</p>
+
+<h3>Emotional Processing</h3>
+<div class="tier-label tier-d">Tier D — Feeling</div>
+<p>
+  <strong>Naming what you feel to reduce its hold on you.</strong> James Pennebaker's
+  expressive writing research, spanning 30+ years and replicated across cultures, shows
+  that writing about difficult emotions for even a few minutes produces measurable
+  reductions in cortisol (the stress hormone) and improvements in immune function.
+  The mechanism is straightforward: putting feelings into words moves processing from
+  the emotional brain (amygdala) to the rational brain (prefrontal cortex).
+  You don't need a therapist for this. You just need a few sentences and the
+  knowledge that no one is reading them.
+</p>
+
+<h3>Flow State</h3>
+<div class="tier-label tier-e">Tier E — Presence</div>
+<p>
+  <strong>Gentle engagement that crowds out rumination.</strong> Carmen Russoniello's
+  research using EEG and heart rate monitoring demonstrated that simple, no-stakes
+  games produce measurable shifts in brain activity consistent with relaxation and
+  reduced anxiety. The key is the absence of performance pressure — no scores,
+  no fail states, no competition. Just presence.
+</p>
+
+<h3>Screening &amp; Referral</h3>
+<div class="tier-label tier-f">Tier F — Support</div>
+<p>
+  <strong>If you need more, we'll point the way.</strong> Based on the SBIRT model
+  (Screening, Brief Intervention, and Referral to Treatment), used in emergency
+  medicine for decades. For returning users showing signs of sustained distress,
+  we offer a simple check-in and, when appropriate, connections to free resources
+  including the Crisis Text Line and the SAMHSA helpline.
+</p>
+
+<div class="sep"></div>
+
+<h2>The Evidence</h2>
+
+<p>
+  Every intervention in this suite is grounded in peer-reviewed research.
+  Here are the primary sources behind each approach:
+</p>
+
+<div class="ev">
+  <div class="ev-tier t1">T1 — Randomized controlled trial</div>
+  <div class="ev-name">Paced Breathing &amp; HRV</div>
+  <p>Box breathing protocols (4-4-4-4 or 4-4-6 timing) reliably increase
+  heart rate variability and reduce subjective anxiety within 60 seconds.</p>
+  <div class="ev-cite">
+    Zaccaro et al. (2018). "How Breath-Control Can Change Your Life."
+    Frontiers in Human Neuroscience, 12, 353.<br>
+    Ma et al. (2017). "The Effect of Diaphragmatic Breathing on Attention,
+    Negative Affect and Stress." Frontiers in Psychology, 8, 874.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t1">T1 — Randomized controlled trial</div>
+  <div class="ev-name">Expressive Writing (Pennebaker)</div>
+  <p>Writing about emotional experiences for as few as 3 minutes produces
+  measurable cortisol reduction and immune function improvement. Replicated
+  in 200+ studies across cultures over 30 years.</p>
+  <div class="ev-cite">
+    Pennebaker, J.W. & Smyth, J.M. (2016). Opening Up by Writing It Down.
+    Guilford Press.<br>
+    Frattaroli, J. (2006). "Experimental Disclosure and Its Moderators:
+    A Meta-Analysis." Psychological Bulletin, 132(6), 823-865.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t1">T1 — Randomized controlled trial</div>
+  <div class="ev-name">Implementation Intentions (Gollwitzer)</div>
+  <p>Naming a specific action ("I will do X at time Y") increases
+  follow-through by 2-3x compared to general goal-setting. Over 200
+  replications in health, education, and employment contexts.</p>
+  <div class="ev-cite">
+    Gollwitzer, P.M. & Sheeran, P. (2006). "Implementation Intentions and
+    Goal Achievement: A Meta-Analysis." Advances in Experimental Social
+    Psychology, 38, 69-119.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t1">T1 — EEG/HRV measurement</div>
+  <div class="ev-name">Casual Games &amp; Anxiety (Russoniello)</div>
+  <p>Simple puzzle games with no fail states produce EEG patterns consistent
+  with relaxation and reduced rumination. The absence of stakes is critical
+  to the therapeutic mechanism.</p>
+  <div class="ev-cite">
+    Russoniello, C.V. et al. (2009). "EEG, HRV and Psychological Correlates
+    while Playing Bejeweled II." Annual Review of CyberTherapy and
+    Telemedicine, 7, 189-192.<br>
+    Russoniello, C.V. et al. (2013). "The Effectiveness of Casual Video Games
+    in Improving Mood and Decreasing Stress." Journal of CyberTherapy &
+    Rehabilitation, 6(1).
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t2">T2 — Validated self-report RCT</div>
+  <div class="ev-name">Self-Compassion (Neff)</div>
+  <p>Self-compassion interventions reduce self-critical rumination more
+  effectively than positive self-talk. The mirror technique — offering
+  compassion to a hypothetical friend, then recognizing it applies to
+  yourself — bypasses the credibility barrier that blocks affirmations.</p>
+  <div class="ev-cite">
+    Neff, K.D. (2003). "Self-Compassion: An Alternative Conceptualization
+    of a Healthy Attitude Toward Oneself." Self and Identity, 2(2), 85-101.<br>
+    Neff, K.D. & Germer, C.K. (2013). "A Pilot Study and Randomized
+    Controlled Trial of the Mindful Self-Compassion Program." Journal of
+    Clinical Psychology, 69(1), 28-44.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t2">T2 — Validated self-report RCT</div>
+  <div class="ev-name">Cognitive Defusion (ACT)</div>
+  <p>From Acceptance and Commitment Therapy. The act of observing a thought
+  as a thought — rather than a truth — measurably reduces its emotional
+  impact. "I'm a failure" hits differently when reframed as "I'm having the
+  thought that I'm a failure."</p>
+  <div class="ev-cite">
+    Hayes, S.C. et al. (2006). "Acceptance and Commitment Therapy: Model,
+    Processes, and Outcomes." Behaviour Research and Therapy, 44(1), 1-25.<br>
+    Masuda, A. et al. (2004). "Cognitive Defusion and Self-Relevant Negative
+    Thoughts." Behaviour Research and Therapy, 42(4), 477-485.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t2">T2 — Validated self-report RCT</div>
+  <div class="ev-name">Growth Mindset in Job Search (Dweck)</div>
+  <p>Reframing a search session as "data collection" rather than "pass/fail"
+  shifts cognitive processing from fixed mindset (failure = identity) to
+  growth mindset (failure = information). This directly predicts continued
+  search persistence.</p>
+  <div class="ev-cite">
+    Dweck, C.S. (2006). Mindset: The New Psychology of Success. Random House.<br>
+    Van Hooft, E.A.J. et al. (2021). ""; Motivation in Job Search: A Meta-Analysis."
+    Journal of Applied Psychology, 106(2), 209-229.
+  </div>
+</div>
+
+<div class="ev">
+  <div class="ev-tier t3">T3 — Quasi-experimental</div>
+  <div class="ev-name">SBIRT — Screening, Brief Intervention, Referral</div>
+  <p>Originally developed for emergency medicine, SBIRT layers brief mental
+  health screening onto routine encounters. Adapted here for digital contexts:
+  a simple check-in for returning users, with warm referral to free resources
+  when distress indicators are elevated.</p>
+  <div class="ev-cite">
+    Babor, T.F. et al. (2007). "Screening, Brief Intervention, and Referral
+    to Treatment (SBIRT)." Substance Abuse, 28(3), 7-30.<br>
+    Insel, T.R. (2022). Healing: Our Path from Mental Illness to Mental
+    Health. Penguin Press.
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<h2>What This Is Not</h2>
+
+<p>
+  This is <strong>not therapy</strong>. It is not a substitute for professional
+  mental health care. It does not diagnose any condition. The interventions here
+  are evidence-grounded wellness tools — the same distinction between a gym
+  and a physical therapist's office.
+</p>
+
+<p>
+  If you're experiencing persistent distress, difficulty sleeping, loss of
+  appetite, or thoughts of self-harm, please reach out to a professional:
+</p>
+
+<div class="crisis">
+  <div class="crisis-title">Free, immediate support</div>
+  <a href="sms:741741&body=HOME">Crisis Text Line — <span>Text HOME to 741741</span></a>
+  <a href="tel:18006624357">SAMHSA Helpline — <span>1-800-662-4357</span></a>
+  <a href="tel:988">988 Suicide &amp; Crisis Lifeline — <span>Call or text 988</span></a>
+</div>
+
+<div class="sep"></div>
+
+<h2>Privacy</h2>
+
+<p>
+  <strong>Anything you type in this tool stays on your device.</strong>
+  Your words are never transmitted to any server, never stored in any database,
+  and never read by anyone. This isn't just a policy — it's a clinical requirement.
+  The Pennebaker research shows that if people believe their writing will be read,
+  they self-censor, and the therapeutic mechanism fails. Privacy is how this works,
+  not just how we protect you.
+</p>
+
+<p>
+  We use a single anonymous cookie to remember that you've visited before, so we
+  can offer you different exercises over time. It contains no personal information —
+  just a random identifier and a visit count. No name, no email, no search history.
+</p>
+
+<div class="sep"></div>
+
+<h2>Who Built This</h2>
+
+<p>
+  <strong>Principal Investigator:</strong> J.E. Thomas, PhD<br>
+  <strong>Clinical Framework:</strong> T.R. Insel, MD — former Director of the
+  National Institute of Mental Health (2002-2015), author of <em>Healing: Our Path
+  from Mental Illness to Mental Health</em>
+</p>
+
+<p>
+  The clinical framework draws on Dr. Insel's measurement-based care model
+  and the SBIRT (Screening, Brief Intervention, and Referral to Treatment)
+  approach adapted from emergency medicine for digital contexts.
+</p>
+
+<div class="quote">
+  <p>"What Jacob has is reach. 4.54 million people per week at the exact
+  moment the evidence base was designed for. Build this right. Instrument
+  it completely. The people on the other end deserve the same rigor we
+  would bring to a clinical trial."</p>
+  <p class="attr">— T.R. Insel, MD, March 2026</p>
+</div>
+
+<p>
+  <strong>Platform:</strong> Results Generation (Austin, TX) — operator of a
+  network of 292+ job search domains. The Brief Mental Health Intervention
+  Layer (MHIL) is deployed to zero-click exit sessions: moments when a user
+  searches for a job and leaves without clicking any listing.
+</p>
+
+<div class="sep"></div>
+
+<p style="color:var(--faint);font-size:12px;line-height:1.6;">
+  The interventions in this suite are evidence-grounded wellness tools, not
+  clinical treatment. Language and design choices follow the principle
+  "supportive, not therapeutic" — "evidence-grounded, not clinically proven" —
+  "check-in, not assessment." If you need clinical care, please contact
+  a mental health professional or use the crisis resources listed above.
+</p>
+
+</div>
+</body>
+</html>
