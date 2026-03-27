@@ -298,8 +298,8 @@ body.demo-mode .stage { padding-bottom: 80px; }
 .mhi-textarea:focus { border-color: rgba(196,146,42,0.2); }
 .mhi-textarea::placeholder { color: var(--faint); font-style: italic; }
 .mhi-textarea.dissolving {
-  opacity: 0; transform: scale(0.98);
-  transition: opacity 3s ease, transform 3s ease;
+  opacity: 0; transform: scale(0.98); filter: blur(4px);
+  transition: opacity 3s ease, transform 3s ease, filter 3s ease;
 }
 
 /* ─── ACTION BUTTONS ─── */
@@ -686,6 +686,7 @@ body::before {
 <script src="interventions/c1-one-small-thing.js"></script>
 <script src="interventions/c2-momentum.js"></script>
 <script src="interventions/c3-network-nudge.js"></script>
+<script src="interventions/d1-release.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
