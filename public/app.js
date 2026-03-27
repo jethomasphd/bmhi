@@ -259,6 +259,7 @@
 
   function showSuiteNav() {
     state.demoMode = true;
+    document.body.classList.add('demo-mode');
     buildSuiteNav();
     $('suiteNav').classList.add('vis');
     $('dismissBtn').classList.add('vis');
@@ -328,8 +329,18 @@
       var btn = $('postTryAnother');
       if (btn) {
         btn.addEventListener('click', function () {
-          showIntervention();
           showSuiteNav();
+          // Pick next intervention that's different from current
+          var available = getAvailableInterventions();
+          var next = selectByEngagement(available);
+          if (next) {
+            launchIntervention(next);
+            // Highlight the tab
+            var tabs = $('suiteTabs').querySelectorAll('.suite-tab');
+            for (var k = 0; k < tabs.length; k++) {
+              tabs[k].classList.toggle('active', tabs[k].getAttribute('data-id') === next);
+            }
+          }
         });
       }
     }, 100);
@@ -451,10 +462,17 @@
     if (state.demoMode) {
       // In demo mode, return to landing
       state.activeIntervention = null;
-      showLanding();
       hideSuiteNav();
       state.demoMode = false;
-      revealLanding();
+      document.body.classList.remove('demo-mode');
+      // Reset landing elements so reveal can re-animate
+      var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
+      for (var r = 0; r < rvEls.length; r++) {
+        var el = $(rvEls[r]);
+        if (el) { el.classList.remove('vis', 'draw'); }
+      }
+      showLanding();
+      setTimeout(revealLanding, 300);
     } else {
       // In normal mode, close the whole thing
       document.body.style.transition = 'opacity 0.8s ease';
