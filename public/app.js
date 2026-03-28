@@ -13,7 +13,6 @@
   var COOKIE_NAME = 'bmhi_session';
   var COOKIE_DAYS = 90;
   var STORAGE_KEY = 'bmhi_engagement';
-  var WORKER_URL = window.__BMHI_WORKER__ || '';
 
   // Long Arc Protocol: visit → intervention (null = use engagement score)
   var LONG_ARC = ['A1', 'B1', 'C1', null, 'D1', 'B2', 'D2'];
@@ -131,23 +130,12 @@
 
     log(eventType, payload.data);
 
-    // Store locally
+    // Store locally — no server, no database, fully client-side
     try {
       var events = JSON.parse(sessionStorage.getItem('bmhi_events') || '[]');
       events.push(payload);
       sessionStorage.setItem('bmhi_events', JSON.stringify(events));
     } catch (e) { /* ok */ }
-
-    // POST to worker (fire-and-forget — never block the intervention)
-    if (WORKER_URL) {
-      try {
-        fetch(WORKER_URL + '/api/events', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(function () {});
-      } catch (e) { /* ok */ }
-    }
   }
 
   // ═══════════════════════════════════════════════════════════
