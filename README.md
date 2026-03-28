@@ -12,7 +12,7 @@ Every week, 4.54 million people search for a job across this network and leave w
 
 The theory of change: **validated distress plus micro-agency**. Acknowledge what just happened was hard. Offer one small thing the person can do. Interrupt the learned helplessness spiral that repeated failed searches install.
 
-## Interventions (16 built, 5 tiers complete)
+## Interventions (18 built, 6 tiers complete)
 
 | ID | Name | Tier | Mechanism | Evidence |
 |----|------|------|-----------|----------|
@@ -32,8 +32,10 @@ The theory of change: **validated distress plus micro-agency**. Acknowledge what
 | D4 | Strength Anchor | D · Emotional | Identity protection under role-threat | T3 |
 | E1 | Pattern Match | E · Flow | Rumination crowding (Russoniello) | T1 |
 | E2 | Open Canvas | E · Flow | Expressive art / cortisol reduction | T3 |
+| F1 | Check-In Screen | F · SBIRT | Brief screening + referral pathway | T1 |
+| F2 | Population Mirror | F · SBIRT | Social proof / loneliness buffering | T3 |
 
-**Remaining:** Tier F (Screening & Referral), Tier G (Returning User Sequence), Measurement Worker, Deployment Integration.
+**Remaining:** Tier G (Returning User Sequence), Measurement Worker, Deployment Integration.
 
 ## Architecture
 
@@ -59,6 +61,8 @@ public/
     d4-strength-anchor.js
     e1-pattern-match.js       ← Tier E: Flow State
     e2-open-canvas.js
+    f1-checkin.js             ← Tier F: SBIRT Screening & Referral
+    f2-population-mirror.js
 ```
 
 ## Core Systems
