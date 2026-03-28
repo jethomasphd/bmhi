@@ -57,15 +57,16 @@ html, body {
 /* ─── DISMISS BUTTON (always visible per §4.3) ─── */
 .dismiss {
   position: fixed; top: 16px; right: 16px; z-index: 200;
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: rgba(26,22,18,0.6); border: 1px solid var(--border);
-  color: var(--faint); font-size: 18px; cursor: pointer;
+  color: var(--faint); font-size: 20px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.3s ease; backdrop-filter: blur(8px);
   opacity: 0; pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .dismiss.vis { opacity: 1; pointer-events: auto; }
-.dismiss:hover { color: var(--text); border-color: var(--border2); }
+.dismiss:hover, .dismiss:active { color: var(--text); border-color: var(--border2); }
 
 /* ─── STAGE SYSTEM ─── */
 .stage {
@@ -516,15 +517,15 @@ body.demo-mode .stage { padding-bottom: 80px; }
   display: flex; gap: 2px;
 }
 .suite-tab {
-  font-family: var(--mono); font-size: 9px; font-weight: 400;
+  font-family: var(--mono); font-size: 10px; font-weight: 400;
   letter-spacing: 0.3px; color: var(--faint);
   background: transparent; border: 1px solid var(--border);
-  border-radius: 12px; padding: 5px 10px; cursor: pointer;
+  border-radius: 12px; padding: 8px 12px; cursor: pointer;
   transition: all 0.25s ease; white-space: nowrap;
-  min-width: 32px; text-align: center;
-  position: relative;
+  min-width: 44px; min-height: 36px; text-align: center;
+  position: relative; -webkit-tap-highlight-color: transparent;
 }
-.suite-tab:hover { color: var(--dim); border-color: var(--border2); }
+.suite-tab:hover, .suite-tab:active { color: var(--dim); border-color: var(--border2); }
 .suite-tab:active { transform: scale(0.94); }
 .suite-tab[data-tier="a"] { color: var(--sage); }
 .suite-tab[data-tier="b"] { color: var(--water); }
@@ -555,7 +556,11 @@ body.demo-mode .stage { padding-bottom: 80px; }
   z-index: 200;
 }
 .suite-tab .tab-tip strong { color: var(--text2); font-weight: 400; }
-.suite-tab:hover .tab-tip { display: block; }
+.suite-tab:hover .tab-tip,
+.suite-tab:focus .tab-tip { display: block; }
+@media (hover: none) {
+  .suite-tab .tab-tip { display: none !important; }
+}
 
 /* Info bar showing current intervention */
 .suite-info {
@@ -587,15 +592,17 @@ body.demo-mode .stage { padding-bottom: 80px; }
 /* ─── AMBIENT AUDIO CONTROLS ─── */
 .audio-toggle {
   position: fixed; top: 16px; left: 16px; z-index: 200;
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: rgba(26,22,18,0.6); border: 1px solid var(--border);
   color: var(--faint); font-size: 14px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.3s ease; backdrop-filter: blur(8px);
   opacity: 0; pointer-events: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .audio-toggle.vis { opacity: 1; pointer-events: auto; }
 .audio-toggle.on { color: var(--amber); border-color: rgba(196,146,42,0.3); }
+.audio-toggle:active { color: var(--amber); }
 
 /* ─── KEYFRAMES ─── */
 @keyframes fadeUp {
@@ -621,10 +628,22 @@ body::before {
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 480px) {
-  .stage { padding: 32px 20px; }
-  .emoji-scale { gap: 10px; }
-  .emoji-btn { width: 44px; height: 44px; font-size: 20px; }
-  .match-grid { gap: 6px; max-width: 240px; }
+  .stage { padding: 28px 16px; }
+  .emoji-scale { gap: 8px; }
+  .emoji-btn { width: 48px; height: 48px; font-size: 22px; }
+  .match-grid { gap: 6px; max-width: min(280px, 85vw); }
+  .mhi-input { font-size: 16px; } /* prevents iOS zoom on focus */
+  .mhi-textarea { font-size: 16px; } /* prevents iOS zoom on focus */
+  .breath-circle { width: 100px; height: 100px; }
+  .suite-tier-label { font-size: 6px; letter-spacing: 1px; }
+  .suite-tab { font-size: 9px; padding: 6px 10px; min-width: 36px; min-height: 32px; }
+  .landing-title { margin-bottom: 20px; }
+  .landing-kicker { margin-bottom: 28px; }
+  .begin-btn { padding: 12px 28px; }
+}
+@media (max-width: 360px) {
+  .stage { padding: 24px 14px; }
+  .suite-tab { padding: 5px 8px; }
 }
 @media (min-width: 768px) {
   .stage { padding: 48px 40px; }

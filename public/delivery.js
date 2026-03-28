@@ -71,20 +71,19 @@
     var frame = document.createElement('iframe');
     frame.src = BMHI_URL + '?mode=embedded&trigger=popup';
     frame.style.cssText =
-      'width:100%;max-width:560px;height:88vh;max-height:700px;' +
+      'width:100%;max-width:min(560px,92vw);height:85vh;max-height:700px;' +
       'border:none;border-radius:12px;background:#1a1612;' +
       'box-shadow:0 24px 80px rgba(0,0,0,0.6);';
 
     var dismiss = document.createElement('button');
     dismiss.innerHTML = '&times;';
     dismiss.style.cssText =
-      'position:absolute;top:16px;right:16px;z-index:100000;' +
-      'width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);' +
-      'background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:20px;' +
+      'position:absolute;top:12px;right:12px;z-index:100000;' +
+      'width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);' +
+      'background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:22px;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-      'backdrop-filter:blur(8px);transition:all 0.3s;';
-    dismiss.onmouseover = function () { dismiss.style.color = '#fff'; };
-    dismiss.onmouseout = function () { dismiss.style.color = 'rgba(255,255,255,0.6)'; };
+      'backdrop-filter:blur(8px);transition:all 0.3s;' +
+      '-webkit-tap-highlight-color:transparent;';
     dismiss.addEventListener('click', function () {
       overlay.style.opacity = '0';
       setTimeout(function () { overlay.remove(); _activeOverlay = null; _triggered = false; }, 800);
@@ -98,8 +97,22 @@
   }
 
   function enableExitIntent() {
+    // Desktop: mouseleave toward browser chrome
     document.addEventListener('mouseleave', function (e) {
       if (e.clientY < 10 && shouldTrigger()) showPopup();
+    });
+    // Mobile: detect tab/app switch via visibility change
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden' && shouldTrigger()) {
+        // User is leaving — mark for popup on return
+        sessionStorage.setItem('bmhi_show_on_return', '1');
+      }
+      if (document.visibilityState === 'visible') {
+        if (sessionStorage.getItem('bmhi_show_on_return') === '1') {
+          sessionStorage.removeItem('bmhi_show_on_return');
+          showPopup();
+        }
+      }
     });
   }
 
@@ -127,8 +140,8 @@
     banner.style.cssText =
       'position:fixed;bottom:0;left:0;right:0;z-index:99999;' +
       'background:#1a1612;border-top:1px solid rgba(240,236,228,0.1);' +
-      'padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;' +
-      'justify-content:center;gap:12px;' +
+      'padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;' +
+      'justify-content:center;gap:10px;' +
       'transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);' +
       'font-family:Inter,system-ui,sans-serif;box-shadow:0 -8px 40px rgba(0,0,0,0.3);';
 
@@ -143,7 +156,8 @@
     emailInput.style.cssText =
       'padding:8px 14px;font-size:13px;background:transparent;' +
       'border:1px solid rgba(240,236,228,0.12);border-radius:8px;' +
-      'color:#f0ece4;outline:none;width:200px;font-family:inherit;';
+      'color:#f0ece4;outline:none;width:100%;max-width:200px;' +
+      'min-width:120px;font-family:inherit;font-size:16px;';
     banner.appendChild(emailInput);
 
     var sendBtn = document.createElement('button');
