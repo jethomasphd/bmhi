@@ -35,15 +35,18 @@ The theory of change: **validated distress plus micro-agency**. Acknowledge what
 | F1 | Check-In Screen | F · SBIRT | Brief screening + referral pathway | T1 |
 | F2 | Population Mirror | F · SBIRT | Social proof / loneliness buffering | T3 |
 
-**Remaining:** Final polish and integration testing.
+**18 interventions across 6 tiers. Long Arc Protocol (G1) sequences returning users. Complete.**
 
 ## Architecture
 
 ```
 public/
   index.html                  ← App shell + full CSS design system
-  about.html                  ← The science (position paper + citations)
+  about.html                  ← The science (position paper + 20 citations)
   app.js                      ← Core: session, measurement, router, state machine
+  delivery.js                 ← Four delivery mechanisms (popup, popunder, embedded, email)
+  embed.html                  ← Job site demo with delivery mechanism toggle
+  _headers                    ← Cloudflare Pages security headers
   interventions/
     a1-breath-pacer.js        ← Tier A: Somatic Reset
     a2-body-scan.js
@@ -63,6 +66,9 @@ public/
     e2-open-canvas.js
     f1-checkin.js             ← Tier F: SBIRT Screening & Referral
     f2-population-mirror.js
+docs/
+  PILOT.md                    ← Phase 1 pilot configuration
+  LAUNCH-CHECKLIST.md         ← Pre-launch verification checklist
 ```
 
 ## Core Systems
@@ -116,6 +122,30 @@ See `embed.html` for a full working demo of all four delivery mechanisms.
 | `exit_window_position_paper.html` | Academic position paper: the exit window as detection-problem solution |
 | `companion_insel_summoning.html` | Dialogue with T.R. Insel, MD — clinical validation and measurement requirements |
 | `rg_mental-health-intervention.html` | Strategic brief: the business case |
+
+## Measurement
+
+Events emitted per session (stored in sessionStorage, logged to console):
+
+| Event | When | Key Data |
+|-------|------|----------|
+| `MHIL_TRIGGER` | Intervention fires | domain, visit_number, trigger_type, time_of_day |
+| `MHIL_START` | Intervention displayed | intervention_id, mechanism_tier |
+| `MHIL_ENGAGE` | User interaction | interaction_type, depth_score, text_input_chars |
+| `MHIL_CLOSE` | Intervention ended | completion_status, referral_shown |
+| `MHIL_RETURN` | User returns to site | days_since_last_visit, intervention_last_session |
+
+**Primary outcome variable**: `return_visit_rate` by `intervention_id` x `visit_number`
+
+All measurement is client-side. No server telemetry. When a backend is needed for aggregation, any analytics endpoint can ingest these events — the format is documented in `seed.md` §7.
+
+## Ethical Framework
+
+1. **Do no harm first** — every intervention acknowledges distress before offering reframe
+2. **Never weaponize vulnerability** — monetization happens AFTER the intervention, never during
+3. **Referral is not optional** — F1 screening fires for returning users; crisis resources always available
+4. **Privacy is the mechanism** — if users don't trust it, they self-censor, and Pennebaker's cortisol mechanism fails
+5. **This is not a medical device** — language is "supportive" not "therapeutic," "evidence-grounded" not "clinically proven"
 
 ## Clinical Framework
 
