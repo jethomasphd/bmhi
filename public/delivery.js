@@ -119,7 +119,7 @@
   // EMAIL OPT-IN
   // ═══════════════════════════════════════════════════════
 
-  function showEmailOptIn(workerUrl) {
+  function showEmailOptIn() {
     reset();
     _triggered = true;
 
@@ -157,13 +157,12 @@
       if (!email || email.indexOf('@') === -1) return;
       sendBtn.textContent = 'Sent \u2713';
       sendBtn.disabled = true;
-      if (workerUrl) {
-        fetch(workerUrl + '/api/email-trigger', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, timestamp: new Date().toISOString() })
-        }).catch(function () {});
-      }
+      // Store consent locally — no server needed
+      try {
+        var consents = JSON.parse(localStorage.getItem('bmhi_email_consents') || '[]');
+        consents.push({ email: email, timestamp: new Date().toISOString() });
+        localStorage.setItem('bmhi_email_consents', JSON.stringify(consents));
+      } catch (e) { /* ok */ }
       setTimeout(closeBanner, 2000);
     });
     banner.appendChild(sendBtn);
@@ -226,7 +225,7 @@
     } else if (mechanism === 'popunder') {
       setTimeout(function () { if (shouldTrigger()) showPopunder(); }, 60000);
     } else if (mechanism === 'email') {
-      setTimeout(function () { if (shouldTrigger()) showEmailOptIn(opts.workerUrl || ''); }, 60000);
+      setTimeout(function () { if (shouldTrigger()) showEmailOptIn(); }, 60000);
     } else if (mechanism === 'embedded') {
       setTimeout(function () {
         if (shouldTrigger() && opts.embedTarget) embedBMHI(opts.embedTarget);

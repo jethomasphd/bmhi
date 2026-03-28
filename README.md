@@ -35,7 +35,7 @@ The theory of change: **validated distress plus micro-agency**. Acknowledge what
 | F1 | Check-In Screen | F · SBIRT | Brief screening + referral pathway | T1 |
 | F2 | Population Mirror | F · SBIRT | Social proof / loneliness buffering | T3 |
 
-**Remaining:** Tier G (Returning User Sequence), Measurement Worker, Deployment Integration.
+**Remaining:** Final polish and integration testing.
 
 ## Architecture
 
@@ -68,23 +68,45 @@ public/
 ## Core Systems
 
 - **Session Management**: 90-day first-party cookie, no PII, tracks visit count and engagement history
-- **Measurement Framework**: MHIL event suite (TRIGGER, START, ENGAGE, CLOSE, RETURN) emitted to console + sessionStorage, ready for Cloudflare Worker endpoint
+- **Measurement Framework**: MHIL event suite (TRIGGER, START, ENGAGE, CLOSE, RETURN) stored in sessionStorage — fully client-side, no server required
 - **Intervention Router**: Long Arc Protocol (visit-sequenced deepening) with engagement-based rotation for visit 8+
 - **Time-of-Day Awareness**: Late-night sessions (after 10pm) route to A3 priority
-- **Privacy Architecture**: Text input NEVER transmitted or stored server-side — privacy is the mechanism, not just the policy (Pennebaker)
+- **Privacy Architecture**: Text input NEVER transmitted or stored anywhere — cookie + localStorage only. Privacy is the mechanism, not just the policy (Pennebaker)
+- **Zero Infrastructure**: No database, no server, no API keys. Pure static files. Embeddable on any web property via iframe or script tag.
 
 ## Deployment
 
-Static site — no build step, no Node, no bundler. Cloudflare Pages serves `public/` directly.
+Static site — no build step, no Node, no bundler, no backend. Any static host works.
 
 ```bash
-# CLI deploy
+# Cloudflare Pages (CLI)
 wrangler pages deploy ./public --project-name bmhi
 
 # Or connect GitHub repo in Cloudflare dashboard:
 # Build output directory: public
 # Build command: (leave empty)
+
+# Or literally any static host:
+# Netlify, Vercel, GitHub Pages, S3, nginx — just serve public/
 ```
+
+## Embedding on Any Site
+
+```html
+<!-- Option 1: Popup on exit intent -->
+<script src="https://bmhi.pages.dev/delivery.js"></script>
+<script>
+  BMHI_DELIVERY.setContext(jobsViewed, jobsClicked);
+  BMHI_DELIVERY.enableExitIntent();
+</script>
+
+<!-- Option 2: Inline iframe -->
+<iframe src="https://bmhi.pages.dev/?mode=embedded"
+  style="width:100%;max-width:560px;height:600px;border:none;border-radius:12px;">
+</iframe>
+```
+
+See `embed.html` for a full working demo of all four delivery mechanisms.
 
 ## Source Documents
 
