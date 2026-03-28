@@ -185,8 +185,8 @@
     var available = getAvailableInterventions();
     if (available.length === 0) return null;
 
-    // Late-night override: prefer A3 if available
-    if (isLateNight() && available.indexOf('A3') !== -1) {
+    // Late-night override for Visit 1: A3 instead of A1
+    if (visitNumber === 1 && isLateNight() && available.indexOf('A3') !== -1) {
       return 'A3';
     }
 
@@ -196,16 +196,34 @@
       if (target && available.indexOf(target) !== -1) {
         return target;
       }
-      // Fallback: visit 4 (null) or unavailable → pick first available
+      // Visit 4 (null in LONG_ARC) → F1 pre-layer handled by launchWithPreLayer
+      // Fall through to engagement-based selection for the actual intervention
+      if (target === null) {
+        // For visit 4, pick from a curated set after F1
+        var v4pool = ['A2', 'B3', 'C2', 'E1', 'F2'];
+        var v4available = v4pool.filter(function (id) {
+          return available.indexOf(id) !== -1;
+        });
+        if (v4available.length > 0) return selectByEngagement(v4available);
+      }
     }
 
-    // Visit 8+ or fallback: engagement-based rotation
+    // Visit 8+: engagement-based rotation with tier awareness
+    // Late-night weighting: prefer somatic (A-tier) after 10pm
+    if (isLateNight()) {
+      var somatic = available.filter(function (id) { return id.charAt(0) === 'A'; });
+      if (somatic.length > 0 && Math.random() < 0.5) {
+        return selectByEngagement(somatic);
+      }
+    }
+
     return selectByEngagement(available);
   }
 
   function selectByEngagement(available) {
     var history = getEngagementHistory();
     var lastId = history.length > 0 ? history[history.length - 1].intervention : null;
+    var lastTier = lastId ? lastId.charAt(0) : null;
 
     // Filter out interventions with unmet requirements
     var visitNumber = state.session ? state.session.visitNumber : 1;
@@ -214,6 +232,8 @@
       if (intervention && intervention.minVisits && visitNumber < intervention.minVisits) {
         return false;
       }
+      // Skip pre-layer interventions from normal rotation
+      if (intervention && intervention.isPreLayer) return false;
       return true;
     });
     if (eligible.length === 0) eligible = available;
@@ -221,6 +241,12 @@
     // Filter out the last intervention (no back-to-back repeats)
     var candidates = eligible.filter(function (id) { return id !== lastId; });
     if (candidates.length === 0) candidates = eligible;
+
+    // Prefer different tier than last (no back-to-back same tier)
+    if (lastTier && candidates.length > 1) {
+      var diffTier = candidates.filter(function (id) { return id.charAt(0) !== lastTier; });
+      if (diffTier.length > 0) candidates = diffTier;
+    }
 
     // Count engagement per intervention
     var counts = {};
@@ -235,6 +261,13 @@
     });
 
     return candidates[0];
+  }
+
+  // Check if visit 4 should show F1 pre-layer
+  function shouldShowPreLayer(visitNumber) {
+    return visitNumber >= 4 && visitNumber % 4 === 0 &&
+      window.BMHI_INTERVENTIONS['F1'] &&
+      getAvailableInterventions().indexOf('F1') !== -1;
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -406,6 +439,57 @@
         if (state.activeIntervention !== interventionId) return;
         emitEvent('MHIL_ENGAGE', Object.assign({
           intervention_id: interventionId
+        }, data));
+      }
+    });
+
+    showIntervention();
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // LANDING — cinematic slow reveal
+  // ═══════════════════════════════════════════════════════════
+
+  // Launch F1 pre-layer, then the actual intervention after it completes
+  function launchInterventionWithPreLayer(preId, mainId) {
+    var preIntervention = window.BMHI_INTERVENTIONS[preId];
+    if (!preIntervention) {
+      launchIntervention(mainId);
+      return;
+    }
+
+    // Clean up previous
+    if (state.activeIntervention) {
+      var prev = window.BMHI_INTERVENTIONS[state.activeIntervention];
+      if (prev && prev.cleanup) prev.cleanup();
+    }
+
+    state.activeIntervention = preId;
+    var container = $('interventionContent');
+    container.innerHTML = '';
+
+    log('Pre-layer:', preId, '→ then:', mainId);
+
+    emitEvent('MHIL_START', {
+      intervention_id: preId,
+      mechanism_tier: preIntervention.tier,
+      is_pre_layer: true
+    });
+
+    var preCompleted = false;
+
+    preIntervention.render(container, {
+      complete: function (closingMessage, depthScore, textChars) {
+        if (preCompleted || state.activeIntervention !== preId) return;
+        preCompleted = true;
+        recordEngagement(preId, depthScore || 2, textChars || 0, 15);
+        // Now launch the actual intervention
+        launchIntervention(mainId);
+      },
+      engage: function (data) {
+        if (state.activeIntervention !== preId) return;
+        emitEvent('MHIL_ENGAGE', Object.assign({
+          intervention_id: preId
         }, data));
       }
     });
@@ -599,7 +683,14 @@
 
     $('beginBtn').addEventListener('click', function () {
       var id = selectIntervention(visitNumber);
-      if (id) {
+      if (!id) return;
+
+      if (shouldShowPreLayer(visitNumber)) {
+        // Visit 4, 8, 12...: show F1 check-in first, then the intervention
+        leaveLanding(function () {
+          launchInterventionWithPreLayer('F1', id);
+        });
+      } else {
         leaveLanding(function () { launchIntervention(id); });
       }
     });
