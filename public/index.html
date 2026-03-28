@@ -7,6 +7,7 @@
 <title>BMHI — Brief Mental Health Intervention Suite</title>
 <meta name="description" content="Evidence-based micro-interventions for job seekers. A population-level behavioral health touchpoint grounded in 30+ years of peer-reviewed research.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════
@@ -488,43 +489,80 @@ body.demo-mode .stage { padding-bottom: 80px; }
 /* ─── SUITE NAVIGATOR (demo mode) ─── */
 .suite-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  padding: 12px 16px; display: flex; flex-direction: column;
-  align-items: center; gap: 8px;
-  background: linear-gradient(transparent, var(--bg) 30%);
+  padding: 10px 12px 12px;
+  background: linear-gradient(transparent, var(--bg) 25%);
   opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease;
 }
 .suite-nav.vis { opacity: 1; pointer-events: auto; }
 
-.suite-tabs {
-  display: flex; flex-wrap: wrap; gap: 4px;
-  justify-content: center; max-width: 560px;
+.suite-tiers {
+  display: flex; gap: 2px; justify-content: center;
+  max-width: 620px; margin: 0 auto;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.suite-tiers::-webkit-scrollbar { display: none; }
+
+.suite-tier-group {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.suite-tier-label {
+  font-family: var(--mono); font-size: 7px; font-weight: 400;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--faint); white-space: nowrap;
+}
+.suite-tier-tabs {
+  display: flex; gap: 2px;
 }
 .suite-tab {
   font-family: var(--mono); font-size: 9px; font-weight: 400;
-  letter-spacing: 0.5px; color: var(--faint);
+  letter-spacing: 0.3px; color: var(--faint);
   background: transparent; border: 1px solid var(--border);
-  border-radius: 14px; padding: 5px 12px; cursor: pointer;
-  transition: all 0.3s ease; white-space: nowrap;
+  border-radius: 12px; padding: 5px 10px; cursor: pointer;
+  transition: all 0.25s ease; white-space: nowrap;
+  min-width: 32px; text-align: center;
+  position: relative;
 }
-.suite-tab:hover { color: var(--dim); }
-.suite-tab.active { color: var(--amber); border-color: rgba(196,146,42,0.3); }
+.suite-tab:hover { color: var(--dim); border-color: var(--border2); }
+.suite-tab:active { transform: scale(0.94); }
 .suite-tab[data-tier="a"] { color: var(--sage); }
 .suite-tab[data-tier="b"] { color: var(--water); }
 .suite-tab[data-tier="c"] { color: var(--clay); }
 .suite-tab[data-tier="d"] { color: var(--rose); }
 .suite-tab[data-tier="e"] { color: var(--plum); }
 .suite-tab[data-tier="f"] { color: var(--amber); }
-.suite-tab.active[data-tier="a"] { border-color: rgba(122,158,142,0.4); }
-.suite-tab.active[data-tier="b"] { border-color: rgba(106,143,167,0.4); }
-.suite-tab.active[data-tier="c"] { border-color: rgba(184,133,110,0.4); }
-.suite-tab.active[data-tier="d"] { border-color: rgba(176,122,122,0.4); }
-.suite-tab.active[data-tier="e"] { border-color: rgba(142,114,153,0.4); }
-.suite-tab.active[data-tier="f"] { border-color: rgba(196,146,42,0.4); }
+.suite-tab.active {
+  background: rgba(240,236,228,0.04);
+  border-color: rgba(240,236,228,0.2);
+}
+.suite-tab.active[data-tier="a"] { border-color: rgba(122,158,142,0.5); background: rgba(122,158,142,0.06); }
+.suite-tab.active[data-tier="b"] { border-color: rgba(106,143,167,0.5); background: rgba(106,143,167,0.06); }
+.suite-tab.active[data-tier="c"] { border-color: rgba(184,133,110,0.5); background: rgba(184,133,110,0.06); }
+.suite-tab.active[data-tier="d"] { border-color: rgba(176,122,122,0.5); background: rgba(176,122,122,0.06); }
+.suite-tab.active[data-tier="e"] { border-color: rgba(142,114,153,0.5); background: rgba(142,114,153,0.06); }
+.suite-tab.active[data-tier="f"] { border-color: rgba(196,146,42,0.5); background: rgba(196,146,42,0.06); }
 
-.suite-label {
-  font-family: var(--mono); font-size: 8px; color: var(--faint);
-  letter-spacing: 1.5px; text-transform: uppercase;
+/* Tooltip on hover */
+.suite-tab .tab-tip {
+  display: none; position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 12px;
+  font-family: var(--sans); font-size: 10px; font-weight: 300;
+  color: var(--dim); line-height: 1.5; text-align: left;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4); pointer-events: none;
+  z-index: 200;
+}
+.suite-tab .tab-tip strong { color: var(--text2); font-weight: 400; }
+.suite-tab:hover .tab-tip { display: block; }
+
+/* Info bar showing current intervention */
+.suite-info {
+  text-align: center; margin: 6px auto 0;
+  font-family: var(--mono); font-size: 9px; color: var(--faint);
+  letter-spacing: 0.3px; max-width: 620px;
+  min-height: 14px;
 }
 
 /* ─── POST-INTERVENTION ─── */
@@ -657,7 +695,7 @@ body::before {
   <!-- ═══════════════════════════════════════════
        INTERVENTION STAGE — all interventions render here
        ═══════════════════════════════════════════ -->
-  <div class="stage" id="stageIntervention">
+  <div class="stage" id="stageIntervention" role="main" aria-live="polite">
     <div id="interventionContent"></div>
   </div>
 
@@ -672,8 +710,8 @@ body::before {
 
 <!-- SUITE NAVIGATOR (demo mode) -->
 <div class="suite-nav" id="suiteNav">
-  <div class="suite-label">Intervention Suite</div>
-  <div class="suite-tabs" id="suiteTabs"></div>
+  <div class="suite-tiers" id="suiteTiers"></div>
+  <div class="suite-info" id="suiteInfo"></div>
 </div>
 
 <!-- SCRIPTS -->

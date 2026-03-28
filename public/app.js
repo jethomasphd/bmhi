@@ -262,30 +262,85 @@
   // SUITE NAVIGATOR (demo mode)
   // ═══════════════════════════════════════════════════════════
 
+  var TIER_NAMES = {
+    A: 'Somatic', B: 'Cognitive', C: 'Behavioral',
+    D: 'Emotional', E: 'Flow', F: 'Screening'
+  };
+
   function buildSuiteNav() {
-    var tabs = $('suiteTabs');
-    tabs.innerHTML = '';
+    var container = $('suiteTiers');
+    container.innerHTML = '';
     var available = getAvailableInterventions();
     available.sort();
 
+    // Group by tier
+    var tiers = {};
     for (var i = 0; i < available.length; i++) {
-      (function (id) {
-        var intervention = window.BMHI_INTERVENTIONS[id];
-        var btn = document.createElement('button');
-        btn.className = 'suite-tab';
-        btn.setAttribute('data-tier', intervention.tier.toLowerCase());
-        btn.setAttribute('data-id', id);
-        btn.textContent = id;
-        btn.title = intervention.name + ' · ' + intervention.evidence + ' · ' + intervention.time;
-        btn.addEventListener('click', function () {
-          launchIntervention(id);
-          // Update active tab
-          var all = tabs.querySelectorAll('.suite-tab');
-          for (var j = 0; j < all.length; j++) all[j].classList.remove('active');
-          btn.classList.add('active');
-        });
-        tabs.appendChild(btn);
-      })(available[i]);
+      var id = available[i];
+      var tier = id.charAt(0);
+      if (!tiers[tier]) tiers[tier] = [];
+      tiers[tier].push(id);
+    }
+
+    var tierOrder = ['A', 'B', 'C', 'D', 'E', 'F'];
+    for (var t = 0; t < tierOrder.length; t++) {
+      var tierKey = tierOrder[t];
+      if (!tiers[tierKey]) continue;
+
+      var group = document.createElement('div');
+      group.className = 'suite-tier-group';
+
+      var label = document.createElement('div');
+      label.className = 'suite-tier-label';
+      label.textContent = TIER_NAMES[tierKey] || tierKey;
+      group.appendChild(label);
+
+      var tabRow = document.createElement('div');
+      tabRow.className = 'suite-tier-tabs';
+
+      for (var j = 0; j < tiers[tierKey].length; j++) {
+        (function (interventionId) {
+          var intervention = window.BMHI_INTERVENTIONS[interventionId];
+          var btn = document.createElement('button');
+          btn.className = 'suite-tab';
+          btn.setAttribute('data-tier', tierKey.toLowerCase());
+          btn.setAttribute('data-id', interventionId);
+          btn.textContent = interventionId;
+          btn.setAttribute('aria-label', intervention.name);
+
+          // Tooltip
+          var tip = document.createElement('div');
+          tip.className = 'tab-tip';
+          tip.innerHTML = '<strong>' + interventionId + ' \u00B7 ' + intervention.name + '</strong><br>' +
+            intervention.mechanism + '<br>' +
+            intervention.evidence + ' \u00B7 ' + intervention.time;
+          btn.appendChild(tip);
+
+          btn.addEventListener('click', function () {
+            launchIntervention(interventionId);
+            updateActiveTab(interventionId);
+          });
+          tabRow.appendChild(btn);
+        })(tiers[tierKey][j]);
+      }
+
+      group.appendChild(tabRow);
+      container.appendChild(group);
+    }
+  }
+
+  function updateActiveTab(interventionId) {
+    var all = document.querySelectorAll('.suite-tab');
+    for (var k = 0; k < all.length; k++) {
+      all[k].classList.toggle('active', all[k].getAttribute('data-id') === interventionId);
+    }
+    // Update info bar
+    var info = $('suiteInfo');
+    if (info) {
+      var intervention = window.BMHI_INTERVENTIONS[interventionId];
+      info.textContent = intervention
+        ? interventionId + ' \u00B7 ' + intervention.name
+        : '';
     }
   }
 
@@ -689,7 +744,7 @@
         var available = getAvailableInterventions();
         if (available.length > 0) {
           launchIntervention(available[0]);
-          var firstTab = $('suiteTabs').querySelector('.suite-tab');
+          var firstTab = $('suiteTiers').querySelector('.suite-tab');
           if (firstTab) firstTab.classList.add('active');
         }
       });
