@@ -341,7 +341,7 @@
     hideSuiteNav();
     state.demoMode = false;
     document.body.classList.remove('demo-mode');
-    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink'];
+    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink', 'aboutLink'];
     for (var i = 0; i < rvEls.length; i++) {
       var el = $(rvEls[i]);
       if (el) el.classList.remove('vis', 'draw');
@@ -432,7 +432,8 @@
       { el: 'rv4', cls: 'vis', delay: 8500 },
       { el: 'rv5', cls: 'vis', delay: 10000 },
       { el: 'beginBtn', cls: 'vis', delay: 12000 },
-      { el: 'demoLink', cls: 'vis', delay: 13000 }
+      { el: 'demoLink', cls: 'vis', delay: 13000 },
+      { el: 'aboutLink', cls: 'vis', delay: 13500 }
     ];
 
     var reducedMotion = window.matchMedia &&
