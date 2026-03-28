@@ -1,0 +1,18 @@
+name = "bmhi-worker"
+main = "src/index.js"
+compatibility_date = "2026-03-01"
+
+# ─── D1 Database (measurement events) ───
+# After running: wrangler d1 create bmhi-events
+# Replace database_id with the returned ID
+[[d1_databases]]
+binding = "DB"
+database_name = "bmhi-events"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# ─── KV Namespace (population counter, rate limiting) ───
+# After running: wrangler kv namespace create KV
+# Replace id with the returned ID
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
