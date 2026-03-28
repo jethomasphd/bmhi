@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMHI Delivery Test Harness</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, system-ui, sans-serif;
+    background: #f5f5f5; color: #333; line-height: 1.6;
+  }
+  .header {
+    background: #fff; border-bottom: 1px solid #ddd;
+    padding: 16px 24px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 { font-size: 16px; font-weight: 600; }
+  .header .tag {
+    font-size: 10px; background: #e8e8e8; padding: 3px 8px;
+    border-radius: 10px; color: #666;
+  }
+  .container { max-width: 800px; margin: 0 auto; padding: 24px; }
+  .search-bar {
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 24px; display: flex;
+    align-items: center; gap: 8px;
+  }
+  .search-bar input {
+    flex: 1; border: none; outline: none; font-size: 14px;
+  }
+  .search-bar .btn {
+    padding: 8px 20px; background: #2563eb; color: #fff;
+    border: none; border-radius: 6px; font-size: 13px;
+    cursor: pointer;
+  }
+  .job-card {
+    background: #fff; border: 1px solid #e5e5e5; border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 12px;
+  }
+  .job-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .job-card .company { font-size: 13px; color: #666; }
+  .job-card .salary { font-size: 13px; color: #16a34a; margin-top: 4px; }
+
+  /* Test controls */
+  .controls {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #1a1a2e; padding: 16px 24px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center; justify-content: center;
+  }
+  .controls .label {
+    font-size: 10px; color: #888; text-transform: uppercase;
+    letter-spacing: 1px; width: 100%; text-align: center;
+    margin-bottom: 4px;
+  }
+  .controls button {
+    padding: 8px 16px; font-size: 12px; font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+    background: transparent; color: #ccc; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .controls button:hover {
+    background: rgba(255,255,255,0.08); color: #fff;
+    border-color: rgba(255,255,255,0.3);
+  }
+  .controls .info {
+    font-size: 11px; color: #666; width: 100%; text-align: center;
+  }
+  #embedTarget { min-height: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TheseJobs.net</h1>
+  <span class="tag">BMHI Test Harness</span>
+</div>
+
+<div class="container">
+  <div class="search-bar">
+    <input type="text" value="software engineer" readonly>
+    <button class="btn">Search</button>
+  </div>
+
+  <div class="job-card">
+    <h3>Senior Software Engineer</h3>
+    <div class="company">Acme Corp &middot; Austin, TX</div>
+    <div class="salary">$120,000 - $160,000</div>
+  </div>
+  <div class="job-card">
+    <h3>Full Stack Developer</h3>
+    <div class="company">TechStart Inc &middot; Remote</div>
+    <div class="salary">$95,000 - $130,000</div>
+  </div>
+  <div class="job-card">
+    <h3>Backend Engineer</h3>
+    <div class="company">DataFlow Systems &middot; San Francisco, CA</div>
+    <div class="salary">$140,000 - $180,000</div>
+  </div>
+  <div class="job-card">
+    <h3>DevOps Engineer</h3>
+    <div class="company">CloudNine &middot; New York, NY</div>
+    <div class="salary">$110,000 - $150,000</div>
+  </div>
+
+  <div id="embedTarget"></div>
+</div>
+
+<div class="controls">
+  <div class="label">BMHI Delivery Test Controls</div>
+  <button onclick="BMHI_DELIVERY.setContext(4,0); BMHI_DELIVERY.showPopup()">
+    Popup
+  </button>
+  <button onclick="BMHI_DELIVERY.setContext(4,0); BMHI_DELIVERY.showPopunder()">
+    Pop-Under
+  </button>
+  <button onclick="BMHI_DELIVERY.setContext(4,0); BMHI_DELIVERY.embedBMHI('#embedTarget')">
+    Embedded
+  </button>
+  <button onclick="BMHI_DELIVERY.setContext(4,0); BMHI_DELIVERY.showEmailOptIn('')">
+    Email Opt-In
+  </button>
+  <div class="info">
+    A/B assignment: <strong id="abInfo">loading...</strong>
+    &middot; Simulates: 4 jobs viewed, 0 clicked, 45s+ elapsed
+  </div>
+</div>
+
+<script src="delivery.js"></script>
+<script>
+  document.getElementById('abInfo').textContent = BMHI_DELIVERY.getMechanism();
+</script>
+</body>
+</html>
