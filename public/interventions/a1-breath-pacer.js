@@ -44,7 +44,8 @@
       // Outer glow wrapper
       var glow = document.createElement('div');
       glow.style.cssText =
-        'width:180px;height:180px;border-radius:50%;position:relative;' +
+        'width:clamp(120px,40vw,180px);height:clamp(120px,40vw,180px);' +
+        'border-radius:50%;position:relative;' +
         'display:flex;align-items:center;justify-content:center;' +
         'margin-bottom:40px;';
 

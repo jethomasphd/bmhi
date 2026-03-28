@@ -59,7 +59,7 @@
         // Text message bubble
         var bubble = document.createElement('div');
         bubble.style.cssText =
-          'max-width:320px;width:100%;padding:16px 20px;' +
+          'max-width:min(320px,90vw);width:100%;padding:16px 20px;' +
           'background:var(--surface);border:1px solid var(--border);' +
           'border-radius:16px 16px 16px 4px;text-align:left;' +
           'font-family:var(--sans);font-size:14px;font-weight:300;' +
