@@ -3,41 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Software Engineer Jobs — TheseJobs.net</title>
+<title>BMHI Embed Demo — Job Board Integration</title>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Open Sans', sans-serif; background: #f2f2f2; color: #454545; }
 
-  /* ─── Top bar ─── */
   .topbar {
     background: #1265A2; color: #fff; font-size: 12px;
     padding: 6px 0; text-align: center; letter-spacing: 0.3px;
   }
-
-  /* ─── Header ─── */
   .header {
     background: #fff; border-bottom: 1px solid #ddd;
     padding: 14px 24px; display: flex; align-items: center;
-    justify-content: space-between; max-width: 100%;
+    justify-content: space-between;
   }
   .logo {
     font-size: 20px; font-weight: 700; color: #1265A2;
     text-decoration: none; display: flex; align-items: center; gap: 6px;
   }
   .logo span { color: #F68B0C; }
-  .header-nav {
-    display: flex; gap: 20px; font-size: 13px;
-  }
-  .header-nav a {
-    color: #666; text-decoration: none; transition: color 0.2s;
-  }
+  .header-nav { display: flex; gap: 20px; font-size: 13px; }
+  .header-nav a { color: #666; text-decoration: none; transition: color 0.2s; }
   .header-nav a:hover { color: #1265A2; }
 
-  /* ─── Search ─── */
-  .search-section {
-    background: #1265A2; padding: 28px 24px;
-  }
+  .search-section { background: #1265A2; padding: 28px 24px; }
   .search-wrap {
     max-width: 780px; margin: 0 auto;
     display: flex; gap: 8px; flex-wrap: wrap;
@@ -49,117 +39,44 @@
     background: rgba(255,255,255,0.95); color: #333; outline: none;
   }
   .search-field:focus { border-color: #F68B0C; }
-  .search-field::placeholder { color: #999; }
   .search-btn {
     padding: 11px 28px; font-size: 14px; font-weight: 600;
     font-family: inherit; background: #F68B0C; color: #fff;
     border: none; border-radius: 6px; cursor: pointer;
-    transition: background 0.2s;
   }
-  .search-btn:hover { background: #e07d08; }
 
-  /* ─── Results ─── */
-  .results-wrap {
-    max-width: 780px; margin: 0 auto; padding: 20px 24px 120px;
-  }
+  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 60px; }
   .results-meta {
     font-size: 13px; color: #888; margin-bottom: 16px;
     display: flex; justify-content: space-between; align-items: center;
-  }
-  .results-meta select {
-    font-family: inherit; font-size: 12px; padding: 4px 8px;
-    border: 1px solid #ddd; border-radius: 4px; color: #666;
   }
 
   .job-card {
     background: #fff; border: 1px solid #ddd; border-radius: 6px;
     padding: 16px 20px; margin-bottom: 10px; cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    position: relative;
+    transition: border-color 0.2s; position: relative;
   }
-  .job-card:hover { border-color: #F68B0C; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .job-card .new-badge {
-    position: absolute; top: 16px; right: 16px;
-    font-size: 10px; font-weight: 700; color: #F68B0C;
-    background: rgba(246,139,12,0.1); padding: 2px 8px;
-    border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+  .job-card:hover { border-color: #F68B0C; }
+  .job-card h3 { font-size: 16px; font-weight: 600; color: #1265A2; margin-bottom: 4px; }
+  .job-card .company { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 2px; }
+  .job-card .location { font-size: 12px; color: #888; margin-bottom: 6px; }
+  .job-card .salary { font-size: 13px; font-weight: 600; color: #2a8a4a; }
+  .job-card .posted { font-size: 11px; color: #aaa; margin-top: 6px; }
+
+  /* Embedded BMHI */
+  .bmhi-embed {
+    margin: 24px 0; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   }
-  .job-card h3 {
-    font-size: 16px; font-weight: 600; color: #1265A2;
-    margin-bottom: 4px; padding-right: 60px;
-  }
-  .job-card .company {
-    font-size: 13px; font-weight: 600; color: #555; margin-bottom: 2px;
-  }
-  .job-card .location {
-    font-size: 12px; color: #888; margin-bottom: 6px;
-  }
-  .job-card .salary {
-    font-size: 13px; font-weight: 600; color: #2a8a4a;
-  }
-  .job-card .posted {
-    font-size: 11px; color: #aaa; margin-top: 6px;
-  }
-  .job-card.sponsored {
-    background: rgba(246,139,12,0.03);
-    border-color: rgba(246,139,12,0.25);
-  }
-  .job-card.sponsored::before {
-    content: 'Sponsored';
-    font-size: 9px; font-weight: 600; color: #F68B0C;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    display: block; margin-bottom: 6px;
+  .bmhi-embed iframe {
+    width: 100%; height: 600px; border: none; display: block;
   }
 
-  /* ─── Pagination ─── */
-  .pagination {
-    display: flex; justify-content: center; gap: 4px;
-    margin-top: 24px;
+  .demo-note {
+    text-align: center; padding: 20px; font-size: 11px; color: #999;
+    letter-spacing: 0.3px; line-height: 1.6;
   }
-  .pagination a {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 4px;
-    font-size: 13px; color: #666; text-decoration: none;
-    border: 1px solid #ddd; transition: all 0.2s;
-  }
-  .pagination a:hover { border-color: #1265A2; color: #1265A2; }
-  .pagination a.active { background: #1265A2; color: #fff; border-color: #1265A2; }
-
-  #embedTarget { min-height: 0; }
-
-  /* ─── Test controls (dark bar) ─── */
-  .controls {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 99998;
-    background: rgba(10,10,20,0.95); backdrop-filter: blur(12px);
-    padding: 12px 20px;
-    display: flex; flex-wrap: wrap; gap: 8px;
-    align-items: center; justify-content: center;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-  .controls .label {
-    font-size: 9px; color: #666; text-transform: uppercase;
-    letter-spacing: 1.5px; width: 100%; text-align: center;
-    margin-bottom: 2px;
-  }
-  .ctrl-btn {
-    padding: 7px 16px; font-size: 11px; font-weight: 500;
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
-    background: transparent; color: #aaa; cursor: pointer;
-    transition: all 0.25s; font-family: inherit; letter-spacing: 0.3px;
-  }
-  .ctrl-btn:hover {
-    background: rgba(255,255,255,0.06); color: #fff;
-    border-color: rgba(255,255,255,0.25);
-  }
-  .ctrl-btn.active {
-    background: rgba(196,146,42,0.12); color: #c4922a;
-    border-color: rgba(196,146,42,0.35);
-  }
-  .controls .info {
-    font-size: 10px; color: #555; width: 100%; text-align: center;
-    margin-top: 2px;
-  }
-  .controls .info strong { color: #c4922a; }
+  .demo-note strong { color: #666; }
 
   @media (max-width: 600px) {
     .header-nav { display: none; }
@@ -192,24 +109,22 @@
 
 <div class="results-wrap">
   <div class="results-meta">
-    <span>Showing 1–10 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong></span>
-    <select><option>Sort by: Relevance</option><option>Date posted</option><option>Salary</option></select>
+    <span>Showing 1&ndash;10 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong></span>
   </div>
 
-  <div class="job-card sponsored">
+  <div class="job-card">
     <h3>Senior Platform Engineer</h3>
     <div class="company">Datadog</div>
     <div class="location">Austin, TX &middot; Hybrid</div>
-    <div class="salary">$155,000 – $195,000/yr</div>
+    <div class="salary">$155,000 &ndash; $195,000/yr</div>
     <div class="posted">Posted 2 days ago</div>
   </div>
 
   <div class="job-card">
-    <span class="new-badge">New</span>
-    <h3>Software Engineer II — Backend</h3>
+    <h3>Software Engineer II &mdash; Backend</h3>
     <div class="company">Indeed</div>
     <div class="location">Austin, TX &middot; Remote eligible</div>
-    <div class="salary">$120,000 – $160,000/yr</div>
+    <div class="salary">$120,000 &ndash; $160,000/yr</div>
     <div class="posted">Posted today</div>
   </div>
 
@@ -217,98 +132,36 @@
     <h3>Full Stack Developer</h3>
     <div class="company">RetailMeNot</div>
     <div class="location">Austin, TX</div>
-    <div class="salary">$105,000 – $140,000/yr</div>
+    <div class="salary">$105,000 &ndash; $140,000/yr</div>
     <div class="posted">Posted 1 day ago</div>
   </div>
 
+  <!-- BMHI Embedded Intervention -->
+  <div class="bmhi-embed">
+    <iframe src="index.html" title="Brief Mental Health Intervention"></iframe>
+  </div>
+
   <div class="job-card">
-    <span class="new-badge">New</span>
-    <h3>Staff Software Engineer — Infrastructure</h3>
+    <h3>Staff Software Engineer &mdash; Infrastructure</h3>
     <div class="company">CrowdStrike</div>
     <div class="location">Austin, TX &middot; Hybrid</div>
-    <div class="salary">$170,000 – $220,000/yr</div>
+    <div class="salary">$170,000 &ndash; $220,000/yr</div>
     <div class="posted">Posted today</div>
   </div>
 
   <div class="job-card">
-    <h3>Backend Engineer — Payments</h3>
+    <h3>Backend Engineer &mdash; Payments</h3>
     <div class="company">Stripe</div>
     <div class="location">Austin, TX &middot; Remote</div>
-    <div class="salary">$140,000 – $185,000/yr</div>
+    <div class="salary">$140,000 &ndash; $185,000/yr</div>
     <div class="posted">Posted 3 days ago</div>
   </div>
 
-  <div class="job-card">
-    <h3>DevOps / SRE Engineer</h3>
-    <div class="company">HomeAway (Vrbo)</div>
-    <div class="location">Austin, TX</div>
-    <div class="salary">$125,000 – $165,000/yr</div>
-    <div class="posted">Posted 4 days ago</div>
-  </div>
-
-  <div class="job-card">
-    <h3>Junior Software Developer</h3>
-    <div class="company">National Instruments</div>
-    <div class="location">Austin, TX</div>
-    <div class="salary">$75,000 – $95,000/yr</div>
-    <div class="posted">Posted 5 days ago</div>
-  </div>
-
-  <div class="job-card">
-    <h3>React / TypeScript Engineer</h3>
-    <div class="company">Procore Technologies</div>
-    <div class="location">Austin, TX &middot; Hybrid</div>
-    <div class="salary">$130,000 – $170,000/yr</div>
-    <div class="posted">Posted 2 days ago</div>
-  </div>
-
-  <div id="embedTarget"></div>
-
-  <div class="pagination">
-    <a href="#" class="active">1</a>
-    <a href="#">2</a>
-    <a href="#">3</a>
-    <a href="#">4</a>
-    <a href="#">5</a>
-    <a href="#">&raquo;</a>
+  <div class="demo-note">
+    <strong>Demo:</strong> The intervention above appears inline between job listings.<br>
+    No cookies. No tracking. No data storage. Fully portable iframe embed.
   </div>
 </div>
 
-<!-- Test controls -->
-<div class="controls">
-  <div class="label">BMHI Delivery Mechanism Demo</div>
-  <button class="ctrl-btn" id="btnPopup" onclick="triggerMechanism('popup')">Popup</button>
-  <button class="ctrl-btn" id="btnPopunder" onclick="triggerMechanism('popunder')">Pop-Under</button>
-  <button class="ctrl-btn" id="btnEmbedded" onclick="triggerMechanism('embedded')">Embedded</button>
-  <button class="ctrl-btn" id="btnEmail" onclick="triggerMechanism('email')">Email Opt-In</button>
-  <div class="info">
-    A/B assigned: <strong id="abInfo">—</strong> &middot;
-    Simulated zero-click exit after viewing 8 listings
-  </div>
-</div>
-
-<script src="delivery.js"></script>
-<script>
-  document.getElementById('abInfo').textContent = BMHI_DELIVERY.getMechanism();
-
-  // Simulate context: user viewed 8 jobs, clicked none
-  BMHI_DELIVERY.setContext(8, 0);
-
-  var activeBtn = null;
-
-  function triggerMechanism(type) {
-    // Reset previous
-    BMHI_DELIVERY.reset();
-    if (activeBtn) activeBtn.classList.remove('active');
-
-    var btn = document.getElementById('btn' + type.charAt(0).toUpperCase() + type.slice(1));
-    if (btn) { btn.classList.add('active'); activeBtn = btn; }
-
-    if (type === 'popup') BMHI_DELIVERY.showPopup();
-    else if (type === 'popunder') BMHI_DELIVERY.showPopunder();
-    else if (type === 'embedded') BMHI_DELIVERY.embedBMHI('#embedTarget');
-    else if (type === 'email') BMHI_DELIVERY.showEmailOptIn();
-  }
-</script>
 </body>
 </html>

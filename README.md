@@ -1,188 +1,111 @@
-# BMHI — Brief Mental Health Intervention Suite
+# Before you go.
 
-A population-level behavioral health touchpoint for job seekers, grounded in 30+ years of peer-reviewed evidence. The most credible solution to the detection problem in mental health: reaching people at a documented moment of distress, without requiring them to seek help.
+You searched today. That counts.
 
-## Live
+**BMHI** is a brief mental health intervention suite for job seekers. It delivers evidence-based micro-exercises at the moment someone needs them most — after a job search that didn't go the way they hoped.
 
-Deployed via Cloudflare Pages: [bmhi.pages.dev](https://bmhi.pages.dev)
+No accounts. No tracking. No cookies. No data stored. Just a quiet pause.
 
-## The Exit Window
+---
 
-Every week, 4.54 million people search for a job across this network and leave without clicking a single listing. That moment — the 2–4 minutes between the last search result and closing the browser — is the exit window. It is a temporally precise, behaviorally verified dose of a documented psychiatric stressor. This suite delivers brief, evidence-based interventions in that window.
+### What it does
 
-The theory of change: **validated distress plus micro-agency**. Acknowledge what just happened was hard. Offer one small thing the person can do. Interrupt the learned helplessness spiral that repeated failed searches install.
+Nineteen exercises across six categories, each grounded in peer-reviewed research:
 
-## UX: Direct Suite Access
+| | Category | What it helps with |
+|---|---|---|
+| **Calm my body** | Breathing, body scan, quiet reset | Settling the nervous system |
+| **Quiet my mind** | Reality check, step back, fresh eyes | Interrupting negative thought spirals |
+| **Do something small** | One small step, reach out | Restoring a sense of agency |
+| **Feel what I feel** | Let it out, self-kindness, gratitude | Processing difficult emotions safely |
+| **Get out of my head** | Match, draw, blocks, serpent, breaker, garden | Flow states that crowd out rumination |
+| **Get help** | Check in, you're not alone | Screening and crisis resources |
 
-Users land directly on the full intervention suite — no landing page, no gate. The suite navigator is immediately visible at the bottom of the screen, organized by evidence tier. Users can freely browse all 22 interventions or let the Long Arc Protocol select the right one for their visit number and engagement history.
+Every exercise ends. Every click leads somewhere. You can leave anytime.
 
-## Interventions (22 built, 6 tiers complete)
+---
 
-| ID | Name | Tier | Mechanism | Evidence |
-|----|------|------|-----------|----------|
-| A1 | Visual Breath Pacer | A · Somatic | Parasympathetic activation | T1 |
-| A2 | Body Scan | A · Somatic | Somatic awareness interrupts rumination | T2 |
-| A3 | Two-Minute Reset | A · Somatic | Parasympathetic + effort reattribution | T2 |
-| B1 | Data Reframe | B · Cognitive | Normalization / external attribution | T3 |
-| B2 | Defusion Exercise | B · Cognitive | ACT-derived cognitive defusion | T2 |
-| B3 | Cognitive Reappraisal | B · Cognitive | Growth mindset framing | T2 |
-| B4 | Progress Mapping | B · Cognitive | Progress visualization | T3 |
-| C1 | One Small Thing | C · Behavioral | Implementation intention | T1 |
-| C2 | Momentum Builder | C · Behavioral | Micro-mastery / behavioral activation | T2 |
-| C3 | Network Nudge | C · Behavioral | Weak-tie network activation | T3 |
-| D1 | 3-Sentence Release | D · Emotional | Expressive disclosure (Pennebaker) | T1 |
-| D2 | Self-Compassion Mirror | D · Emotional | Self-compassion (Neff) | T2 |
-| D3 | Gratitude | D · Emotional | Relationship-focused gratitude | T2 |
-| D4 | Strength Anchor | D · Emotional | Identity protection under role-threat | T3 |
-| E1 | Pattern Match | E · Flow | Rumination crowding (Russoniello) | T1 |
-| E2 | Open Canvas | E · Flow | Expressive art / cortisol reduction | T3 |
-| E3 | Meditative Blocks | E · Flow | Visuospatial rumination interruption (Holmes) | T1 |
-| E4 | Meditative Serpent | E · Flow | Sustained attention / flow state (Csikszentmihalyi) | T1 |
-| E5 | Rhythmic Breaker | E · Flow | Rhythmic tracking / parasympathetic activation | T2 |
-| E6 | Mindful Garden | E · Flow | Nurturing activation / attention restoration (Kaplan) | T2 |
-| F1 | Check-In Screen | F · SBIRT | Brief screening + referral pathway | T1 |
-| F2 | Population Mirror | F · SBIRT | Social proof / loneliness buffering | T3 |
+### How it works
 
-**22 interventions across 6 tiers. Long Arc Protocol (G1) sequences returning users. Complete.**
-
-### Flow State Games (Tier E: E3–E6)
-
-Four canvas-based games adapted from the RecursiveMarketing prototype, fully realized as standalone interventions with clinical documentation. All games share these design principles:
-
-- **No score, no timer, no fail state** — performance pressure reactivates the stress response
-- **Calming color palette** — desaturated earth tones from the BMHI design system
-- **Floating affirmation words** — gentle text floats upward on interaction ("breathe", "you matter", "steady")
-- **Auto-end after 120 seconds** — with graceful fade to closing message
-- **Evidence-grounded** — each game's mechanism traces to peer-reviewed research
-
-| Game | Mechanism | Key Citation |
-|------|-----------|-------------|
-| E3 · Meditative Blocks (Tetris) | Visuospatial processing blocks intrusive imagery | Holmes et al. 2009, 2010 |
-| E4 · Meditative Serpent (Snake) | Sustained attention induces flow state | Csikszentmihalyi 1990; Russoniello 2009 |
-| E5 · Rhythmic Breaker | Smooth pursuit eye tracking (EMDR-adjacent) | van den Hout & Engelhard 2012 |
-| E6 · Mindful Garden | Tend-and-befriend + attention restoration | Taylor et al. 2000; Kaplan 1995 |
-
-## Architecture
+One HTML file. No build step. No server. No dependencies. No framework.
 
 ```
 public/
-  index.html                  ← App shell + full CSS design system
-  about.html                  ← The science (position paper + 20 citations)
-  app.js                      ← Core: session, measurement, router, state machine
-  delivery.js                 ← Four delivery mechanisms (popup, popunder, embedded, email)
-  embed.html                  ← Job site demo with delivery mechanism toggle
-  _headers                    ← Cloudflare Pages security headers
-  interventions/
-    a1-breath-pacer.js        ← Tier A: Somatic Reset
-    a2-body-scan.js
-    a3-two-minute-reset.js
-    b1-data-reframe.js        ← Tier B: Cognitive Reframe
-    b2-defusion.js
-    b3-reappraisal.js
-    b4-progress-map.js
-    c1-one-small-thing.js     ← Tier C: Behavioral Activation
-    c2-momentum.js
-    c3-network-nudge.js
-    d1-release.js             ← Tier D: Emotional Processing
-    d2-self-compassion.js
-    d3-gratitude.js
-    d4-strength-anchor.js
-    e1-pattern-match.js       ← Tier E: Flow State
-    e2-open-canvas.js
-    e3-tetris.js              ← Tier E: Meditative Blocks (Tetris)
-    e4-snake.js               ← Tier E: Meditative Serpent (Snake)
-    e5-breaker.js             ← Tier E: Rhythmic Breaker (Brick Breaker)
-    e6-garden.js              ← Tier E: Mindful Garden
-    f1-checkin.js             ← Tier F: SBIRT Screening & Referral
-    f2-population-mirror.js
-docs/
-  PILOT.md                    ← Phase 1 pilot configuration
-  LAUNCH-CHECKLIST.md         ← Pre-launch verification checklist
+  index.html          The entire app (shell + styles)
+  app.js              State machine + random selection
+  about.html          The science, in plain language
+  embed.html          Demo: embedded on a job board
+  interventions/      19 self-contained intervention files
 ```
 
-## Core Systems
-
-- **Direct Suite Access**: Users land directly on the full intervention suite with navigator — no landing page gate
-- **Session Management**: 90-day first-party cookie, no PII, tracks visit count and engagement history
-- **Measurement Framework**: MHIL event suite (TRIGGER, START, ENGAGE, CLOSE, RETURN) stored in sessionStorage — fully client-side, no server required
-- **Intervention Router**: Long Arc Protocol (visit-sequenced deepening) with engagement-based rotation for visit 8+
-- **Time-of-Day Awareness**: Late-night sessions (after 10pm) route to A3 priority
-- **Privacy Architecture**: Text input NEVER transmitted or stored anywhere — cookie + localStorage only. Privacy is the mechanism, not just the policy (Pennebaker)
-- **Zero Infrastructure**: No database, no server, no API keys. Pure static files. Embeddable on any web property via iframe or script tag.
-
-## Deployment
-
-Static site — no build step, no Node, no bundler, no backend. Any static host works.
+**Deploy anywhere:**
 
 ```bash
-# Cloudflare Pages (CLI)
-wrangler pages deploy ./public --project-name bmhi
-
-# Or connect GitHub repo in Cloudflare dashboard:
-# Build output directory: public
-# Build command: (leave empty)
-
-# Or literally any static host:
-# Netlify, Vercel, GitHub Pages, S3, nginx — just serve public/
+# Any static host — just serve public/
 ```
 
-## Embedding on Any Site
+**Embed on any site:**
 
 ```html
-<!-- Option 1: Popup on exit intent -->
-<script src="https://bmhi.pages.dev/delivery.js"></script>
-<script>
-  BMHI_DELIVERY.setContext(jobsViewed, jobsClicked);
-  BMHI_DELIVERY.enableExitIntent();
-</script>
-
-<!-- Option 2: Inline iframe -->
-<iframe src="https://bmhi.pages.dev/?mode=embedded"
+<iframe src="https://your-host.com/"
   style="width:100%;max-width:560px;height:600px;border:none;border-radius:12px;">
 </iframe>
 ```
 
-See `embed.html` for a full working demo of all four delivery mechanisms.
+---
 
-## Source Documents
+### The science
 
-| File | Description |
-|------|-------------|
-| `seed.md` | Full clinical specification (22 interventions, 6 tiers, measurement framework, ethical framework) |
-| `exit_window_position_paper.html` | Academic position paper: the exit window as detection-problem solution |
-| `companion_insel_summoning.html` | Dialogue with T.R. Insel, MD — clinical validation and measurement requirements |
-| `rg_mental-health-intervention.html` | Strategic brief: the business case |
+Every exercise traces to published research. The primary sources:
 
-## Measurement
+- **Breathing** — Balban et al. 2023 (Stanford RCT): cyclic physiological sighing
+- **Expressive writing** — Pennebaker & Smyth 2016: 30+ years, 200+ replications
+- **Cognitive defusion** — Hayes et al. 2006: Acceptance and Commitment Therapy
+- **Flow state games** — Holmes et al. 2009: Tetris reduces intrusive memories; Russoniello et al. 2009: casual games + HRV
+- **Self-compassion** — Neff & Germer 2013: Mindful Self-Compassion RCT
+- **Implementation intentions** — Gollwitzer & Sheeran 2006: 200+ replications
+- **Nature restoration** — Kaplan 1995; Ulrich et al. 1991
+- **SBIRT screening** — Babor et al. 2007, adapted for digital contexts
 
-Events emitted per session (stored in sessionStorage, logged to console):
+Full citations and lay explanations: [about the science](public/about.html)
 
-| Event | When | Key Data |
-|-------|------|----------|
-| `MHIL_TRIGGER` | Intervention fires | domain, visit_number, trigger_type, time_of_day |
-| `MHIL_START` | Intervention displayed | intervention_id, mechanism_tier |
-| `MHIL_ENGAGE` | User interaction | interaction_type, depth_score, text_input_chars |
-| `MHIL_CLOSE` | Intervention ended | completion_status, referral_shown |
-| `MHIL_RETURN` | User returns to site | days_since_last_visit, intervention_last_session |
+---
 
-**Primary outcome variable**: `return_visit_rate` by `intervention_id` x `visit_number`
+### Privacy
 
-All measurement is client-side. No server telemetry. When a backend is needed for aggregation, any analytics endpoint can ingest these events — the format is documented in `seed.md` §7.
+**Nothing is stored. Nothing is tracked. Nothing leaves the browser.**
 
-## Ethical Framework
+This is not just a policy — it is a clinical requirement. Pennebaker's research shows that if people believe their writing will be read, they self-censor, and the cortisol reduction mechanism fails. Privacy is the mechanism.
 
-1. **Do no harm first** — every intervention acknowledges distress before offering reframe
-2. **Never weaponize vulnerability** — monetization happens AFTER the intervention, never during
-3. **Referral is not optional** — F1 screening fires for returning users; crisis resources always available
-4. **Privacy is the mechanism** — if users don't trust it, they self-censor, and Pennebaker's cortisol mechanism fails
-5. **This is not a medical device** — language is "supportive" not "therapeutic," "evidence-grounded" not "clinically proven"
+---
 
-## Clinical Framework
+### Who
 
-**PI:** Jacob E. Thomas, PhD — Department of Health Behavior, UT Austin; MA Clinical Psychology, Columbia University
+**PI:** Jacob E. Thomas, PhD — Health Behavior, UT Austin; Clinical Psychology, Columbia
 
-**Clinical Framework:** Thomas R. Insel, MD — former Director, National Institute of Mental Health (2002–2015). SBIRT model, detection-first approach, measurement-based care.
+**Clinical framework:** Thomas R. Insel, MD — former Director, National Institute of Mental Health (2002–2015)
 
-*"If you don't measure it, you didn't do it."* — T.R. Insel
+*"They searched today. They found nothing. Give them something."*
 
-*"They searched today. They found nothing. Give them something."* — T.R. Insel, March 2026
+---
+
+### This is not therapy
+
+This is a collection of evidence-grounded wellness exercises. It is not a medical device, does not diagnose any condition, and is not a substitute for professional care.
+
+If you are in crisis: **988** (call or text) · **741741** (text HOME) · **1-800-662-4357** (SAMHSA)
+
+---
+
+<details>
+<summary>Cold storage (build history, reference materials, position papers)</summary>
+
+The `cold-storage/` directory contains:
+- `seeds/` — 22 build-sequence specification files
+- `seed.md` — Master clinical specification
+- `from_beyond/` — COMPANION protocol design sessions
+- `RecursiveMarketing-main/` — Original prototype (The Gate)
+- Position papers and strategic briefs
+
+These are archival materials from the development process. The live application is entirely within `public/`.
+</details>
