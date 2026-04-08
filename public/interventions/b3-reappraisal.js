@@ -26,7 +26,7 @@
 
   window.BMHI_INTERVENTIONS['B3'] = {
     id: 'B3',
-    name: 'Reframe',
+    name: 'Fresh Eyes',
     tier: 'B',
     mechanism: 'Growth mindset framing of search as data collection',
     evidence: 'T2',

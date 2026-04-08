@@ -4,6 +4,9 @@
 //
 // "The person on the other side of the screen searched for a job
 //  and found nothing. They are not a bounce event."
+//
+// Product design: Steve Jobs, summoned April 2026
+// "You don't give them a menu. You give them a moment."
 // ═══════════════════════════════════════════════════════════════
 
 (function () {
@@ -17,12 +20,43 @@
   // Long Arc Protocol: visit → intervention (null = use engagement score)
   var LONG_ARC = ['A1', 'B1', 'C1', null, 'D1', 'B2', 'D2'];
 
+  // Button text per tier (what the welcome button says)
+  var TIER_CTA = {
+    A: 'Take a breath',
+    B: 'See it differently',
+    C: 'Try something small',
+    D: 'Let something go',
+    E: 'Play for a moment',
+    F: 'Check in with yourself'
+  };
+
+  // Felt-experience tier labels (Jobs: "invitations, not categories")
+  var TIER_LABELS = {
+    A: 'Calm my body',
+    B: 'Quiet my mind',
+    C: 'Do something small',
+    D: 'Feel what I feel',
+    E: 'Get out of my head',
+    F: 'Get help'
+  };
+
+  // SVG icon paths for Play tier games (tiny inline icons)
+  var GAME_ICONS = {
+    E1: '<rect x="3" y="3" width="4" height="4" rx="0.5"/><rect x="9" y="3" width="4" height="4" rx="0.5"/><rect x="3" y="9" width="4" height="4" rx="0.5"/><rect x="9" y="9" width="4" height="4" rx="0.5"/>', // match grid
+    E2: '<path d="M4 13c1-3 3-5 4-7s2-3 4-3"/><circle cx="12" cy="3" r="1"/>', // brush stroke
+    E3: '<rect x="3" y="8" width="4" height="4" rx="0.5"/><rect x="7" y="4" width="4" height="4" rx="0.5"/><rect x="3" y="4" width="4" height="4" rx="0.5"/><rect x="7" y="8" width="4" height="4" rx="0.5"/>', // blocks
+    E4: '<path d="M3 8h2v0h2v0h2v-2h2v2h0v2h-2v0h-2"/><circle cx="12" cy="4" r="1.5"/>', // snake + food
+    E5: '<rect x="2" y="2" width="12" height="2" rx="0.5"/><circle cx="8" cy="10" r="1.5"/><rect x="4" y="13" width="8" height="2" rx="0.5"/>', // breaker
+    E6: '<path d="M8 12V7"/><circle cx="8" cy="5" r="2"/><path d="M5 14c0 0 1-2 3-2s3 2 3 2"/>' // flower
+  };
+
   // ─── State ─────────────────────────────────────────────────
   var state = {
-    stage: 'suite',        // suite | intervention | post
-    demoMode: false,
+    stage: 'init',         // init | welcome | intervention | post | suite
     activeIntervention: null,
-    session: null
+    session: null,
+    firstVisitCompleted: false, // tracks if user completed first intervention this session
+    suiteRevealed: false        // tracks if navigator has been shown
   };
 
   // ─── DOM helpers ───────────────────────────────────────────
@@ -97,7 +131,6 @@
       score: depthScore + (textChars > 0 ? 3 : 0),
       completed: depthScore >= 2
     });
-    // Keep last 50 entries
     if (history.length > 50) history = history.slice(-50);
     saveEngagementHistory(history);
   }
@@ -111,6 +144,10 @@
       saveSession(session);
     }
     return session.visitNumber;
+  }
+
+  function isReturningUser() {
+    return getEngagementHistory().length > 0;
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -127,10 +164,7 @@
         timestamp: new Date().toISOString()
       }, data || {}),
     };
-
     log(eventType, payload.data);
-
-    // Store locally — no server, no database, fully client-side
     try {
       var events = JSON.parse(sessionStorage.getItem('bmhi_events') || '[]');
       events.push(payload);
@@ -158,7 +192,6 @@
   // INTERVENTION REGISTRY & ROUTER
   // ═══════════════════════════════════════════════════════════
 
-  // Interventions register themselves on window.BMHI_INTERVENTIONS
   window.BMHI_INTERVENTIONS = window.BMHI_INTERVENTIONS || {};
 
   function getAvailableInterventions() {
@@ -173,21 +206,16 @@
     var available = getAvailableInterventions();
     if (available.length === 0) return null;
 
-    // Late-night override for Visit 1: A3 instead of A1
     if (visitNumber === 1 && isLateNight() && available.indexOf('A3') !== -1) {
       return 'A3';
     }
 
-    // Long Arc Protocol for visits 1-7
     if (visitNumber >= 1 && visitNumber <= LONG_ARC.length) {
       var target = LONG_ARC[visitNumber - 1];
       if (target && available.indexOf(target) !== -1) {
         return target;
       }
-      // Visit 4 (null in LONG_ARC) → F1 pre-layer handled by launchWithPreLayer
-      // Fall through to engagement-based selection for the actual intervention
       if (target === null) {
-        // For visit 4, pick from a curated set after F1
         var v4pool = ['A2', 'B3', 'C2', 'E1', 'F2'];
         var v4available = v4pool.filter(function (id) {
           return available.indexOf(id) !== -1;
@@ -196,8 +224,6 @@
       }
     }
 
-    // Visit 8+: engagement-based rotation with tier awareness
-    // Late-night weighting: prefer somatic (A-tier) after 10pm
     if (isLateNight()) {
       var somatic = available.filter(function (id) { return id.charAt(0) === 'A'; });
       if (somatic.length > 0 && Math.random() < 0.5) {
@@ -213,37 +239,29 @@
     var lastId = history.length > 0 ? history[history.length - 1].intervention : null;
     var lastTier = lastId ? lastId.charAt(0) : null;
 
-    // Filter out interventions with unmet requirements
     var visitNumber = state.session ? state.session.visitNumber : 1;
     var eligible = available.filter(function (id) {
       var intervention = window.BMHI_INTERVENTIONS[id];
-      if (intervention && intervention.minVisits && visitNumber < intervention.minVisits) {
-        return false;
-      }
-      // Skip pre-layer interventions from normal rotation
+      if (intervention && intervention.minVisits && visitNumber < intervention.minVisits) return false;
       if (intervention && intervention.isPreLayer) return false;
       return true;
     });
     if (eligible.length === 0) eligible = available;
 
-    // Filter out the last intervention (no back-to-back repeats)
     var candidates = eligible.filter(function (id) { return id !== lastId; });
     if (candidates.length === 0) candidates = eligible;
 
-    // Prefer different tier than last (no back-to-back same tier)
     if (lastTier && candidates.length > 1) {
       var diffTier = candidates.filter(function (id) { return id.charAt(0) !== lastTier; });
       if (diffTier.length > 0) candidates = diffTier;
     }
 
-    // Count engagement per intervention
     var counts = {};
     for (var i = 0; i < history.length; i++) {
       var h = history[i];
       counts[h.intervention] = (counts[h.intervention] || 0) + h.score;
     }
 
-    // Prefer interventions with lower engagement (expose variety)
     candidates.sort(function (a, b) {
       return (counts[a] || 0) - (counts[b] || 0);
     });
@@ -251,7 +269,6 @@
     return candidates[0];
   }
 
-  // Check if visit 4 should show F1 pre-layer
   function shouldShowPreLayer(visitNumber) {
     return visitNumber >= 4 && visitNumber % 4 === 0 &&
       window.BMHI_INTERVENTIONS['F1'] &&
@@ -259,13 +276,8 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // SUITE NAVIGATOR
+  // SUITE NAVIGATOR — felt-experience labels, game icons
   // ═══════════════════════════════════════════════════════════
-
-  var TIER_NAMES = {
-    A: 'Body', B: 'Mind', C: 'Action',
-    D: 'Heart', E: 'Play', F: 'Support'
-  };
 
   function buildSuiteNav() {
     var container = $('suiteTiers');
@@ -273,7 +285,6 @@
     var available = getAvailableInterventions();
     available.sort();
 
-    // Group by tier
     var tiers = {};
     for (var i = 0; i < available.length; i++) {
       var id = available[i];
@@ -292,7 +303,7 @@
 
       var label = document.createElement('div');
       label.className = 'suite-tier-label';
-      label.textContent = TIER_NAMES[tierKey] || tierKey;
+      label.textContent = TIER_LABELS[tierKey] || tierKey;
       group.appendChild(label);
 
       var tabRow = document.createElement('div');
@@ -305,10 +316,18 @@
           btn.className = 'suite-tab';
           btn.setAttribute('data-tier', tierKey.toLowerCase());
           btn.setAttribute('data-id', interventionId);
-          btn.textContent = intervention.name;
-          btn.setAttribute('aria-label', intervention.name + ' — ' + intervention.mechanism);
+          btn.setAttribute('aria-label', intervention.name + ' \u2014 ' + intervention.mechanism);
 
-          // Tooltip (shows mechanism on hover for experts)
+          // Play tier: use icons instead of text
+          if (tierKey === 'E' && GAME_ICONS[interventionId]) {
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" stroke="none">' +
+              GAME_ICONS[interventionId] + '</svg>';
+            btn.setAttribute('title', intervention.name);
+          } else {
+            btn.textContent = intervention.name;
+          }
+
+          // Tooltip (mechanism on hover for experts)
           var tip = document.createElement('div');
           tip.className = 'tab-tip';
           tip.innerHTML = '<strong>' + intervention.name + '</strong><br>' +
@@ -334,20 +353,22 @@
     for (var k = 0; k < all.length; k++) {
       all[k].classList.toggle('active', all[k].getAttribute('data-id') === interventionId);
     }
-    // Update info bar text
     var infoText = $('suiteInfoText');
     if (infoText) {
       var intervention = window.BMHI_INTERVENTIONS[interventionId];
-      infoText.textContent = intervention
-        ? TIER_NAMES[intervention.tier] + ' \u00B7 ' + intervention.name
-        : '';
+      if (intervention) {
+        infoText.textContent = (TIER_LABELS[intervention.tier] || intervention.tier) +
+          ' \u00B7 ' + intervention.name;
+      }
     }
   }
 
   function showSuiteNav() {
-    state.demoMode = true;
+    if (!state.suiteRevealed) {
+      buildSuiteNav();
+      state.suiteRevealed = true;
+    }
     document.body.classList.add('demo-mode');
-    buildSuiteNav();
     $('suiteNav').classList.add('vis');
     $('dismissBtn').classList.add('vis');
   }
@@ -361,15 +382,18 @@
   // ═══════════════════════════════════════════════════════════
 
   function transitionTo(stageId) {
-    // Fade out current
     var stages = document.querySelectorAll('.stage');
     for (var i = 0; i < stages.length; i++) {
       stages[i].classList.remove('active');
     }
-    // Fade in target after brief pause
     setTimeout(function () {
       $(stageId).classList.add('active');
     }, 200);
+  }
+
+  function showWelcome() {
+    state.stage = 'welcome';
+    transitionTo('stageWelcome');
   }
 
   function showIntervention() {
@@ -382,7 +406,6 @@
   function showPost(closingMessage) {
     state.stage = 'post';
 
-    // Record completion (before any branching)
     if (state.activeIntervention) {
       emitEvent('MHIL_CLOSE', {
         intervention_id: state.activeIntervention,
@@ -390,17 +413,27 @@
       });
     }
 
-    // Always show suite nav (suite is the home now)
+    // Reveal the suite navigator
     showSuiteNav();
+
+    // First completion: show the "there's more" reveal
+    if (!state.firstVisitCompleted) {
+      state.firstVisitCompleted = true;
+      var reveal = $('postReveal');
+      if (reveal) {
+        setTimeout(function () { reveal.classList.add('vis'); }, 800);
+        // Auto-hide after 6 seconds
+        setTimeout(function () { reveal.classList.remove('vis'); }, 7000);
+      }
+    }
   }
 
-  function resetToLanding() {
-    // Return to suite view (no landing page — suite IS the home)
+  function returnToSuite() {
     showSuiteNav();
-    var available = getAvailableInterventions();
-    if (available.length > 0) {
-      launchIntervention(available[0]);
-      updateActiveTab(available[0]);
+    var id = selectIntervention(state.session.visitNumber);
+    if (id) {
+      launchIntervention(id);
+      updateActiveTab(id);
     }
   }
 
@@ -415,7 +448,6 @@
       return;
     }
 
-    // Clean up previous
     if (state.activeIntervention) {
       var prev = window.BMHI_INTERVENTIONS[state.activeIntervention];
       if (prev && prev.cleanup) prev.cleanup();
@@ -435,11 +467,8 @@
     var startTime = Date.now();
     var completed = false;
 
-    // Provide the intervention with helpers
     intervention.render(container, {
-      // Called when the intervention completes naturally
       complete: function (closingMessage, depthScore, textChars) {
-        // Guard: only fire once, and never after cleanup/dismiss
         if (completed || state.activeIntervention !== interventionId) return;
         completed = true;
         var elapsed = (Date.now() - startTime) / 1000;
@@ -455,7 +484,6 @@
         });
         showPost(closingMessage);
       },
-      // For logging engagement mid-intervention
       engage: function (data) {
         if (state.activeIntervention !== interventionId) return;
         emitEvent('MHIL_ENGAGE', Object.assign({
@@ -471,7 +499,6 @@
   // PRE-LAYER (F1 check-in before main intervention)
   // ═══════════════════════════════════════════════════════════
 
-  // Launch F1 pre-layer, then the actual intervention after it completes
   function launchInterventionWithPreLayer(preId, mainId) {
     var preIntervention = window.BMHI_INTERVENTIONS[preId];
     if (!preIntervention) {
@@ -479,7 +506,6 @@
       return;
     }
 
-    // Clean up previous
     if (state.activeIntervention) {
       var prev = window.BMHI_INTERVENTIONS[state.activeIntervention];
       if (prev && prev.cleanup) prev.cleanup();
@@ -489,7 +515,7 @@
     var container = $('interventionContent');
     container.innerHTML = '';
 
-    log('Pre-layer:', preId, '→ then:', mainId);
+    log('Pre-layer:', preId, '\u2192 then:', mainId);
 
     emitEvent('MHIL_START', {
       intervention_id: preId,
@@ -504,7 +530,6 @@
         if (preCompleted || state.activeIntervention !== preId) return;
         preCompleted = true;
         recordEngagement(preId, depthScore || 2, textChars || 0, 15);
-        // Now launch the actual intervention
         launchIntervention(mainId);
       },
       engage: function (data) {
@@ -518,14 +543,11 @@
     showIntervention();
   }
 
-
   // ═══════════════════════════════════════════════════════════
   // DISMISS — always available (§4.3)
   // ═══════════════════════════════════════════════════════════
 
   function handleDismiss() {
-    // Clean up active intervention — clear ID first to prevent
-    // any in-flight callbacks from re-triggering showPost
     var prevId = state.activeIntervention;
     state.activeIntervention = null;
 
@@ -539,11 +561,9 @@
       });
     }
 
-    // Stop ambient audio if playing
     if (audioPlaying) stopAudio();
 
-    // Return to suite view
-    resetToLanding();
+    returnToSuite();
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -555,11 +575,7 @@
   var audioNodes = {};
 
   function toggleAudio() {
-    if (audioPlaying) {
-      stopAudio();
-    } else {
-      startAudio();
-    }
+    if (audioPlaying) { stopAudio(); } else { startAudio(); }
   }
 
   function startAudio() {
@@ -568,7 +584,6 @@
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    // Warm sine drone ~120Hz with gentle modulation
     var osc = audioCtx.createOscillator();
     osc.type = 'sine';
     osc.frequency.value = 120;
@@ -576,7 +591,6 @@
     var gain = audioCtx.createGain();
     gain.gain.value = 0;
 
-    // Gentle amplitude modulation
     var lfo = audioCtx.createOscillator();
     lfo.type = 'sine';
     lfo.frequency.value = 0.15;
@@ -590,7 +604,6 @@
     gain.connect(audioCtx.destination);
     osc.start();
 
-    // Fade in over 2s
     gain.gain.setTargetAtTime(0.04, audioCtx.currentTime, 0.6);
 
     audioNodes = { osc: osc, gain: gain, lfo: lfo, lfoGain: lfoGain };
@@ -614,13 +627,12 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // INIT
+  // INIT — "First visit: guided. Every visit after: free."
   // ═══════════════════════════════════════════════════════════
 
   function init() {
     log('init');
 
-    // Session
     state.session = getSession();
     var visitNumber = incrementVisit();
     log('Visit #' + visitNumber, 'Session:', state.session.id);
@@ -638,7 +650,6 @@
       });
     }
 
-    // Emit trigger event
     emitEvent('MHIL_TRIGGER', {
       domain: window.location.hostname,
       trigger_type: 'standalone',
@@ -646,17 +657,60 @@
       pages_viewed: 0
     });
 
-    // Wire up buttons
+    // Wire up dismiss & audio
     $('dismissBtn').addEventListener('click', handleDismiss);
     $('audioToggle').addEventListener('click', toggleAudio);
 
-    // Boot directly into the full suite
-    showSuiteNav();
-    var available = getAvailableInterventions();
-    if (available.length > 0) {
-      launchIntervention(available[0]);
-      updateActiveTab(available[0]);
+    // Select the intervention the router wants
+    var selectedId = selectIntervention(visitNumber);
+    var selectedIntervention = selectedId ? window.BMHI_INTERVENTIONS[selectedId] : null;
+
+    // ─── RETURNING USER: straight into suite ──────────────
+    if (isReturningUser()) {
+      log('Returning user → suite mode');
+      $('stageWelcome').classList.remove('active');
+      showSuiteNav();
+
+      if (selectedId) {
+        if (shouldShowPreLayer(visitNumber)) {
+          launchInterventionWithPreLayer('F1', selectedId);
+        } else {
+          launchIntervention(selectedId);
+        }
+        updateActiveTab(selectedId);
+      }
+      state.firstVisitCompleted = true;
+      return;
     }
+
+    // ─── FIRST VISIT: the hand on the shoulder ───────────
+    log('First visit → welcome screen');
+
+    // Set the welcome button text based on what the router chose
+    var btn = $('welcomeBtn');
+    if (selectedIntervention && TIER_CTA[selectedIntervention.tier]) {
+      btn.textContent = TIER_CTA[selectedIntervention.tier];
+    }
+
+    showWelcome();
+
+    // When they click the button, fade out welcome, launch intervention
+    btn.addEventListener('click', function () {
+      var welcome = $('stageWelcome');
+      welcome.classList.add('exiting');
+
+      setTimeout(function () {
+        welcome.classList.remove('active', 'exiting');
+
+        if (selectedId) {
+          if (shouldShowPreLayer(visitNumber)) {
+            launchInterventionWithPreLayer('F1', selectedId);
+          } else {
+            launchIntervention(selectedId);
+          }
+        }
+      }, 600);
+    });
   }
 
   // ─── Expose for interventions to use ───────────────────────
