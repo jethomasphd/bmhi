@@ -119,10 +119,17 @@
         }
       });
 
-      // Also show after 90 seconds regardless
+      // Show button after 20 seconds regardless (don't leave them waiting)
       timers.push(setTimeout(function () {
         if (running) showButton();
-      }, 90000));
+      }, 20000));
+
+      // Auto-dissolve after 60 seconds total if button never clicked
+      timers.push(setTimeout(function () {
+        if (running && !dissolved) {
+          letgo.click();
+        }
+      }, 60000));
 
       // ─── Dissolution ritual ─────────────────────────────
       var dissolved = false;
