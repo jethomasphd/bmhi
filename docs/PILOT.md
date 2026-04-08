@@ -7,7 +7,7 @@
 | **Domains** | thesejobs.net, jobcafes.com |
 | **Population** | ~12,588 recoverable exits/week |
 | **Delivery** | POPUP (primary), EMBEDDED (holdout) |
-| **Interventions** | A1, B1, D1, E1 (one per session, rotating) |
+| **Interventions** | A1, B1, D1, E1, E3, E4, E5, E6 (one per session, rotating) |
 | **Measurement** | Client-side MHIL event suite (sessionStorage + console) |
 | **Success Criteria** | >=15% completion rate; no decline in return visit rate vs. baseline |
 
@@ -51,7 +51,7 @@ The intervention fires ONLY on zero-click exits. Active job seekers (those who c
 
 ## Phase 2 — Intervention Comparison (8 weeks)
 
-Expand to 10 domains. Add B2, C1, D2, F1. Full A/B across mechanism tiers.
+Expand to 10 domains. Add B2, C1, D2, F1, E3–E6. Full A/B across mechanism tiers. Compare flow state games (E1–E6) against cognitive/somatic interventions for rumination interruption efficacy.
 
 ## Phase 3 — Partner Conversations
 

@@ -17,6 +17,10 @@
 - [ ] D4 Strength Anchor: input + previous answers from localStorage
 - [ ] E1 Pattern Match: 4x4 grid, pairs match, NO score/timer/counter
 - [ ] E2 Open Canvas: drawing works (mouse + touch), 3 colors, save to PNG
+- [ ] E3 Meditative Blocks: pieces drop, rotate, lock; lines clear with affirmation words; no game-over
+- [ ] E4 Meditative Serpent: snake moves, wraps edges, self-collision trims tail; food produces affirmations
+- [ ] E5 Rhythmic Breaker: ball bounces off paddle/walls/bricks; ball resets on miss; bricks regenerate
+- [ ] E6 Mindful Garden: plants sprout/grow, tap to bloom, radiating petals; tap-based canvas interaction
 - [ ] F1 Check-In: emoji scale, score 1-2 shows referral card
 - [ ] F2 Population Mirror: number animates counting up
 
@@ -28,9 +32,10 @@
 - [ ] Late-night (after 10pm): visit 1 routes to A3, somatic weighted
 - [ ] Visit 4: F1 pre-layer fires before main intervention
 - [ ] Engagement history persists in localStorage
-- [ ] Suite navigator shows all 18 interventions grouped by tier
-- [ ] Demo mode: can switch freely between any intervention
-- [ ] Dismiss (x) button works at any point, returns to landing
+- [ ] Suite navigator shows all 22 interventions grouped by tier
+- [ ] Users land directly on suite view (no landing page)
+- [ ] Can switch freely between any intervention via suite navigator
+- [ ] Dismiss (x) button works at any point, returns to suite view
 - [ ] No orphan timers/animations after dismiss or intervention switch
 - [ ] About page loads correctly, back link works
 - [ ] Measurement events log to console and sessionStorage

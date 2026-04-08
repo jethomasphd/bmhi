@@ -461,6 +461,116 @@ Description: Simple drawing surface. Three color options.
              Timer: soft 2-minute countdown, no pressure.
 ```
 
+**E3. Meditative Blocks (Tetris)**
+```
+Mechanism:   Visuospatial processing interrupts rumination;
+             executive function engagement blocks intrusive thought
+Evidence:    T1 (Holmes et al. 2009, 2010 — Tetris reduces intrusive
+             memories; Russoniello et al. 2009, 2011 — casual games
+             produce EEG/HRV parasympathetic shift)
+Time:        60–120 seconds
+Complexity:  High
+Description: Canvas-based meditative Tetris.
+             - 8×14 grid, calming color palette
+             - No game-over state — top rows clear silently
+             - Pre-seeded bottom rows for immediate puzzle-feel
+             - Lines cleared produce floating affirmation words
+             - No score, no level, no timer visible
+             
+             Closing: "Your mind just did something remarkable —
+                      it chose focus over worry."
+
+Key detail:  Holmes et al. demonstrated Tetris reduces intrusive
+             visual memories by ~60% via visuospatial working
+             memory competition. The same cognitive resources
+             used for rumination are consumed by the game.
+             No score/timer reintroduces performance pressure.
+```
+
+**E4. Meditative Serpent (Snake)**
+```
+Mechanism:   Sustained attention & flow state induction;
+             rhythmic movement occupies executive function,
+             blocking ruminative self-referential processing
+Evidence:    T1 (Russoniello et al. 2009, 2011 — EEG/HRV;
+             Csikszentmihalyi 1990 — flow state theory)
+Time:        60–120 seconds
+Complexity:  High
+Description: Canvas-based meditative Snake.
+             - 12×12 toroidal grid (wraps at edges)
+             - No death — self-collision trims tail
+             - Food items in varied calming colors
+             - Eating food produces floating affirmation words
+             - No score, no speed progression
+             
+             Closing: "Steady rhythm. Steady you."
+
+Key detail:  Flow state (Csikszentmihalyi) requires clear goals,
+             immediate feedback, challenge-skill balance. Snake
+             provides all three naturally. Flow is incompatible
+             with rumination — task-positive network blocks
+             default mode network.
+```
+
+**E5. Rhythmic Breaker (Brick Breaker)**
+```
+Mechanism:   Rhythmic visual tracking produces predictable sensory
+             input supporting parasympathetic activation; smooth
+             pursuit eye movements reduce physiological arousal
+             (EMDR-adjacent mechanism)
+Evidence:    T2 (Russoniello et al. 2009 — casual games + HRV;
+             van den Hout & Engelhard 2012 — eye movement and
+             working memory taxation; Kavanagh et al. 2001 —
+             visuospatial tasks reduce intrusion vividness)
+Time:        60–120 seconds
+Complexity:  High
+Description: Canvas-based meditative Brick Breaker.
+             - 280×400px playfield, paddle and ball
+             - No lives — ball resets to paddle if missed
+             - Gentle speed, predictable physics
+             - Brick hits produce floating affirmation words
+             - Bricks regenerate when all destroyed
+             - No score, no lives, no level counter
+             
+             Closing: "Rhythm and focus. Your mind knows
+                      how to find calm."
+
+Key detail:  Ball tracking shares mechanism with EMDR.
+             Horizontal eye movements tax visuospatial
+             working memory, reducing vividness and
+             emotionality of negative memories.
+```
+
+**E6. Mindful Garden (Nurturing Whac-A-Mole)**
+```
+Mechanism:   Behavioral activation via nurturing interaction;
+             non-violent engagement produces positive affect;
+             tending/befriending response (Taylor et al. 2000);
+             attention restoration (Kaplan 1995)
+Evidence:    T2 (Kaplan 1995 — Attention Restoration Theory;
+             Ulrich 1991 — stress recovery from nature exposure;
+             Russoniello et al. 2009 — casual games + HRV)
+Time:        60–120 seconds
+Complexity:  High
+Description: Canvas-based nurturing garden.
+             - 4×4 grid of garden plots
+             - Plants sprout automatically every 1.5s
+             - Lifecycle: sprouting → growing → blooming → wilted
+             - Tap growing flowers to make them bloom
+             - Full bloom shows radiating petals with glow
+             - No violence — tending, not whacking
+             - Tap-based (no button controls needed)
+             
+             Closing: "You tended something. That matters
+                      more than you think."
+
+Key detail:  Inverts Whac-A-Mole paradigm: nurture instead
+             of destroy. Taylor's tend-and-befriend response
+             is an alternative to fight-or-flight. Kaplan's
+             ART: even digital nature restores directed
+             attention capacity depleted by stress.
+```
+
 ---
 
 ### TIER F — SCREENING & REFERRAL (SBIRT MODEL)

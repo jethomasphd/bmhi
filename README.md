@@ -12,7 +12,11 @@ Every week, 4.54 million people search for a job across this network and leave w
 
 The theory of change: **validated distress plus micro-agency**. Acknowledge what just happened was hard. Offer one small thing the person can do. Interrupt the learned helplessness spiral that repeated failed searches install.
 
-## Interventions (18 built, 6 tiers complete)
+## UX: Direct Suite Access
+
+Users land directly on the full intervention suite — no landing page, no gate. The suite navigator is immediately visible at the bottom of the screen, organized by evidence tier. Users can freely browse all 22 interventions or let the Long Arc Protocol select the right one for their visit number and engagement history.
+
+## Interventions (22 built, 6 tiers complete)
 
 | ID | Name | Tier | Mechanism | Evidence |
 |----|------|------|-----------|----------|
@@ -32,10 +36,31 @@ The theory of change: **validated distress plus micro-agency**. Acknowledge what
 | D4 | Strength Anchor | D · Emotional | Identity protection under role-threat | T3 |
 | E1 | Pattern Match | E · Flow | Rumination crowding (Russoniello) | T1 |
 | E2 | Open Canvas | E · Flow | Expressive art / cortisol reduction | T3 |
+| E3 | Meditative Blocks | E · Flow | Visuospatial rumination interruption (Holmes) | T1 |
+| E4 | Meditative Serpent | E · Flow | Sustained attention / flow state (Csikszentmihalyi) | T1 |
+| E5 | Rhythmic Breaker | E · Flow | Rhythmic tracking / parasympathetic activation | T2 |
+| E6 | Mindful Garden | E · Flow | Nurturing activation / attention restoration (Kaplan) | T2 |
 | F1 | Check-In Screen | F · SBIRT | Brief screening + referral pathway | T1 |
 | F2 | Population Mirror | F · SBIRT | Social proof / loneliness buffering | T3 |
 
-**18 interventions across 6 tiers. Long Arc Protocol (G1) sequences returning users. Complete.**
+**22 interventions across 6 tiers. Long Arc Protocol (G1) sequences returning users. Complete.**
+
+### Flow State Games (Tier E: E3–E6)
+
+Four canvas-based games adapted from the RecursiveMarketing prototype, fully realized as standalone interventions with clinical documentation. All games share these design principles:
+
+- **No score, no timer, no fail state** — performance pressure reactivates the stress response
+- **Calming color palette** — desaturated earth tones from the BMHI design system
+- **Floating affirmation words** — gentle text floats upward on interaction ("breathe", "you matter", "steady")
+- **Auto-end after 120 seconds** — with graceful fade to closing message
+- **Evidence-grounded** — each game's mechanism traces to peer-reviewed research
+
+| Game | Mechanism | Key Citation |
+|------|-----------|-------------|
+| E3 · Meditative Blocks (Tetris) | Visuospatial processing blocks intrusive imagery | Holmes et al. 2009, 2010 |
+| E4 · Meditative Serpent (Snake) | Sustained attention induces flow state | Csikszentmihalyi 1990; Russoniello 2009 |
+| E5 · Rhythmic Breaker | Smooth pursuit eye tracking (EMDR-adjacent) | van den Hout & Engelhard 2012 |
+| E6 · Mindful Garden | Tend-and-befriend + attention restoration | Taylor et al. 2000; Kaplan 1995 |
 
 ## Architecture
 
@@ -64,6 +89,10 @@ public/
     d4-strength-anchor.js
     e1-pattern-match.js       ← Tier E: Flow State
     e2-open-canvas.js
+    e3-tetris.js              ← Tier E: Meditative Blocks (Tetris)
+    e4-snake.js               ← Tier E: Meditative Serpent (Snake)
+    e5-breaker.js             ← Tier E: Rhythmic Breaker (Brick Breaker)
+    e6-garden.js              ← Tier E: Mindful Garden
     f1-checkin.js             ← Tier F: SBIRT Screening & Referral
     f2-population-mirror.js
 docs/
@@ -73,6 +102,7 @@ docs/
 
 ## Core Systems
 
+- **Direct Suite Access**: Users land directly on the full intervention suite with navigator — no landing page gate
 - **Session Management**: 90-day first-party cookie, no PII, tracks visit count and engagement history
 - **Measurement Framework**: MHIL event suite (TRIGGER, START, ENGAGE, CLOSE, RETURN) stored in sessionStorage — fully client-side, no server required
 - **Intervention Router**: Long Arc Protocol (visit-sequenced deepening) with engagement-based rotation for visit 8+
@@ -118,7 +148,7 @@ See `embed.html` for a full working demo of all four delivery mechanisms.
 
 | File | Description |
 |------|-------------|
-| `seed.md` | Full clinical specification (20 interventions, 8 tiers, measurement framework, ethical framework) |
+| `seed.md` | Full clinical specification (22 interventions, 6 tiers, measurement framework, ethical framework) |
 | `exit_window_position_paper.html` | Academic position paper: the exit window as detection-problem solution |
 | `companion_insel_summoning.html` | Dialogue with T.R. Insel, MD — clinical validation and measurement requirements |
 | `rg_mental-health-intervention.html` | Strategic brief: the business case |

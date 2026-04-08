@@ -397,33 +397,18 @@
       });
     }
 
-    if (state.demoMode) {
-      // Show suite nav over the intervention's closing text
-      showSuiteNav();
-      return;
-    }
-
-    // Normal mode: return to landing after a gentle pause
-    var postTimer = setTimeout(function () {
-      // Guard: only if we're still in post stage (user might have dismissed)
-      if (state.stage !== 'post') return;
-      resetToLanding();
-    }, 3000);
-    // Store so dismiss can clear it
-    state._postTimer = postTimer;
+    // Always show suite nav (suite is the home now)
+    showSuiteNav();
   }
 
   function resetToLanding() {
-    hideSuiteNav();
-    state.demoMode = false;
-    document.body.classList.remove('demo-mode');
-    var rvEls = ['enso', 'rv1', 'rv2', 'rv3', 'rv4', 'rv5', 'beginBtn', 'demoLink', 'aboutLink'];
-    for (var i = 0; i < rvEls.length; i++) {
-      var el = $(rvEls[i]);
-      if (el) el.classList.remove('vis', 'draw');
+    // Return to suite view (no landing page — suite IS the home)
+    showSuiteNav();
+    var available = getAvailableInterventions();
+    if (available.length > 0) {
+      launchIntervention(available[0]);
+      updateActiveTab(available[0]);
     }
-    showLanding();
-    setTimeout(revealLanding, 300);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -599,13 +584,10 @@
       });
     }
 
-    // Clear any pending post-intervention timer
-    if (state._postTimer) { clearTimeout(state._postTimer); state._postTimer = null; }
-
     // Stop ambient audio if playing
     if (audioPlaying) stopAudio();
 
-    // Return to landing
+    // Return to suite view
     resetToLanding();
   }
 
@@ -710,64 +692,18 @@
     });
 
     // Wire up buttons
-    function leaveLanding(callback) {
-      // Cancel pending landing reveal timers
-      for (var lt = 0; lt < landingTimers.length; lt++) clearTimeout(landingTimers[lt]);
-      landingTimers = [];
-      $('stageLanding').style.transition = 'opacity 0.8s ease';
-      $('stageLanding').style.opacity = '0';
-      setTimeout(function () {
-        $('stageLanding').classList.remove('active');
-        $('stageLanding').style.opacity = '';
-        $('stageLanding').style.transition = '';
-        callback();
-      }, 800);
-    }
-
-    $('beginBtn').addEventListener('click', function () {
-      var id = selectIntervention(visitNumber);
-      if (!id) return;
-
-      if (shouldShowPreLayer(visitNumber)) {
-        // Visit 4, 8, 12...: show F1 check-in first, then the intervention
-        leaveLanding(function () {
-          launchInterventionWithPreLayer('F1', id);
-        });
-      } else {
-        leaveLanding(function () { launchIntervention(id); });
-      }
-    });
-
-    $('demoLink').addEventListener('click', function () {
-      leaveLanding(function () {
-        showSuiteNav();
-        var available = getAvailableInterventions();
-        if (available.length > 0) {
-          launchIntervention(available[0]);
-          var firstTab = $('suiteTiers').querySelector('.suite-tab');
-          if (firstTab) firstTab.classList.add('active');
-        }
-      });
-    });
-
     $('dismissBtn').addEventListener('click', handleDismiss);
     $('audioToggle').addEventListener('click', toggleAudio);
 
-    // Embedded mode: shorter landing
-    if (window.location.search.indexOf('mode=embedded') !== -1) {
-      // Skip to intervention immediately
-      setTimeout(function () {
-        var id = selectIntervention(visitNumber);
-        if (id) {
-          $('stageLanding').classList.remove('active');
-          launchIntervention(id);
-        }
-      }, 500);
-      return;
+    // Boot directly into the full suite (no landing page)
+    $('stageLanding').classList.remove('active');
+    showSuiteNav();
+    var available = getAvailableInterventions();
+    if (available.length > 0) {
+      launchIntervention(available[0]);
+      var firstTab = $('suiteTiers').querySelector('.suite-tab');
+      if (firstTab) firstTab.classList.add('active');
     }
-
-    // Start cinematic reveal
-    revealLanding();
   }
 
   // ─── Expose for interventions to use ───────────────────────

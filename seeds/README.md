@@ -1,4 +1,4 @@
-# BMHI Build Sequence — 18 Sessions
+# BMHI Build Sequence — 22 Sessions
 
 ## How to Use These Seeds
 
@@ -19,13 +19,17 @@ Each seed file is a self-contained assignment for a coding agent session. Run th
 | 09 | `seed-09-d2-self-compassion.md` | Self-Compassion Mirror | `d2-self-compassion.js` |
 | 10 | `seed-10-d3-gratitude-d4-strength.md` | Gratitude + Strength Anchor (completes Tier D) | `d3-gratitude.js`, `d4-strength-anchor.js` |
 | 11 | `seed-11-e1-pattern-match-game.md` | Pattern Match Micro-Game (first flow state) | `e1-pattern-match.js` |
-| 12 | `seed-12-e2-open-canvas.md` | Open Canvas drawing (completes Tier E) | `e2-open-canvas.js` |
+| 12 | `seed-12-e2-open-canvas.md` | Open Canvas drawing (completes original Tier E) | `e2-open-canvas.js` |
 | 13 | `seed-13-f1-checkin-f2-population.md` | SBIRT Check-In + Population Mirror (Tier F) | `f1-checkin.js`, `f2-population-mirror.js` |
 | 14 | `seed-14-g1-long-arc-protocol.md` | Returning user sequence engine | Modifies `app.js` |
 | 15 | `seed-15-delivery-mechanisms.md` | Popup, pop-under, embedded, email trigger | `delivery.js`, `embed.html` |
 | 16 | `seed-16-cloudflare-worker-measurement.md` | Backend: events, email, population counter | `worker/src/index.js`, `worker/wrangler.toml` |
 | 17 | `seed-17-demo-mode-polish.md` | Suite navigator, transitions, accessibility, polish | Modifies all files |
 | 18 | `seed-18-deployment-documentation.md` | Cloudflare Pages deploy, README, launch checklist | `README.md`, `docs/` |
+| 19 | `seed-19-e3-tetris.md` | Meditative Blocks (Tetris) — visuospatial rumination interruption | `e3-tetris.js` |
+| 20 | `seed-20-e4-snake.md` | Meditative Serpent (Snake) — sustained attention flow state | `e4-snake.js` |
+| 21 | `seed-21-e5-breaker.md` | Rhythmic Breaker (Brick Breaker) — rhythmic visual tracking | `e5-breaker.js` |
+| 22 | `seed-22-e6-garden.md` | Mindful Garden — nurturing activation & attention restoration | `e6-garden.js` |
 
 ### For Each Session
 
@@ -40,7 +44,7 @@ Each seed file is a self-contained assignment for a coding agent session. Run th
 - `/seed.md` — Master clinical specification (always provide as context)
 - `/RecursiveMarketing-main/public/mhi/index.html` — UI aesthetic reference
 - `/RecursiveMarketing-main/public/mhi/app.js` — Interaction pattern reference
-- `/RecursiveMarketing-main/public/mhi/games.js` — Game implementation reference
+- `/RecursiveMarketing-main/public/mhi/games.js` — Game implementation reference (E3–E6 originated here)
 - `/rg_mental-health-intervention.html` — Data visualization / pitch deck reference
 
 ### Architecture Pattern
@@ -64,8 +68,9 @@ All interventions follow this registration pattern:
 ```
 
 The core engine (`app.js`) handles:
+- Direct suite access (no landing page — boots into suite navigator)
 - Session management (cookie, visit count, engagement history)
 - Intervention routing (Long Arc Protocol)
 - Measurement event emission
-- Stage transitions (landing → intervention → post)
-- Demo mode (suite navigator)
+- Stage transitions (suite → intervention → post → suite)
+- Suite navigator always visible
