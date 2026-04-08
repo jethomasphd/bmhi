@@ -47,7 +47,7 @@
 
   window.BMHI_INTERVENTIONS['B2'] = {
     id: 'B2',
-    name: 'Defusion Exercise',
+    name: 'Thought Distance',
     tier: 'B',
     mechanism: 'Cognitive defusion — distance from self-critical thought',
     evidence: 'T2',

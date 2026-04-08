@@ -32,7 +32,7 @@
 
   window.BMHI_INTERVENTIONS['D1'] = {
     id: 'D1',
-    name: '3-Sentence Release',
+    name: 'Let It Out',
     tier: 'D',
     mechanism: 'Expressive disclosure — cortisol reduction',
     evidence: 'T1',

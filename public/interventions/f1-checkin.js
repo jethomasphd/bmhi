@@ -55,7 +55,7 @@
 
   window.BMHI_INTERVENTIONS['F1'] = {
     id: 'F1',
-    name: 'Check-In Screen',
+    name: 'Check In',
     tier: 'F',
     mechanism: 'SBIRT — brief screening, open referral',
     evidence: 'T1',

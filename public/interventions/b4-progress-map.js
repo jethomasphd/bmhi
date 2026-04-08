@@ -26,7 +26,7 @@
 
   window.BMHI_INTERVENTIONS['B4'] = {
     id: 'B4',
-    name: 'Progress Mapping',
+    name: 'Progress Map',
     tier: 'B',
     mechanism: 'Progress visualization counters learned helplessness',
     evidence: 'T3',

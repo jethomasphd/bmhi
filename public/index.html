@@ -91,71 +91,15 @@ html, body {
 /* Account for suite nav at bottom in demo mode */
 body.demo-mode .stage { padding-bottom: 80px; }
 
-/* ─── LANDING ─── */
-.landing { overflow: hidden; }
-.landing-bg {
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(196,146,42,0.03), transparent);
-}
-
-/* Reveal animation */
-.rv {
-  opacity: 0; transform: translateY(14px);
-  transition: opacity 1.2s ease, transform 1.2s ease;
-}
-.rv.vis { opacity: 1; transform: translateY(0); }
-
-/* Enso circle */
-.enso { width: 80px; height: 80px; margin-bottom: 40px; color: var(--amber); opacity: 0; }
-.enso-path {
-  stroke-dasharray: 280; stroke-dashoffset: 280;
-  transition: stroke-dashoffset 3s cubic-bezier(0.4,0,0.2,1);
-}
-.enso.draw .enso-path { stroke-dashoffset: 0; }
-.enso.draw { opacity: 1; transition: opacity 0.8s ease; }
-
-.landing-title {
-  font-family: var(--serif); font-size: clamp(24px, 6vw, 36px);
-  font-weight: 300; color: var(--text); line-height: 1.3;
-  letter-spacing: -0.3px; margin-bottom: 32px; max-width: 480px;
-}
-.landing-sub {
-  font-family: var(--serif); font-size: clamp(16px, 3.5vw, 20px);
-  font-weight: 300; font-style: italic; color: var(--dim);
-  line-height: 1.5; margin-bottom: 8px;
-}
-.landing-note {
-  font-size: 13px; font-weight: 300; color: var(--faint);
-  line-height: 1.7; margin-bottom: 12px; letter-spacing: 0.2px;
-  max-width: 400px;
-}
-.landing-kicker {
-  font-family: var(--serif); font-size: 18px; font-weight: 400;
-  color: var(--amber); line-height: 1.4; margin-bottom: 44px;
-}
-
-.begin-btn {
-  font-family: var(--serif); font-size: 16px; font-weight: 400;
-  font-style: italic; color: var(--amber);
-  background: rgba(196,146,42,0.06);
-  border: 1px solid rgba(196,146,42,0.3);
-  border-radius: 24px; cursor: pointer; letter-spacing: 0.5px;
-  padding: 14px 36px;
-  transition: all 0.3s ease;
-}
-.begin-btn:hover {
-  color: var(--text); background: rgba(196,146,42,0.12);
-  border-color: rgba(196,146,42,0.5);
-}
-.begin-btn:active { transform: scale(0.96); }
-
-.demo-link {
-  font-size: 10px; font-weight: 300; color: var(--faint);
+/* ─── ABOUT LINK ─── */
+.about-link {
+  font-family: var(--mono); font-size: 9px; font-weight: 400;
+  letter-spacing: 0.8px; color: var(--faint);
   background: none; border: none; cursor: pointer;
-  margin-top: 20px; letter-spacing: 1px;
-  transition: color 0.3s;
+  text-decoration: none; transition: color 0.3s;
+  display: inline-flex; align-items: center; gap: 4px;
 }
-.demo-link:hover { color: var(--dim); }
+.about-link:hover { color: var(--amber); }
 
 /* ─── BREATH PACER (A1) ─── */
 .breath-circle {
@@ -172,7 +116,7 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 .breath-circle.inhale {
   transform: scale(1); opacity: 0.8;
-  transition: transform 4s cubic-bezier(0.4,0,0.2,1), opacity 4s ease;
+  transition: transform 3s cubic-bezier(0.4,0,0.2,1), opacity 3s ease;
 }
 .breath-circle.hold {
   transform: scale(1); opacity: 0.8;
@@ -180,7 +124,7 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 .breath-circle.exhale {
   transform: scale(0.4); opacity: 0.3;
-  transition: transform 6s cubic-bezier(0.4,0,0.2,1), opacity 6s ease;
+  transition: transform 4s cubic-bezier(0.4,0,0.2,1), opacity 4s ease;
 }
 
 .breath-label {
@@ -487,19 +431,19 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 .confirm-anim.done .check-path { stroke-dashoffset: 0; }
 
-/* ─── SUITE NAVIGATOR (demo mode) ─── */
+/* ─── SUITE NAVIGATOR ─── */
 .suite-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  padding: 10px 12px 12px;
-  background: linear-gradient(transparent, var(--bg) 25%);
+  padding: 8px 12px 10px;
+  background: linear-gradient(transparent, var(--bg) 20%);
   opacity: 0; pointer-events: none;
   transition: opacity 0.5s ease;
 }
 .suite-nav.vis { opacity: 1; pointer-events: auto; }
 
 .suite-tiers {
-  display: flex; gap: 2px; justify-content: center;
-  max-width: 620px; margin: 0 auto;
+  display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
+  max-width: 720px; margin: 0 auto;
   overflow-x: auto; -webkit-overflow-scrolling: touch;
   scrollbar-width: none; -ms-overflow-style: none;
 }
@@ -514,15 +458,15 @@ body.demo-mode .stage { padding-bottom: 80px; }
   color: var(--faint); white-space: nowrap;
 }
 .suite-tier-tabs {
-  display: flex; gap: 2px;
+  display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;
 }
 .suite-tab {
-  font-family: var(--mono); font-size: 10px; font-weight: 400;
-  letter-spacing: 0.3px; color: var(--faint);
+  font-family: var(--sans); font-size: 9px; font-weight: 400;
+  letter-spacing: 0.2px; color: var(--faint);
   background: transparent; border: 1px solid var(--border);
-  border-radius: 12px; padding: 8px 12px; cursor: pointer;
+  border-radius: 12px; padding: 6px 10px; cursor: pointer;
   transition: all 0.25s ease; white-space: nowrap;
-  min-width: 44px; min-height: 36px; text-align: center;
+  min-height: 30px; text-align: center;
   position: relative; -webkit-tap-highlight-color: transparent;
 }
 .suite-tab:hover, .suite-tab:active { color: var(--dim); border-color: var(--border2); }
@@ -562,12 +506,17 @@ body.demo-mode .stage { padding-bottom: 80px; }
   .suite-tab .tab-tip { display: none !important; }
 }
 
-/* Info bar showing current intervention */
+/* Info bar showing current intervention + about link */
 .suite-info {
-  text-align: center; margin: 6px auto 0;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin: 5px auto 0; max-width: 720px; min-height: 16px;
+}
+.suite-info-text {
   font-family: var(--mono); font-size: 9px; color: var(--faint);
-  letter-spacing: 0.3px; max-width: 620px;
-  min-height: 14px;
+  letter-spacing: 0.3px;
+}
+.suite-info-sep {
+  width: 1px; height: 10px; background: var(--border2);
 }
 
 /* ─── POST-INTERVENTION ─── */
@@ -636,14 +585,11 @@ body::before {
   .mhi-textarea { font-size: 16px; } /* prevents iOS zoom on focus */
   .breath-circle { width: 100px; height: 100px; }
   .suite-tier-label { font-size: 6px; letter-spacing: 1px; }
-  .suite-tab { font-size: 9px; padding: 6px 10px; min-width: 36px; min-height: 32px; }
-  .landing-title { margin-bottom: 20px; }
-  .landing-kicker { margin-bottom: 28px; }
-  .begin-btn { padding: 12px 28px; }
+  .suite-tab { font-size: 8px; padding: 5px 8px; min-height: 28px; }
 }
 @media (max-width: 360px) {
   .stage { padding: 24px 14px; }
-  .suite-tab { padding: 5px 8px; }
+  .suite-tab { font-size: 7px; padding: 4px 6px; min-height: 26px; }
 }
 @media (min-width: 768px) {
   .stage { padding: 48px 40px; }
@@ -655,7 +601,7 @@ body::before {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-  .rv, .enso, .begin-btn, .demo-link, .breath-circle,
+  .breath-circle,
   .breath-label, .closing-text, .dismiss, .audio-toggle {
     opacity: 1 !important;
     transform: none !important;
@@ -678,40 +624,6 @@ body::before {
   </button>
 
   <!-- ═══════════════════════════════════════════
-       LANDING — the quiet opening
-       ═══════════════════════════════════════════ -->
-  <div class="stage landing" id="stageLanding">
-    <div class="landing-bg"></div>
-
-    <svg class="enso rv" id="enso" viewBox="0 0 100 100">
-      <circle class="enso-path" cx="50" cy="50" r="44"
-        fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round"/>
-    </svg>
-
-    <div class="landing-title rv" id="rv1">
-      Before you go.
-    </div>
-
-    <div class="landing-sub rv" id="rv2">You searched today.</div>
-    <div class="landing-sub rv" id="rv3">That counts.</div>
-
-    <div class="landing-note rv" id="rv4">
-      This is a brief, evidence-based pause — designed for
-      exactly this moment. It takes about two minutes.
-      You can leave anytime.
-    </div>
-
-    <div class="landing-kicker rv" id="rv5">
-      Take what you need.
-    </div>
-
-    <button class="begin-btn rv" id="beginBtn">Begin</button>
-    <button class="demo-link rv" id="demoLink">explore the full suite</button>
-    <a href="about.html" class="demo-link rv" id="aboutLink" style="margin-top:12px;text-decoration:none;">about the science</a>
-  </div>
-
-  <!-- ═══════════════════════════════════════════
        INTERVENTION STAGE — all interventions render here
        ═══════════════════════════════════════════ -->
   <div class="stage" id="stageIntervention" role="main" aria-live="polite">
@@ -727,10 +639,14 @@ body::before {
 
 </div><!-- .app -->
 
-<!-- SUITE NAVIGATOR (demo mode) -->
+<!-- SUITE NAVIGATOR -->
 <div class="suite-nav" id="suiteNav">
   <div class="suite-tiers" id="suiteTiers"></div>
-  <div class="suite-info" id="suiteInfo"></div>
+  <div class="suite-info" id="suiteInfo">
+    <span class="suite-info-text" id="suiteInfoText"></span>
+    <span class="suite-info-sep"></span>
+    <a href="about.html" class="about-link">about the science</a>
+  </div>
 </div>
 
 <!-- SCRIPTS -->

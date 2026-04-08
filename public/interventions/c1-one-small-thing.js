@@ -31,7 +31,7 @@
 
   window.BMHI_INTERVENTIONS['C1'] = {
     id: 'C1',
-    name: 'The One Small Thing',
+    name: 'One Small Step',
     tier: 'C',
     mechanism: 'Implementation intention — specific micro-commitment',
     evidence: 'T1',

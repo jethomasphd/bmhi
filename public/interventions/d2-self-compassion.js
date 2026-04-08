@@ -36,7 +36,7 @@
 
   window.BMHI_INTERVENTIONS['D2'] = {
     id: 'D2',
-    name: 'Self-Compassion Mirror',
+    name: 'Self-Kindness',
     tier: 'D',
     mechanism: 'Self-compassion reduces self-critical rumination',
     evidence: 'T2',

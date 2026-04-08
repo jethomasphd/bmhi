@@ -72,7 +72,7 @@
 
   window.BMHI_INTERVENTIONS['C2'] = {
     id: 'C2',
-    name: 'Momentum Builder',
+    name: 'Momentum',
     tier: 'C',
     mechanism: 'Micro-mastery / behavioral activation via mini-task',
     evidence: 'T2',

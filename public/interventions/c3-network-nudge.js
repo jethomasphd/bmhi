@@ -26,7 +26,7 @@
 
   window.BMHI_INTERVENTIONS['C3'] = {
     id: 'C3',
-    name: 'Network Nudge',
+    name: 'Reach Out',
     tier: 'C',
     mechanism: 'Behavioral activation + weak-tie network activation',
     evidence: 'T3',

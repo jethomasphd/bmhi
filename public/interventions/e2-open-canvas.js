@@ -35,7 +35,7 @@
 
   window.BMHI_INTERVENTIONS['E2'] = {
     id: 'E2',
-    name: 'Open Canvas',
+    name: 'Draw',
     tier: 'E',
     mechanism: 'Expressive art; cortisol reduction',
     evidence: 'T3',

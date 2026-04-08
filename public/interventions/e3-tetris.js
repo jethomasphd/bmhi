@@ -72,7 +72,7 @@
 
   window.BMHI_INTERVENTIONS['E3'] = {
     id: 'E3',
-    name: 'Meditative Blocks',
+    name: 'Blocks',
     tier: 'E',
     mechanism: 'Visuospatial rumination interruption (Holmes)',
     evidence: 'T1',

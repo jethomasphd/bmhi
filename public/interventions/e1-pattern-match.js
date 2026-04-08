@@ -49,7 +49,7 @@
 
   window.BMHI_INTERVENTIONS['E1'] = {
     id: 'E1',
-    name: 'Pattern Match',
+    name: 'Match',
     tier: 'E',
     mechanism: 'Flow state; rumination crowding',
     evidence: 'T1',

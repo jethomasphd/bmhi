@@ -41,7 +41,7 @@
 
   window.BMHI_INTERVENTIONS['D4'] = {
     id: 'D4',
-    name: 'Strength Anchor',
+    name: 'Inner Anchor',
     tier: 'D',
     mechanism: 'Identity protection under role-threat',
     evidence: 'T3',
