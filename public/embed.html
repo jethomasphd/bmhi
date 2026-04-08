@@ -214,7 +214,8 @@
   <button class="ctrl-btn" id="btnPopunder">Pop-Under</button>
   <button class="ctrl-btn" id="btnEmbedded">Embedded</button>
   <button class="ctrl-btn" id="btnEmail">Email CTA</button>
-  <div class="info">No cookies &middot; No tracking &middot; No data stored</div>
+  <button class="ctrl-btn" id="btnExit" style="border-color:rgba(74,144,217,0.3);color:#4a90d9;">Exit Recovery</button>
+  <div class="info">No cookies &middot; No tracking &middot; No data stored &middot; <strong>Exit Recovery</strong> = CEO conversion flow</div>
 </div>
 
 <script src="delivery.js"></script>
@@ -224,7 +225,8 @@
     popup:    document.getElementById('btnPopup'),
     popunder: document.getElementById('btnPopunder'),
     embedded: document.getElementById('btnEmbedded'),
-    email:    document.getElementById('btnEmail')
+    email:    document.getElementById('btnEmail'),
+    exit:     document.getElementById('btnExit')
   };
 
   function trigger(type) {
@@ -237,12 +239,14 @@
     if (type === 'popunder') BMHI_DELIVERY.showPopunder();
     if (type === 'embedded') BMHI_DELIVERY.embedBMHI('#embedTarget');
     if (type === 'email')    BMHI_DELIVERY.showEmailOptIn();
+    if (type === 'exit')     BMHI_DELIVERY.showExitRecovery();
   }
 
   btns.popup.addEventListener('click', function () { trigger('popup'); });
   btns.popunder.addEventListener('click', function () { trigger('popunder'); });
   btns.embedded.addEventListener('click', function () { trigger('embedded'); });
   btns.email.addEventListener('click', function () { trigger('email'); });
+  btns.exit.addEventListener('click', function () { trigger('exit'); });
 </script>
 </body>
 </html>
