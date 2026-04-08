@@ -40,14 +40,14 @@
     F: 'Get help'
   };
 
-  // SVG icon paths for Play tier games (tiny inline icons)
+  // SVG icon markup for Play tier games (consistent stroke-based, 16×16)
   var GAME_ICONS = {
-    E1: '<rect x="3" y="3" width="4" height="4" rx="0.5"/><rect x="9" y="3" width="4" height="4" rx="0.5"/><rect x="3" y="9" width="4" height="4" rx="0.5"/><rect x="9" y="9" width="4" height="4" rx="0.5"/>', // match grid
-    E2: '<path d="M4 13c1-3 3-5 4-7s2-3 4-3"/><circle cx="12" cy="3" r="1"/>', // brush stroke
-    E3: '<rect x="3" y="8" width="4" height="4" rx="0.5"/><rect x="7" y="4" width="4" height="4" rx="0.5"/><rect x="3" y="4" width="4" height="4" rx="0.5"/><rect x="7" y="8" width="4" height="4" rx="0.5"/>', // blocks
-    E4: '<path d="M3 8h2v0h2v0h2v-2h2v2h0v2h-2v0h-2"/><circle cx="12" cy="4" r="1.5"/>', // snake + food
-    E5: '<rect x="2" y="2" width="12" height="2" rx="0.5"/><circle cx="8" cy="10" r="1.5"/><rect x="4" y="13" width="8" height="2" rx="0.5"/>', // breaker
-    E6: '<path d="M8 12V7"/><circle cx="8" cy="5" r="2"/><path d="M5 14c0 0 1-2 3-2s3 2 3 2"/>' // flower
+    E1: '<rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/>', // match: 4 cards
+    E2: '<line x1="4" y1="12" x2="7" y2="4"/><line x1="7" y1="4" x2="12" y2="8"/><circle cx="12" cy="8" r="1.5"/>', // draw: brush stroke
+    E3: '<rect x="2" y="6" width="4" height="4" rx="0.5"/><rect x="6" y="6" width="4" height="4" rx="0.5"/><rect x="10" y="6" width="4" height="4" rx="0.5"/><rect x="4" y="2" width="4" height="4" rx="0.5"/>', // blocks: L-piece
+    E4: '<circle cx="4" cy="8" r="1.5"/><circle cx="7" cy="8" r="1.5"/><circle cx="10" cy="8" r="2"/><circle cx="14" cy="5" r="1"/>', // serpent: body + food
+    E5: '<rect x="2" y="2" width="3" height="2" rx="0.5"/><rect x="6" y="2" width="3" height="2" rx="0.5"/><rect x="10" y="2" width="3" height="2" rx="0.5"/><circle cx="8" cy="9" r="1.5"/><rect x="4" y="13" width="8" height="2" rx="1"/>', // breaker: bricks + ball + paddle
+    E6: '<line x1="8" y1="14" x2="8" y2="7"/><circle cx="8" cy="5" r="2.5"/><line x1="5" y1="10" x2="8" y2="7"/><line x1="11" y1="10" x2="8" y2="7"/>' // garden: flower with stem + leaves
   };
 
   // ─── State ─────────────────────────────────────────────────
@@ -320,7 +320,7 @@
 
           // Play tier: use icons instead of text
           if (tierKey === 'E' && GAME_ICONS[interventionId]) {
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" stroke="none">' +
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">' +
               GAME_ICONS[interventionId] + '</svg>';
             btn.setAttribute('title', intervention.name);
           } else {
@@ -627,7 +627,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // INIT — "First visit: guided. Every visit after: free."
+  // INIT — welcome every time, suite reveals after first action
   // ═══════════════════════════════════════════════════════════
 
   function init() {
@@ -635,9 +635,10 @@
 
     state.session = getSession();
     var visitNumber = incrementVisit();
-    log('Visit #' + visitNumber, 'Session:', state.session.id);
+    var returning = isReturningUser();
+    log('Visit #' + visitNumber, 'Session:', state.session.id, returning ? '(returning)' : '(new)');
 
-    // Check for returning user
+    // Check for returning user event
     var history = getEngagementHistory();
     if (history.length > 0) {
       var lastEntry = history[history.length - 1];
@@ -665,31 +666,22 @@
     var selectedId = selectIntervention(visitNumber);
     var selectedIntervention = selectedId ? window.BMHI_INTERVENTIONS[selectedId] : null;
 
-    // ─── RETURNING USER: straight into suite ──────────────
-    if (isReturningUser()) {
-      log('Returning user → suite mode');
-      $('stageWelcome').classList.remove('active');
-      showSuiteNav();
-
-      if (selectedId) {
-        if (shouldShowPreLayer(visitNumber)) {
-          launchInterventionWithPreLayer('F1', selectedId);
-        } else {
-          launchIntervention(selectedId);
-        }
-        updateActiveTab(selectedId);
-      }
-      state.firstVisitCompleted = true;
-      return;
-    }
-
-    // ─── FIRST VISIT: the hand on the shoulder ───────────
-    log('First visit → welcome screen');
+    // ─── WELCOME SCREEN — every visit ────────────────────
+    // "Before you go." — every time. The user always arrives
+    // with the brief prompt. The hand on the shoulder.
 
     // Set the welcome button text based on what the router chose
     var btn = $('welcomeBtn');
     if (selectedIntervention && TIER_CTA[selectedIntervention.tier]) {
       btn.textContent = TIER_CTA[selectedIntervention.tier];
+    }
+
+    // Returning users: pre-build the suite nav (hidden) so it's
+    // ready to show immediately after the first intervention
+    if (returning) {
+      buildSuiteNav();
+      state.suiteRevealed = true;
+      state.firstVisitCompleted = true; // skip "there's more" reveal
     }
 
     showWelcome();
@@ -702,11 +694,19 @@
       setTimeout(function () {
         welcome.classList.remove('active', 'exiting');
 
+        // Returning users: show suite nav immediately alongside intervention
+        if (returning) {
+          showSuiteNav();
+        }
+
         if (selectedId) {
           if (shouldShowPreLayer(visitNumber)) {
             launchInterventionWithPreLayer('F1', selectedId);
           } else {
             launchIntervention(selectedId);
+          }
+          if (returning) {
+            updateActiveTab(selectedId);
           }
         }
       }, 600);
