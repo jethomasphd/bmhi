@@ -38,18 +38,14 @@
     border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
     background: rgba(255,255,255,0.95); color: #333; outline: none;
   }
-  .search-field:focus { border-color: #F68B0C; }
   .search-btn {
     padding: 11px 28px; font-size: 14px; font-weight: 600;
     font-family: inherit; background: #F68B0C; color: #fff;
     border: none; border-radius: 6px; cursor: pointer;
   }
 
-  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 60px; }
-  .results-meta {
-    font-size: 13px; color: #888; margin-bottom: 16px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 120px; }
+  .results-meta { font-size: 13px; color: #888; margin-bottom: 16px; }
 
   .job-card {
     background: #fff; border: 1px solid #ddd; border-radius: 6px;
@@ -62,21 +58,58 @@
   .job-card .location { font-size: 12px; color: #888; margin-bottom: 6px; }
   .job-card .salary { font-size: 13px; font-weight: 600; color: #2a8a4a; }
   .job-card .posted { font-size: 11px; color: #aaa; margin-top: 6px; }
-
-  /* Embedded BMHI */
-  .bmhi-embed {
-    margin: 24px 0; border-radius: 12px; overflow: hidden;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  }
-  .bmhi-embed iframe {
-    width: 100%; height: 600px; border: none; display: block;
+  .job-card .new-badge {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 10px; font-weight: 700; color: #F68B0C;
+    background: rgba(246,139,12,0.1); padding: 2px 8px;
+    border-radius: 10px; text-transform: uppercase;
   }
 
-  .demo-note {
-    text-align: center; padding: 20px; font-size: 11px; color: #999;
-    letter-spacing: 0.3px; line-height: 1.6;
+  #embedTarget { min-height: 0; }
+
+  .pagination {
+    display: flex; justify-content: center; gap: 4px; margin-top: 24px;
   }
-  .demo-note strong { color: #666; }
+  .pagination a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 4px;
+    font-size: 13px; color: #666; text-decoration: none;
+    border: 1px solid #ddd; transition: all 0.2s;
+  }
+  .pagination a.active { background: #1265A2; color: #fff; border-color: #1265A2; }
+
+  /* ─── Demo controls (dark bar) ─── */
+  .controls {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 99998;
+    background: rgba(10,10,20,0.95); backdrop-filter: blur(12px);
+    padding: 12px 20px;
+    display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center; justify-content: center;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .controls .label {
+    font-size: 9px; color: #666; text-transform: uppercase;
+    letter-spacing: 1.5px; width: 100%; text-align: center;
+    margin-bottom: 2px;
+  }
+  .ctrl-btn {
+    padding: 7px 16px; font-size: 11px; font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
+    background: transparent; color: #aaa; cursor: pointer;
+    transition: all 0.25s; font-family: inherit; letter-spacing: 0.3px;
+  }
+  .ctrl-btn:hover {
+    background: rgba(255,255,255,0.06); color: #fff;
+    border-color: rgba(255,255,255,0.25);
+  }
+  .ctrl-btn.active {
+    background: rgba(196,146,42,0.12); color: #c4922a;
+    border-color: rgba(196,146,42,0.35);
+  }
+  .controls .info {
+    font-size: 10px; color: #555; width: 100%; text-align: center;
+    margin-top: 2px;
+  }
 
   @media (max-width: 600px) {
     .header-nav { display: none; }
@@ -109,7 +142,7 @@
 
 <div class="results-wrap">
   <div class="results-meta">
-    <span>Showing 1&ndash;10 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong></span>
+    Showing 1&ndash;10 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong>
   </div>
 
   <div class="job-card">
@@ -121,6 +154,7 @@
   </div>
 
   <div class="job-card">
+    <span class="new-badge">New</span>
     <h3>Software Engineer II &mdash; Backend</h3>
     <div class="company">Indeed</div>
     <div class="location">Austin, TX &middot; Remote eligible</div>
@@ -136,12 +170,10 @@
     <div class="posted">Posted 1 day ago</div>
   </div>
 
-  <!-- BMHI Embedded Intervention -->
-  <div class="bmhi-embed">
-    <iframe src="index.html" title="Brief Mental Health Intervention"></iframe>
-  </div>
+  <div id="embedTarget"></div>
 
   <div class="job-card">
+    <span class="new-badge">New</span>
     <h3>Staff Software Engineer &mdash; Infrastructure</h3>
     <div class="company">CrowdStrike</div>
     <div class="location">Austin, TX &middot; Hybrid</div>
@@ -157,11 +189,60 @@
     <div class="posted">Posted 3 days ago</div>
   </div>
 
-  <div class="demo-note">
-    <strong>Demo:</strong> The intervention above appears inline between job listings.<br>
-    No cookies. No tracking. No data storage. Fully portable iframe embed.
+  <div class="job-card">
+    <h3>DevOps / SRE Engineer</h3>
+    <div class="company">HomeAway (Vrbo)</div>
+    <div class="location">Austin, TX</div>
+    <div class="salary">$125,000 &ndash; $165,000/yr</div>
+    <div class="posted">Posted 4 days ago</div>
+  </div>
+
+  <div class="pagination">
+    <a href="#" class="active">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">4</a>
+    <a href="#">5</a>
+    <a href="#">&raquo;</a>
   </div>
 </div>
 
+<!-- Demo controls -->
+<div class="controls">
+  <div class="label">BMHI Delivery Mechanism Demo</div>
+  <button class="ctrl-btn" id="btnPopup">Popup</button>
+  <button class="ctrl-btn" id="btnPopunder">Pop-Under</button>
+  <button class="ctrl-btn" id="btnEmbedded">Embedded</button>
+  <button class="ctrl-btn" id="btnEmail">Email CTA</button>
+  <div class="info">No cookies &middot; No tracking &middot; No data stored</div>
+</div>
+
+<script src="delivery.js"></script>
+<script>
+  var activeBtn = null;
+  var btns = {
+    popup:    document.getElementById('btnPopup'),
+    popunder: document.getElementById('btnPopunder'),
+    embedded: document.getElementById('btnEmbedded'),
+    email:    document.getElementById('btnEmail')
+  };
+
+  function trigger(type) {
+    BMHI_DELIVERY.reset();
+    if (activeBtn) activeBtn.classList.remove('active');
+    btns[type].classList.add('active');
+    activeBtn = btns[type];
+
+    if (type === 'popup')    BMHI_DELIVERY.showPopup();
+    if (type === 'popunder') BMHI_DELIVERY.showPopunder();
+    if (type === 'embedded') BMHI_DELIVERY.embedBMHI('#embedTarget');
+    if (type === 'email')    BMHI_DELIVERY.showEmailOptIn();
+  }
+
+  btns.popup.addEventListener('click', function () { trigger('popup'); });
+  btns.popunder.addEventListener('click', function () { trigger('popunder'); });
+  btns.embedded.addEventListener('click', function () { trigger('embedded'); });
+  btns.email.addEventListener('click', function () { trigger('email'); });
+</script>
 </body>
 </html>
