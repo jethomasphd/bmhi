@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMHI Embed Demo — Job Board Integration</title>
+<title>Software Engineer Jobs — TheseJobs.net</title>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,32 +38,48 @@
     border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
     background: rgba(255,255,255,0.95); color: #333; outline: none;
   }
+  .search-field:focus { border-color: #F68B0C; }
   .search-btn {
     padding: 11px 28px; font-size: 14px; font-weight: 600;
     font-family: inherit; background: #F68B0C; color: #fff;
     border: none; border-radius: 6px; cursor: pointer;
+    transition: background 0.2s;
   }
+  .search-btn:hover { background: #e07d08; }
 
   .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 120px; }
-  .results-meta { font-size: 13px; color: #888; margin-bottom: 16px; }
+  .results-meta {
+    font-size: 13px; color: #888; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
 
   .job-card {
     background: #fff; border: 1px solid #ddd; border-radius: 6px;
     padding: 16px 20px; margin-bottom: 10px; cursor: pointer;
-    transition: border-color 0.2s; position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s, opacity 0.4s; position: relative;
   }
-  .job-card:hover { border-color: #F68B0C; }
-  .job-card h3 { font-size: 16px; font-weight: 600; color: #1265A2; margin-bottom: 4px; }
+  .job-card:hover { border-color: #F68B0C; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .job-card h3 { font-size: 16px; font-weight: 600; color: #1265A2; margin-bottom: 4px; padding-right: 60px; }
   .job-card .company { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 2px; }
   .job-card .location { font-size: 12px; color: #888; margin-bottom: 6px; }
   .job-card .salary { font-size: 13px; font-weight: 600; color: #2a8a4a; }
   .job-card .posted { font-size: 11px; color: #aaa; margin-top: 6px; }
-  .job-card .new-badge {
+  .job-card .badge {
     position: absolute; top: 16px; right: 16px;
     font-size: 10px; font-weight: 700; color: #F68B0C;
     background: rgba(246,139,12,0.1); padding: 2px 8px;
-    border-radius: 10px; text-transform: uppercase;
+    border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px;
   }
+  .job-card.refreshing { opacity: 0; transform: translateY(4px); }
+
+  /* Refresh banner */
+  .refresh-banner {
+    text-align: center; padding: 12px; margin-bottom: 12px;
+    background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.15);
+    border-radius: 8px; font-size: 13px; color: #4a90d9; font-weight: 500;
+    opacity: 0; transition: opacity 0.5s; display: none;
+  }
+  .refresh-banner.vis { opacity: 1; display: block; }
 
   #embedTarget { min-height: 0; }
 
@@ -76,9 +92,10 @@
     font-size: 13px; color: #666; text-decoration: none;
     border: 1px solid #ddd; transition: all 0.2s;
   }
+  .pagination a:hover { border-color: #1265A2; color: #1265A2; }
   .pagination a.active { background: #1265A2; color: #fff; border-color: #1265A2; }
 
-  /* ─── Demo controls (dark bar) ─── */
+  /* Demo controls */
   .controls {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 99998;
     background: rgba(10,10,20,0.95); backdrop-filter: blur(12px);
@@ -110,6 +127,7 @@
     font-size: 10px; color: #555; width: 100%; text-align: center;
     margin-top: 2px;
   }
+  .controls .info strong { color: #c4922a; }
 
   @media (max-width: 600px) {
     .header-nav { display: none; }
@@ -134,68 +152,22 @@
 
 <div class="search-section">
   <div class="search-wrap">
-    <input class="search-field" type="text" value="software engineer" placeholder="Job title, keywords">
-    <input class="search-field" type="text" value="Austin, TX" placeholder="City, state, or remote">
-    <button class="search-btn">Find Jobs</button>
+    <input class="search-field" id="searchTitle" type="text" value="software engineer" placeholder="Job title, keywords">
+    <input class="search-field" id="searchLocation" type="text" value="Austin, TX" placeholder="City, state, or remote">
+    <button class="search-btn" id="searchBtn">Find Jobs</button>
   </div>
 </div>
 
 <div class="results-wrap">
-  <div class="results-meta">
-    Showing 1&ndash;10 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong>
+  <div class="results-meta" id="resultsMeta">
+    Showing 1&ndash;8 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong>
   </div>
 
-  <div class="job-card">
-    <h3>Senior Platform Engineer</h3>
-    <div class="company">Datadog</div>
-    <div class="location">Austin, TX &middot; Hybrid</div>
-    <div class="salary">$155,000 &ndash; $195,000/yr</div>
-    <div class="posted">Posted 2 days ago</div>
-  </div>
+  <div class="refresh-banner" id="refreshBanner"></div>
 
-  <div class="job-card">
-    <span class="new-badge">New</span>
-    <h3>Software Engineer II &mdash; Backend</h3>
-    <div class="company">Indeed</div>
-    <div class="location">Austin, TX &middot; Remote eligible</div>
-    <div class="salary">$120,000 &ndash; $160,000/yr</div>
-    <div class="posted">Posted today</div>
-  </div>
-
-  <div class="job-card">
-    <h3>Full Stack Developer</h3>
-    <div class="company">RetailMeNot</div>
-    <div class="location">Austin, TX</div>
-    <div class="salary">$105,000 &ndash; $140,000/yr</div>
-    <div class="posted">Posted 1 day ago</div>
-  </div>
+  <div id="jobList"></div>
 
   <div id="embedTarget"></div>
-
-  <div class="job-card">
-    <span class="new-badge">New</span>
-    <h3>Staff Software Engineer &mdash; Infrastructure</h3>
-    <div class="company">CrowdStrike</div>
-    <div class="location">Austin, TX &middot; Hybrid</div>
-    <div class="salary">$170,000 &ndash; $220,000/yr</div>
-    <div class="posted">Posted today</div>
-  </div>
-
-  <div class="job-card">
-    <h3>Backend Engineer &mdash; Payments</h3>
-    <div class="company">Stripe</div>
-    <div class="location">Austin, TX &middot; Remote</div>
-    <div class="salary">$140,000 &ndash; $185,000/yr</div>
-    <div class="posted">Posted 3 days ago</div>
-  </div>
-
-  <div class="job-card">
-    <h3>DevOps / SRE Engineer</h3>
-    <div class="company">HomeAway (Vrbo)</div>
-    <div class="location">Austin, TX</div>
-    <div class="salary">$125,000 &ndash; $165,000/yr</div>
-    <div class="posted">Posted 4 days ago</div>
-  </div>
 
   <div class="pagination">
     <a href="#" class="active">1</a>
@@ -215,11 +187,147 @@
   <button class="ctrl-btn" id="btnEmbedded">Embedded</button>
   <button class="ctrl-btn" id="btnEmail">Email CTA</button>
   <button class="ctrl-btn" id="btnExit" style="border-color:rgba(74,144,217,0.3);color:#4a90d9;">Exit Recovery</button>
-  <div class="info">No cookies &middot; No tracking &middot; No data stored &middot; <strong>Exit Recovery</strong> = CEO conversion flow</div>
+  <div class="info">No cookies &middot; No tracking &middot; <strong>Exit Recovery</strong> = CEO conversion flow (shuffles jobs)</div>
 </div>
 
 <script src="delivery.js"></script>
 <script>
+(function () {
+  'use strict';
+
+  // ═══════════════════════════════════════════════
+  // JOB DATA — shuffled and filtered on demand
+  // ═══════════════════════════════════════════════
+
+  var ALL_JOBS = [
+    { title: 'Senior Platform Engineer', company: 'Datadog', location: 'Austin, TX \u00B7 Hybrid', salary: '$155,000 \u2013 $195,000/yr', posted: 'Posted 2 days ago', badge: '', remote: false, quick: false },
+    { title: 'Software Engineer II \u2014 Backend', company: 'Indeed', location: 'Austin, TX \u00B7 Remote eligible', salary: '$120,000 \u2013 $160,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: false },
+    { title: 'Full Stack Developer', company: 'RetailMeNot', location: 'Austin, TX', salary: '$105,000 \u2013 $140,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: true },
+    { title: 'Staff Software Engineer \u2014 Infrastructure', company: 'CrowdStrike', location: 'Austin, TX \u00B7 Hybrid', salary: '$170,000 \u2013 $220,000/yr', posted: 'Posted today', badge: 'New', remote: false, quick: false },
+    { title: 'Backend Engineer \u2014 Payments', company: 'Stripe', location: 'Austin, TX \u00B7 Remote', salary: '$140,000 \u2013 $185,000/yr', posted: 'Posted 3 days ago', badge: '', remote: true, quick: true },
+    { title: 'DevOps / SRE Engineer', company: 'HomeAway (Vrbo)', location: 'Austin, TX', salary: '$125,000 \u2013 $165,000/yr', posted: 'Posted 4 days ago', badge: '', remote: false, quick: false },
+    { title: 'Junior Software Developer', company: 'National Instruments', location: 'Austin, TX', salary: '$75,000 \u2013 $95,000/yr', posted: 'Posted 5 days ago', badge: '', remote: false, quick: true },
+    { title: 'React / TypeScript Engineer', company: 'Procore Technologies', location: 'Austin, TX \u00B7 Hybrid', salary: '$130,000 \u2013 $170,000/yr', posted: 'Posted 2 days ago', badge: '', remote: false, quick: false },
+    { title: 'Principal Engineer \u2014 ML Platform', company: 'Meta', location: 'Austin, TX \u00B7 Remote', salary: '$210,000 \u2013 $310,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: false },
+    { title: 'Cloud Infrastructure Engineer', company: 'Oracle', location: 'Austin, TX \u00B7 Hybrid', salary: '$135,000 \u2013 $180,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: true },
+    { title: 'Senior Frontend Engineer', company: 'Atlassian', location: 'Austin, TX \u00B7 Remote', salary: '$145,000 \u2013 $195,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: true },
+    { title: 'Software Engineer \u2014 Security', company: 'Crowdstrike', location: 'Austin, TX', salary: '$130,000 \u2013 $175,000/yr', posted: 'Posted 3 days ago', badge: '', remote: false, quick: false },
+    { title: 'Data Engineer', company: 'Indeed', location: 'Austin, TX \u00B7 Remote', salary: '$125,000 \u2013 $165,000/yr', posted: 'Posted 2 days ago', badge: '', remote: true, quick: true },
+    { title: 'Mobile Engineer (iOS)', company: 'Bumble', location: 'Austin, TX \u00B7 Hybrid', salary: '$140,000 \u2013 $180,000/yr', posted: 'Posted today', badge: 'New', remote: false, quick: false },
+    { title: 'Site Reliability Engineer', company: 'Tesla', location: 'Austin, TX', salary: '$150,000 \u2013 $200,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: false },
+    { title: 'QA Automation Engineer', company: 'Dell Technologies', location: 'Austin, TX \u00B7 Remote', salary: '$95,000 \u2013 $130,000/yr', posted: 'Posted 4 days ago', badge: '', remote: true, quick: true }
+  ];
+
+  var REFINE_LABELS = {
+    better: 'Showing improved matches',
+    higher: 'Sorted by highest salary',
+    remote: 'Showing remote-only positions',
+    quick: 'Showing quick-apply positions',
+    find: 'Refreshed results for you'
+  };
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function renderJobs(jobs) {
+    var list = document.getElementById('jobList');
+    // Fade out existing
+    var existing = list.querySelectorAll('.job-card');
+    for (var e = 0; e < existing.length; e++) existing[e].classList.add('refreshing');
+
+    setTimeout(function () {
+      list.innerHTML = '';
+      for (var i = 0; i < jobs.length && i < 8; i++) {
+        var j = jobs[i];
+        var card = document.createElement('div');
+        card.className = 'job-card';
+        card.style.opacity = '0';
+        card.style.transition = 'opacity 0.4s ease ' + (i * 60) + 'ms';
+
+        var html = '';
+        if (j.badge) html += '<span class="badge">' + j.badge + '</span>';
+        html += '<h3>' + j.title + '</h3>';
+        html += '<div class="company">' + j.company + '</div>';
+        html += '<div class="location">' + j.location + '</div>';
+        html += '<div class="salary">' + j.salary + '</div>';
+        html += '<div class="posted">' + j.posted + '</div>';
+        card.innerHTML = html;
+        list.appendChild(card);
+
+        // Stagger fade in
+        (function (c) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { c.style.opacity = '1'; });
+          });
+        })(card);
+      }
+    }, 300);
+  }
+
+  function refineJobs(action) {
+    var filtered;
+    if (action === 'remote') {
+      filtered = ALL_JOBS.filter(function (j) { return j.remote; });
+    } else if (action === 'quick') {
+      filtered = ALL_JOBS.filter(function (j) { return j.quick; });
+    } else if (action === 'higher') {
+      filtered = ALL_JOBS.slice().sort(function (a, b) {
+        var sa = parseInt(a.salary.replace(/[^0-9]/g, ''));
+        var sb = parseInt(b.salary.replace(/[^0-9]/g, ''));
+        return sb - sa;
+      });
+    } else {
+      filtered = shuffle(ALL_JOBS);
+    }
+
+    renderJobs(filtered);
+
+    // Show banner
+    var banner = document.getElementById('refreshBanner');
+    banner.textContent = REFINE_LABELS[action] || 'Results updated';
+    banner.classList.add('vis');
+    setTimeout(function () { banner.classList.remove('vis'); }, 3000);
+
+    // Update meta
+    document.getElementById('resultsMeta').innerHTML =
+      'Showing 1\u20138 of ' + filtered.length + ' results for <strong>software engineer</strong> in <strong>Austin, TX</strong>';
+  }
+
+  // Initial render
+  renderJobs(shuffle(ALL_JOBS));
+
+  // Search button shuffles
+  document.getElementById('searchBtn').addEventListener('click', function () {
+    refineJobs('better');
+  });
+
+  // ═══════════════════════════════════════════════
+  // Listen for postMessage from exit recovery iframe
+  // ═══════════════════════════════════════════════
+
+  window.addEventListener('message', function (e) {
+    if (!e.data || !e.data.bmhi) return;
+
+    if (e.data.bmhi === 'refine') {
+      refineJobs(e.data.action);
+    }
+
+    if (e.data.bmhi === 'close') {
+      BMHI_DELIVERY.reset();
+      if (activeBtn) { activeBtn.classList.remove('active'); activeBtn = null; }
+    }
+  });
+
+  // ═══════════════════════════════════════════════
+  // Demo controls
+  // ═══════════════════════════════════════════════
+
   var activeBtn = null;
   var btns = {
     popup:    document.getElementById('btnPopup'),
@@ -247,6 +355,8 @@
   btns.embedded.addEventListener('click', function () { trigger('embedded'); });
   btns.email.addEventListener('click', function () { trigger('email'); });
   btns.exit.addEventListener('click', function () { trigger('exit'); });
+
+})();
 </script>
 </body>
 </html>

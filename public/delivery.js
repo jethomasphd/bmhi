@@ -202,6 +202,16 @@
     document.body.appendChild(overlay);
     _activeOverlay = overlay;
     requestAnimationFrame(function () { overlay.style.opacity = '1'; });
+
+    // Listen for close message from exit.html iframe
+    function onClose(e) {
+      if (e.data && e.data.bmhi === 'close') {
+        window.removeEventListener('message', onClose);
+        overlay.style.opacity = '0';
+        setTimeout(function () { overlay.remove(); _activeOverlay = null; }, 600);
+      }
+    }
+    window.addEventListener('message', onClose);
   }
 
   // ─── Export ─────────────────────────────────────────────
