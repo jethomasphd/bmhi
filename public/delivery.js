@@ -48,10 +48,19 @@
       'background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:22px;' +
       'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
       'backdrop-filter:blur(8px);transition:all 0.3s;';
-    dismiss.addEventListener('click', function () {
+    function dismissOverlay() {
       overlay.style.opacity = '0';
       setTimeout(function () { overlay.remove(); _activeOverlay = null; }, 800);
-    });
+      window.removeEventListener('message', onPopupMsg);
+    }
+
+    dismiss.addEventListener('click', dismissOverlay);
+
+    // Listen for "done" from embedded BMHI iframe
+    function onPopupMsg(e) {
+      if (e.data && e.data.bmhi === 'close') dismissOverlay();
+    }
+    window.addEventListener('message', onPopupMsg);
 
     overlay.appendChild(frame);
     overlay.appendChild(dismiss);
