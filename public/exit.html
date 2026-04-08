@@ -277,14 +277,17 @@ html, body {
     setTimeout(function () { document.getElementById(id).classList.add('active'); }, 200);
   }
 
+  // ─── Notify parent frame of recovery actions ────
+  function notifyParent(action) {
+    try { window.parent.postMessage({ bmhi: 'refine', action: action }, '*'); } catch (e) {}
+  }
+
   // ─── Screen 1: Recovery ─────────────────────────
-  // Job refinement buttons → redirect to search with params
   var recoveryBtns = document.querySelectorAll('.recovery-btn');
   for (var i = 0; i < recoveryBtns.length; i++) {
     recoveryBtns[i].addEventListener('click', function () {
       var action = this.getAttribute('data-action');
-      // In production: redirect to search with refinement params
-      // e.g., window.location.href = '/search?refine=' + action;
+      notifyParent(action);
       goTo('screenReentry');
     });
   }
@@ -295,10 +298,8 @@ html, body {
   });
 
   document.getElementById('leaveBtn').addEventListener('click', function () {
-    // In production: allow exit, possibly log
+    try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
     window.close();
-    // Fallback if window.close doesn't work (most browsers block it)
-    document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;font-family:Inter,sans-serif;color:#6b7080;background:#111318;"><p>You can close this tab.</p></div>';
   });
 
   // ─── Screen 2: Breathing ────────────────────────
@@ -476,9 +477,10 @@ html, body {
   var reentryBtns = document.querySelectorAll('.reentry-btn');
   for (var r = 0; r < reentryBtns.length; r++) {
     reentryBtns[r].addEventListener('click', function () {
-      // In production: redirect to refined search
-      // window.location.href = '/search?action=' + this.getAttribute('data-action');
-      document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;font-family:Inter,sans-serif;color:#4a90d9;background:#111318;font-size:14px;"><p>Redirecting to job search...</p></div>';
+      var action = this.getAttribute('data-action');
+      notifyParent(action);
+      // Close the overlay (tell parent to dismiss)
+      try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
     });
   }
 
@@ -488,8 +490,8 @@ html, body {
   });
 
   document.getElementById('exitBtn').addEventListener('click', function () {
+    try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
     window.close();
-    document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;font-family:Inter,sans-serif;color:#6b7080;background:#111318;"><p>You can close this tab.</p></div>';
   });
 
 })();
