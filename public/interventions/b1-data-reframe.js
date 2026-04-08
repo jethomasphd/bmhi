@@ -27,7 +27,7 @@
 
   window.BMHI_INTERVENTIONS['B1'] = {
     id: 'B1',
-    name: 'The Data Reframe',
+    name: 'Reality Check',
     tier: 'B',
     mechanism: 'Normalization / external attribution of failure',
     evidence: 'T3',

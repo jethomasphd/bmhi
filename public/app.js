@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
 // BMHI — Brief Mental Health Intervention Suite
-// Core Engine: session, measurement, router, landing, state machine
+// Core Engine: session, measurement, router, state machine
 //
 // "The person on the other side of the screen searched for a job
 //  and found nothing. They are not a bounce event."
@@ -19,7 +19,7 @@
 
   // ─── State ─────────────────────────────────────────────────
   var state = {
-    stage: 'landing',      // landing | intervention | post
+    stage: 'suite',        // suite | intervention | post
     demoMode: false,
     activeIntervention: null,
     session: null
@@ -259,12 +259,12 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // SUITE NAVIGATOR (demo mode)
+  // SUITE NAVIGATOR
   // ═══════════════════════════════════════════════════════════
 
   var TIER_NAMES = {
-    A: 'Somatic', B: 'Cognitive', C: 'Behavioral',
-    D: 'Emotional', E: 'Flow', F: 'Screening'
+    A: 'Body', B: 'Mind', C: 'Action',
+    D: 'Heart', E: 'Play', F: 'Support'
   };
 
   function buildSuiteNav() {
@@ -305,13 +305,13 @@
           btn.className = 'suite-tab';
           btn.setAttribute('data-tier', tierKey.toLowerCase());
           btn.setAttribute('data-id', interventionId);
-          btn.textContent = interventionId;
-          btn.setAttribute('aria-label', intervention.name);
+          btn.textContent = intervention.name;
+          btn.setAttribute('aria-label', intervention.name + ' — ' + intervention.mechanism);
 
-          // Tooltip
+          // Tooltip (shows mechanism on hover for experts)
           var tip = document.createElement('div');
           tip.className = 'tab-tip';
-          tip.innerHTML = '<strong>' + interventionId + ' \u00B7 ' + intervention.name + '</strong><br>' +
+          tip.innerHTML = '<strong>' + intervention.name + '</strong><br>' +
             intervention.mechanism + '<br>' +
             intervention.evidence + ' \u00B7 ' + intervention.time;
           btn.appendChild(tip);
@@ -334,12 +334,12 @@
     for (var k = 0; k < all.length; k++) {
       all[k].classList.toggle('active', all[k].getAttribute('data-id') === interventionId);
     }
-    // Update info bar
-    var info = $('suiteInfo');
-    if (info) {
+    // Update info bar text
+    var infoText = $('suiteInfoText');
+    if (infoText) {
       var intervention = window.BMHI_INTERVENTIONS[interventionId];
-      info.textContent = intervention
-        ? interventionId + ' \u00B7 ' + intervention.name
+      infoText.textContent = intervention
+        ? TIER_NAMES[intervention.tier] + ' \u00B7 ' + intervention.name
         : '';
     }
   }
@@ -370,13 +370,6 @@
     setTimeout(function () {
       $(stageId).classList.add('active');
     }, 200);
-  }
-
-  function showLanding() {
-    state.stage = 'landing';
-    transitionTo('stageLanding');
-    $('dismissBtn').classList.remove('vis');
-    $('audioToggle').classList.remove('vis');
   }
 
   function showIntervention() {
@@ -475,7 +468,7 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // LANDING — cinematic slow reveal
+  // PRE-LAYER (F1 check-in before main intervention)
   // ═══════════════════════════════════════════════════════════
 
   // Launch F1 pre-layer, then the actual intervention after it completes
@@ -525,44 +518,6 @@
     showIntervention();
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // LANDING — cinematic slow reveal
-  // ═══════════════════════════════════════════════════════════
-
-  var landingTimers = [];
-
-  function revealLanding() {
-    // Clear any previous landing timers
-    for (var j = 0; j < landingTimers.length; j++) clearTimeout(landingTimers[j]);
-    landingTimers = [];
-
-    var timings = [
-      { el: 'enso', cls: 'draw', delay: 800 },
-      { el: 'rv1', cls: 'vis', delay: 3000 },
-      { el: 'rv2', cls: 'vis', delay: 5000 },
-      { el: 'rv3', cls: 'vis', delay: 6500 },
-      { el: 'rv4', cls: 'vis', delay: 8500 },
-      { el: 'rv5', cls: 'vis', delay: 10000 },
-      { el: 'beginBtn', cls: 'vis', delay: 12000 },
-      { el: 'demoLink', cls: 'vis', delay: 13000 },
-      { el: 'aboutLink', cls: 'vis', delay: 13500 }
-    ];
-
-    var reducedMotion = window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    for (var i = 0; i < timings.length; i++) {
-      (function (t) {
-        var delay = reducedMotion ? 0 : t.delay;
-        landingTimers.push(setTimeout(function () {
-          // Only apply if we're still on the landing stage
-          if (state.stage !== 'landing') return;
-          var el = $(t.el);
-          if (el) el.classList.add(t.cls);
-        }, delay));
-      })(timings[i]);
-    }
-  }
 
   // ═══════════════════════════════════════════════════════════
   // DISMISS — always available (§4.3)
@@ -695,14 +650,12 @@
     $('dismissBtn').addEventListener('click', handleDismiss);
     $('audioToggle').addEventListener('click', toggleAudio);
 
-    // Boot directly into the full suite (no landing page)
-    $('stageLanding').classList.remove('active');
+    // Boot directly into the full suite
     showSuiteNav();
     var available = getAvailableInterventions();
     if (available.length > 0) {
       launchIntervention(available[0]);
-      var firstTab = $('suiteTiers').querySelector('.suite-tab');
-      if (firstTab) firstTab.classList.add('active');
+      updateActiveTab(available[0]);
     }
   }
 

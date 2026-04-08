@@ -59,7 +59,7 @@
 
   window.BMHI_INTERVENTIONS['E6'] = {
     id: 'E6',
-    name: 'Mindful Garden',
+    name: 'Garden',
     tier: 'E',
     mechanism: 'Nurturing activation; attention restoration (Kaplan)',
     evidence: 'T2',

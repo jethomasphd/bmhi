@@ -60,7 +60,7 @@
 
   window.BMHI_INTERVENTIONS['E5'] = {
     id: 'E5',
-    name: 'Rhythmic Breaker',
+    name: 'Breaker',
     tier: 'E',
     mechanism: 'Rhythmic tracking; parasympathetic activation',
     evidence: 'T2',

@@ -174,7 +174,7 @@
 
   window.BMHI_INTERVENTIONS['A3'] = {
     id: 'A3',
-    name: 'Two-Minute Reset',
+    name: 'Quiet Reset',
     tier: 'A',
     mechanism: 'Parasympathetic + positive effort reattribution',
     evidence: 'T2',

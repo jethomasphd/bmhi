@@ -59,7 +59,7 @@
 
   window.BMHI_INTERVENTIONS['E4'] = {
     id: 'E4',
-    name: 'Meditative Serpent',
+    name: 'Serpent',
     tier: 'E',
     mechanism: 'Sustained attention; flow state (Csikszentmihalyi)',
     evidence: 'T1',

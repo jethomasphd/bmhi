@@ -34,7 +34,7 @@
 
   window.BMHI_INTERVENTIONS['F2'] = {
     id: 'F2',
-    name: 'Population Mirror',
+    name: "You're Not Alone",
     tier: 'F',
     mechanism: 'Social proof; loneliness buffering',
     evidence: 'T3',
