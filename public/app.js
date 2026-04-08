@@ -227,6 +227,14 @@
 
   function showPost() {
     state.stage = 'post';
+
+    if (embeddedMode) {
+      // Embedded: show "try another" button, no suite nav
+      showTryAnother();
+      return;
+    }
+
+    // Standalone: show suite nav
     showSuiteNav();
 
     if (!state.firstCompleted) {
@@ -240,8 +248,13 @@
   }
 
   function returnToSuite() {
-    showSuiteNav();
     var id = selectRandom();
+    if (embeddedMode) {
+      // Embedded: just launch another, no suite nav
+      if (id) launchIntervention(id);
+      return;
+    }
+    showSuiteNav();
     if (id) {
       launchIntervention(id);
       updateActiveTab(id);
@@ -364,26 +377,72 @@
   }
 
   // ═══════════════════════════════════════════════════════════
+  // EMBEDDED MODE — intervention only, no suite nav, "try another"
+  // ═══════════════════════════════════════════════════════════
+
+  var embeddedMode = false;
+
+  function showTryAnother() {
+    var existing = document.getElementById('tryAnother');
+    if (existing) existing.remove();
+
+    var wrap = document.createElement('div');
+    wrap.id = 'tryAnother';
+    wrap.style.cssText =
+      'position:fixed;bottom:12px;left:0;right:0;text-align:center;z-index:150;' +
+      'opacity:0;transition:opacity 0.8s ease;';
+
+    var btn = document.createElement('button');
+    btn.style.cssText =
+      'font-family:var(--serif);font-size:14px;font-weight:400;font-style:italic;' +
+      'color:var(--amber);background:rgba(196,146,42,0.06);' +
+      'border:1px solid rgba(196,146,42,0.25);border-radius:20px;' +
+      'padding:10px 24px;cursor:pointer;transition:all 0.3s;' +
+      'backdrop-filter:blur(8px);';
+    btn.textContent = 'try another';
+    btn.addEventListener('click', function () {
+      wrap.style.opacity = '0';
+      setTimeout(function () {
+        wrap.remove();
+        var id = selectRandom();
+        if (id) launchIntervention(id);
+      }, 300);
+    });
+
+    wrap.appendChild(btn);
+    document.body.appendChild(wrap);
+    setTimeout(function () { wrap.style.opacity = '1'; }, 400);
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // INIT — welcome every visit, random selection, zero storage
   // ═══════════════════════════════════════════════════════════
 
   function init() {
     log('init — zero storage mode');
 
+    embeddedMode = window.location.search.indexOf('mode=embedded') !== -1;
+
     $('dismissBtn').addEventListener('click', handleDismiss);
     $('audioToggle').addEventListener('click', toggleAudio);
 
-    // Pick a random intervention
     var selectedId = selectRandom();
     var selectedIntervention = selectedId ? window.BMHI_INTERVENTIONS[selectedId] : null;
 
-    // Set welcome button text based on tier
+    // ─── EMBEDDED MODE: intervention only, no welcome, no suite nav ──
+    if (embeddedMode) {
+      log('Embedded mode');
+      $('stageWelcome').classList.remove('active');
+      if (selectedId) launchIntervention(selectedId);
+      return;
+    }
+
+    // ─── STANDALONE MODE: welcome screen → intervention → suite ──
     var btn = $('welcomeBtn');
     if (selectedIntervention && TIER_CTA[selectedIntervention.tier]) {
       btn.textContent = TIER_CTA[selectedIntervention.tier];
     }
 
-    // Pre-build suite nav (hidden)
     buildSuiteNav();
     state.suiteRevealed = true;
 
