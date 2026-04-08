@@ -32,11 +32,11 @@
   var HOLD   = 1000;    // 1 second — brief, non-stressful
   var EXHALE = 4000;    // 4 seconds — longer out-breath drives vagal tone
   var CYCLE  = INHALE + HOLD + EXHALE; // 8 seconds per cycle
-  var TOTAL_CYCLES = 5; // 5 cycles × 8s = 40 seconds total
+  var TOTAL_CYCLES = 3; // 3 cycles × 8s = 24 seconds total
   var CLOSING_TEXT = 'You searched today. That counts.';
 
   var PHASE_LABELS = ['breathe in', 'hold gently', 'breathe out slowly'];
-  var CYCLE_WORDS = ['good', 'steady', 'that\u2019s it', 'keep going', 'one more'];
+  var CYCLE_WORDS = ['good', 'steady', 'one more'];
 
   var timers = [];
   var running = false;
@@ -55,7 +55,7 @@
     tier: 'A',
     mechanism: 'Cyclic physiological sighing (Balban et al. 2023)',
     evidence: 'T1',
-    time: '40s',
+    time: '24s',
 
     render: function (container, helpers) {
       running = true;
