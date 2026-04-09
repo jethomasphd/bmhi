@@ -313,6 +313,17 @@
     }
 
     if (audioPlaying) stopAudio();
+
+    // Remove any floating buttons
+    var tryAnother = document.getElementById('tryAnother');
+    if (tryAnother) tryAnother.remove();
+
+    if (embeddedMode) {
+      // Tell parent to close the overlay — user is done
+      try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
+      return;
+    }
+
     returnToSuite();
   }
 
@@ -389,18 +400,34 @@
     var wrap = document.createElement('div');
     wrap.id = 'tryAnother';
     wrap.style.cssText =
-      'position:fixed;bottom:12px;left:0;right:0;text-align:center;z-index:150;' +
-      'opacity:0;transition:opacity 0.8s ease;';
+      'position:fixed;bottom:16px;left:0;right:0;display:flex;gap:10px;' +
+      'justify-content:center;z-index:150;opacity:0;transition:opacity 0.8s ease;';
 
-    var btn = document.createElement('button');
-    btn.style.cssText =
-      'font-family:var(--serif);font-size:14px;font-weight:400;font-style:italic;' +
-      'color:var(--amber);background:rgba(196,146,42,0.06);' +
-      'border:1px solid rgba(196,146,42,0.25);border-radius:20px;' +
-      'padding:10px 24px;cursor:pointer;transition:all 0.3s;' +
+    // Primary: close / return to site
+    var doneBtn = document.createElement('button');
+    doneBtn.style.cssText =
+      'font-family:var(--sans);font-size:12px;font-weight:500;' +
+      'color:var(--text2);background:rgba(240,236,228,0.06);' +
+      'border:1px solid rgba(240,236,228,0.12);border-radius:20px;' +
+      'padding:10px 20px;cursor:pointer;transition:all 0.3s;' +
       'backdrop-filter:blur(8px);';
-    btn.textContent = 'try another';
-    btn.addEventListener('click', function () {
+    doneBtn.textContent = 'done';
+    doneBtn.addEventListener('click', function () {
+      // Tell parent frame to close the overlay
+      try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
+      wrap.style.opacity = '0';
+    });
+
+    // Secondary: try another intervention
+    var anotherBtn = document.createElement('button');
+    anotherBtn.style.cssText =
+      'font-family:var(--serif);font-size:13px;font-weight:400;font-style:italic;' +
+      'color:var(--amber);background:rgba(196,146,42,0.06);' +
+      'border:1px solid rgba(196,146,42,0.2);border-radius:20px;' +
+      'padding:10px 20px;cursor:pointer;transition:all 0.3s;' +
+      'backdrop-filter:blur(8px);';
+    anotherBtn.textContent = 'try another';
+    anotherBtn.addEventListener('click', function () {
       wrap.style.opacity = '0';
       setTimeout(function () {
         wrap.remove();
@@ -409,7 +436,8 @@
       }, 300);
     });
 
-    wrap.appendChild(btn);
+    wrap.appendChild(doneBtn);
+    wrap.appendChild(anotherBtn);
     document.body.appendChild(wrap);
     setTimeout(function () { wrap.style.opacity = '1'; }, 400);
   }
