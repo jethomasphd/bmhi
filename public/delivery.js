@@ -97,7 +97,7 @@
 
     var text = document.createElement('span');
     text.style.cssText = 'font-size:14px;color:#d4cfc5;font-weight:300;';
-    text.textContent = 'Can we send you something helpful after your search?';
+    text.textContent = 'Not seeing what you’re looking for? We’ll email you better matches.';
     banner.appendChild(text);
 
     var emailInput = document.createElement('input');
@@ -170,67 +170,13 @@
     frame.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  // ═══════════════════════════════════════════════════════
-  // EXIT RECOVERY — CEO's 4-screen conversion flow
-  // Recover intent first. Monetize second. Entertain last.
-  // ═══════════════════════════════════════════════════════
-
-  var EXIT_URL = 'exit.html';
-
-  function showExitRecovery() {
-    reset();
-
-    var overlay = document.createElement('div');
-    overlay.style.cssText =
-      'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);' +
-      'display:flex;align-items:center;justify-content:center;' +
-      'opacity:0;transition:opacity 0.6s ease;';
-
-    var frame = document.createElement('iframe');
-    frame.src = EXIT_URL;
-    frame.style.cssText =
-      'width:100%;max-width:min(480px,92vw);height:85vh;max-height:640px;' +
-      'border:none;border-radius:12px;background:#111318;' +
-      'box-shadow:0 24px 80px rgba(0,0,0,0.6);';
-
-    var dismiss = document.createElement('button');
-    dismiss.innerHTML = '&times;';
-    dismiss.style.cssText =
-      'position:absolute;top:12px;right:12px;z-index:100000;' +
-      'width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);' +
-      'background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:22px;' +
-      'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-      'backdrop-filter:blur(8px);transition:all 0.3s;';
-    dismiss.addEventListener('click', function () {
-      overlay.style.opacity = '0';
-      setTimeout(function () { overlay.remove(); _activeOverlay = null; }, 600);
-    });
-
-    overlay.appendChild(frame);
-    overlay.appendChild(dismiss);
-    document.body.appendChild(overlay);
-    _activeOverlay = overlay;
-    requestAnimationFrame(function () { overlay.style.opacity = '1'; });
-
-    // Listen for close message from exit.html iframe
-    function onClose(e) {
-      if (e.data && e.data.bmhi === 'close') {
-        window.removeEventListener('message', onClose);
-        overlay.style.opacity = '0';
-        setTimeout(function () { overlay.remove(); _activeOverlay = null; }, 600);
-      }
-    }
-    window.addEventListener('message', onClose);
-  }
-
   // ─── Export ─────────────────────────────────────────────
   window.BMHI_DELIVERY = {
     reset: reset,
     showPopup: showPopup,
     showPopunder: showPopunder,
     showEmailOptIn: showEmailOptIn,
-    embedBMHI: embedBMHI,
-    showExitRecovery: showExitRecovery
+    embedBMHI: embedBMHI
   };
 
 })();

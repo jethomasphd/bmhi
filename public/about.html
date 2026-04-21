@@ -34,6 +34,27 @@ body::before {
 
 .wrap { max-width: 620px; margin: 0 auto; padding: 60px 28px 120px; position: relative; z-index: 1; }
 
+/* Jobs CTA — persistent, matches index.html */
+.jobs-cta {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%); z-index: 200;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.3px; color: var(--dim);
+  background: rgba(26,22,18,0.75); backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 8px 16px;
+  text-decoration: none; cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.jobs-cta:hover {
+  color: var(--amber);
+  border-color: rgba(196,146,42,0.35);
+  background: rgba(196,146,42,0.06);
+}
+.jobs-cta:active { transform: translateX(-50%) scale(0.97); }
+
 /* Back link */
 .back {
   display: inline-flex; align-items: center; gap: 8px;
@@ -167,6 +188,9 @@ p em { color: var(--text2); }
 </style>
 </head>
 <body>
+<button class="jobs-cta" id="jobsCta" type="button" aria-label="Back to job search">
+  show me better matches &rarr;
+</button>
 <div class="wrap">
 
 <a href="index.html" class="back">&larr; Back to interventions</a>
@@ -728,5 +752,20 @@ p em { color: var(--text2); }
 </p>
 
 </div>
+<script>
+(function () {
+  var cta = document.getElementById('jobsCta');
+  if (!cta) return;
+  cta.addEventListener('click', function () {
+    var url = 'https://thesejobs.net/jobs';
+    try {
+      if (window.top && window.top !== window.self) {
+        window.top.location.href = url; return;
+      }
+    } catch (e) {}
+    window.location.href = url;
+  });
+})();
+</script>
 </body>
 </html>

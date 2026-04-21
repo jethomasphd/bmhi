@@ -47,7 +47,7 @@
   }
   .search-btn:hover { background: #e07d08; }
 
-  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 120px; }
+  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 140px; }
   .results-meta {
     font-size: 13px; color: #888; margin-bottom: 16px;
     display: flex; justify-content: space-between; align-items: center;
@@ -72,15 +72,6 @@
   }
   .job-card.refreshing { opacity: 0; transform: translateY(4px); }
 
-  /* Refresh banner */
-  .refresh-banner {
-    text-align: center; padding: 12px; margin-bottom: 12px;
-    background: rgba(74,144,217,0.06); border: 1px solid rgba(74,144,217,0.15);
-    border-radius: 8px; font-size: 13px; color: #4a90d9; font-weight: 500;
-    opacity: 0; transition: opacity 0.5s; display: none;
-  }
-  .refresh-banner.vis { opacity: 1; display: block; }
-
   #embedTarget { min-height: 0; }
 
   .pagination {
@@ -99,7 +90,7 @@
   .controls {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 99998;
     background: rgba(10,10,20,0.95); backdrop-filter: blur(12px);
-    padding: 12px 20px;
+    padding: 14px 20px;
     display: flex; flex-wrap: wrap; gap: 8px;
     align-items: center; justify-content: center;
     border-top: 1px solid rgba(255,255,255,0.08);
@@ -110,7 +101,7 @@
     margin-bottom: 2px;
   }
   .ctrl-btn {
-    padding: 7px 16px; font-size: 11px; font-weight: 500;
+    padding: 8px 18px; font-size: 11px; font-weight: 500;
     border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
     background: transparent; color: #aaa; cursor: pointer;
     transition: all 0.25s; font-family: inherit; letter-spacing: 0.3px;
@@ -125,9 +116,14 @@
   }
   .controls .info {
     font-size: 10px; color: #555; width: 100%; text-align: center;
-    margin-top: 2px;
+    margin-top: 4px; line-height: 1.5;
   }
-  .controls .info strong { color: #c4922a; }
+  .controls .info strong { color: #c4922a; font-weight: 500; }
+  .controls .toggle {
+    font-size: 10px; color: #666; display: inline-flex; align-items: center;
+    gap: 6px; cursor: pointer; user-select: none; margin-left: 8px;
+  }
+  .controls .toggle input { accent-color: #c4922a; }
 
   @media (max-width: 600px) {
     .header-nav { display: none; }
@@ -163,8 +159,6 @@
     Showing 1&ndash;8 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong>
   </div>
 
-  <div class="refresh-banner" id="refreshBanner"></div>
-
   <div id="jobList"></div>
 
   <div id="embedTarget"></div>
@@ -181,13 +175,16 @@
 
 <!-- Demo controls -->
 <div class="controls">
-  <div class="label">BMHI Delivery Mechanism Demo</div>
+  <div class="label">BMHI Delivery Mechanisms &middot; Demo</div>
   <button class="ctrl-btn" id="btnPopup">Popup</button>
   <button class="ctrl-btn" id="btnPopunder">Pop-Under</button>
   <button class="ctrl-btn" id="btnEmbedded">Embedded</button>
   <button class="ctrl-btn" id="btnEmail">Email CTA</button>
-  <button class="ctrl-btn" id="btnExit" style="border-color:rgba(74,144,217,0.3);color:#4a90d9;">Exit Recovery</button>
-  <div class="info">No cookies &middot; No tracking &middot; <strong>Exit Recovery</strong> = CEO conversion flow (shuffles jobs)</div>
+  <label class="toggle"><input type="checkbox" id="exitIntent"> auto-trigger Popup on exit intent</label>
+  <div class="info">
+    Every BMHI session ends with <strong>Show me better matches &rarr;</strong> which refreshes the user's job feed.
+    No cookies &middot; no tracking.
+  </div>
 </div>
 
 <script src="delivery.js"></script>
@@ -196,35 +193,28 @@
   'use strict';
 
   // ═══════════════════════════════════════════════
-  // JOB DATA — shuffled and filtered on demand
+  // JOB DATA — static list, rendered on load.
+  // "Find Jobs" shuffles for a fresh-results feel.
   // ═══════════════════════════════════════════════
 
   var ALL_JOBS = [
-    { title: 'Senior Platform Engineer', company: 'Datadog', location: 'Austin, TX \u00B7 Hybrid', salary: '$155,000 \u2013 $195,000/yr', posted: 'Posted 2 days ago', badge: '', remote: false, quick: false },
-    { title: 'Software Engineer II \u2014 Backend', company: 'Indeed', location: 'Austin, TX \u00B7 Remote eligible', salary: '$120,000 \u2013 $160,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: false },
-    { title: 'Full Stack Developer', company: 'RetailMeNot', location: 'Austin, TX', salary: '$105,000 \u2013 $140,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: true },
-    { title: 'Staff Software Engineer \u2014 Infrastructure', company: 'CrowdStrike', location: 'Austin, TX \u00B7 Hybrid', salary: '$170,000 \u2013 $220,000/yr', posted: 'Posted today', badge: 'New', remote: false, quick: false },
-    { title: 'Backend Engineer \u2014 Payments', company: 'Stripe', location: 'Austin, TX \u00B7 Remote', salary: '$140,000 \u2013 $185,000/yr', posted: 'Posted 3 days ago', badge: '', remote: true, quick: true },
-    { title: 'DevOps / SRE Engineer', company: 'HomeAway (Vrbo)', location: 'Austin, TX', salary: '$125,000 \u2013 $165,000/yr', posted: 'Posted 4 days ago', badge: '', remote: false, quick: false },
-    { title: 'Junior Software Developer', company: 'National Instruments', location: 'Austin, TX', salary: '$75,000 \u2013 $95,000/yr', posted: 'Posted 5 days ago', badge: '', remote: false, quick: true },
-    { title: 'React / TypeScript Engineer', company: 'Procore Technologies', location: 'Austin, TX \u00B7 Hybrid', salary: '$130,000 \u2013 $170,000/yr', posted: 'Posted 2 days ago', badge: '', remote: false, quick: false },
-    { title: 'Principal Engineer \u2014 ML Platform', company: 'Meta', location: 'Austin, TX \u00B7 Remote', salary: '$210,000 \u2013 $310,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: false },
-    { title: 'Cloud Infrastructure Engineer', company: 'Oracle', location: 'Austin, TX \u00B7 Hybrid', salary: '$135,000 \u2013 $180,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: true },
-    { title: 'Senior Frontend Engineer', company: 'Atlassian', location: 'Austin, TX \u00B7 Remote', salary: '$145,000 \u2013 $195,000/yr', posted: 'Posted today', badge: 'New', remote: true, quick: true },
-    { title: 'Software Engineer \u2014 Security', company: 'Crowdstrike', location: 'Austin, TX', salary: '$130,000 \u2013 $175,000/yr', posted: 'Posted 3 days ago', badge: '', remote: false, quick: false },
-    { title: 'Data Engineer', company: 'Indeed', location: 'Austin, TX \u00B7 Remote', salary: '$125,000 \u2013 $165,000/yr', posted: 'Posted 2 days ago', badge: '', remote: true, quick: true },
-    { title: 'Mobile Engineer (iOS)', company: 'Bumble', location: 'Austin, TX \u00B7 Hybrid', salary: '$140,000 \u2013 $180,000/yr', posted: 'Posted today', badge: 'New', remote: false, quick: false },
-    { title: 'Site Reliability Engineer', company: 'Tesla', location: 'Austin, TX', salary: '$150,000 \u2013 $200,000/yr', posted: 'Posted 1 day ago', badge: '', remote: false, quick: false },
-    { title: 'QA Automation Engineer', company: 'Dell Technologies', location: 'Austin, TX \u00B7 Remote', salary: '$95,000 \u2013 $130,000/yr', posted: 'Posted 4 days ago', badge: '', remote: true, quick: true }
+    { title: 'Senior Platform Engineer', company: 'Datadog', location: 'Austin, TX · Hybrid', salary: '$155,000 – $195,000/yr', posted: 'Posted 2 days ago', badge: '' },
+    { title: 'Software Engineer II — Backend', company: 'Indeed', location: 'Austin, TX · Remote eligible', salary: '$120,000 – $160,000/yr', posted: 'Posted today', badge: 'New' },
+    { title: 'Full Stack Developer', company: 'RetailMeNot', location: 'Austin, TX', salary: '$105,000 – $140,000/yr', posted: 'Posted 1 day ago', badge: '' },
+    { title: 'Staff Software Engineer — Infrastructure', company: 'CrowdStrike', location: 'Austin, TX · Hybrid', salary: '$170,000 – $220,000/yr', posted: 'Posted today', badge: 'New' },
+    { title: 'Backend Engineer — Payments', company: 'Stripe', location: 'Austin, TX · Remote', salary: '$140,000 – $185,000/yr', posted: 'Posted 3 days ago', badge: '' },
+    { title: 'DevOps / SRE Engineer', company: 'HomeAway (Vrbo)', location: 'Austin, TX', salary: '$125,000 – $165,000/yr', posted: 'Posted 4 days ago', badge: '' },
+    { title: 'Junior Software Developer', company: 'National Instruments', location: 'Austin, TX', salary: '$75,000 – $95,000/yr', posted: 'Posted 5 days ago', badge: '' },
+    { title: 'React / TypeScript Engineer', company: 'Procore Technologies', location: 'Austin, TX · Hybrid', salary: '$130,000 – $170,000/yr', posted: 'Posted 2 days ago', badge: '' },
+    { title: 'Principal Engineer — ML Platform', company: 'Meta', location: 'Austin, TX · Remote', salary: '$210,000 – $310,000/yr', posted: 'Posted today', badge: 'New' },
+    { title: 'Cloud Infrastructure Engineer', company: 'Oracle', location: 'Austin, TX · Hybrid', salary: '$135,000 – $180,000/yr', posted: 'Posted 1 day ago', badge: '' },
+    { title: 'Senior Frontend Engineer', company: 'Atlassian', location: 'Austin, TX · Remote', salary: '$145,000 – $195,000/yr', posted: 'Posted today', badge: 'New' },
+    { title: 'Software Engineer — Security', company: 'Crowdstrike', location: 'Austin, TX', salary: '$130,000 – $175,000/yr', posted: 'Posted 3 days ago', badge: '' },
+    { title: 'Data Engineer', company: 'Indeed', location: 'Austin, TX · Remote', salary: '$125,000 – $165,000/yr', posted: 'Posted 2 days ago', badge: '' },
+    { title: 'Mobile Engineer (iOS)', company: 'Bumble', location: 'Austin, TX · Hybrid', salary: '$140,000 – $180,000/yr', posted: 'Posted today', badge: 'New' },
+    { title: 'Site Reliability Engineer', company: 'Tesla', location: 'Austin, TX', salary: '$150,000 – $200,000/yr', posted: 'Posted 1 day ago', badge: '' },
+    { title: 'QA Automation Engineer', company: 'Dell Technologies', location: 'Austin, TX · Remote', salary: '$95,000 – $130,000/yr', posted: 'Posted 4 days ago', badge: '' }
   ];
-
-  var REFINE_LABELS = {
-    better: 'Showing improved matches',
-    higher: 'Sorted by highest salary',
-    remote: 'Showing remote-only positions',
-    quick: 'Showing quick-apply positions',
-    find: 'Refreshed results for you'
-  };
 
   function shuffle(arr) {
     var a = arr.slice();
@@ -237,7 +227,6 @@
 
   function renderJobs(jobs) {
     var list = document.getElementById('jobList');
-    // Fade out existing
     var existing = list.querySelectorAll('.job-card');
     for (var e = 0; e < existing.length; e++) existing[e].classList.add('refreshing');
 
@@ -260,7 +249,6 @@
         card.innerHTML = html;
         list.appendChild(card);
 
-        // Stagger fade in
         (function (c) {
           requestAnimationFrame(function () {
             requestAnimationFrame(function () { c.style.opacity = '1'; });
@@ -270,58 +258,20 @@
     }, 300);
   }
 
-  function refineJobs(action) {
-    var filtered;
-    if (action === 'remote') {
-      filtered = ALL_JOBS.filter(function (j) { return j.remote; });
-    } else if (action === 'quick') {
-      filtered = ALL_JOBS.filter(function (j) { return j.quick; });
-    } else if (action === 'higher') {
-      filtered = ALL_JOBS.slice().sort(function (a, b) {
-        var sa = parseInt(a.salary.replace(/[^0-9]/g, ''));
-        var sb = parseInt(b.salary.replace(/[^0-9]/g, ''));
-        return sb - sa;
-      });
-    } else {
-      filtered = shuffle(ALL_JOBS);
-    }
-
-    renderJobs(filtered);
-
-    // Show banner
-    var banner = document.getElementById('refreshBanner');
-    banner.textContent = REFINE_LABELS[action] || 'Results updated';
-    banner.classList.add('vis');
-    setTimeout(function () { banner.classList.remove('vis'); }, 3000);
-
-    // Update meta
-    document.getElementById('resultsMeta').innerHTML =
-      'Showing 1\u20138 of ' + filtered.length + ' results for <strong>software engineer</strong> in <strong>Austin, TX</strong>';
-  }
-
-  // Initial render
   renderJobs(shuffle(ALL_JOBS));
 
-  // Search button shuffles
   document.getElementById('searchBtn').addEventListener('click', function () {
-    refineJobs('better');
+    renderJobs(shuffle(ALL_JOBS));
   });
 
   // ═══════════════════════════════════════════════
-  // Listen for postMessage from exit recovery iframe
+  // Parent-frame close signal from BMHI iframe
   // ═══════════════════════════════════════════════
 
   window.addEventListener('message', function (e) {
-    if (!e.data || !e.data.bmhi) return;
-
-    if (e.data.bmhi === 'refine') {
-      refineJobs(e.data.action);
-    }
-
-    if (e.data.bmhi === 'close') {
-      BMHI_DELIVERY.reset();
-      if (activeBtn) { activeBtn.classList.remove('active'); activeBtn = null; }
-    }
+    if (!e.data || e.data.bmhi !== 'close') return;
+    BMHI_DELIVERY.reset();
+    if (activeBtn) { activeBtn.classList.remove('active'); activeBtn = null; }
   });
 
   // ═══════════════════════════════════════════════
@@ -333,8 +283,7 @@
     popup:    document.getElementById('btnPopup'),
     popunder: document.getElementById('btnPopunder'),
     embedded: document.getElementById('btnEmbedded'),
-    email:    document.getElementById('btnEmail'),
-    exit:     document.getElementById('btnExit')
+    email:    document.getElementById('btnEmail')
   };
 
   function trigger(type) {
@@ -347,14 +296,35 @@
     if (type === 'popunder') BMHI_DELIVERY.showPopunder();
     if (type === 'embedded') BMHI_DELIVERY.embedBMHI('#embedTarget');
     if (type === 'email')    BMHI_DELIVERY.showEmailOptIn();
-    if (type === 'exit')     BMHI_DELIVERY.showExitRecovery();
   }
 
   btns.popup.addEventListener('click', function () { trigger('popup'); });
   btns.popunder.addEventListener('click', function () { trigger('popunder'); });
   btns.embedded.addEventListener('click', function () { trigger('embedded'); });
   btns.email.addEventListener('click', function () { trigger('email'); });
-  btns.exit.addEventListener('click', function () { trigger('exit'); });
+
+  // ═══════════════════════════════════════════════
+  // Exit-intent: arm once, fires the Popup.
+  // This is the "exit recovery" concept — not a
+  // separate flow, just a trigger for the popup.
+  // ═══════════════════════════════════════════════
+
+  var exitArmed = false;
+  var exitFired = false;
+
+  function onExitIntent(e) {
+    if (!exitArmed || exitFired) return;
+    if (activeBtn) return;
+    if (e.clientY > 0) return;
+    exitFired = true;
+    trigger('popup');
+  }
+
+  document.getElementById('exitIntent').addEventListener('change', function () {
+    exitArmed = this.checked;
+    exitFired = false;
+  });
+  document.addEventListener('mouseout', onExitIntent);
 
 })();
 </script>

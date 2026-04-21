@@ -593,6 +593,45 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 .post-link:hover { background: rgba(196,146,42,0.08); border-color: rgba(196,146,42,0.5); }
 
+/* ─── JOBS CTA — persistent, escalates at post ─── */
+.jobs-cta {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.3px; color: var(--dim);
+  background: rgba(26,22,18,0.6); backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 8px 16px;
+  text-decoration: none; cursor: pointer;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease, color 0.3s, border-color 0.3s, background 0.3s, transform 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+.jobs-cta.vis { opacity: 1; pointer-events: auto; }
+.jobs-cta:hover {
+  color: var(--amber);
+  border-color: rgba(196,146,42,0.35);
+  background: rgba(196,146,42,0.06);
+}
+.jobs-cta:active { transform: translateX(-50%) scale(0.97); }
+.jobs-cta.loud {
+  color: var(--amber);
+  border-color: rgba(196,146,42,0.35);
+  background: rgba(196,146,42,0.08);
+  font-size: 13px; padding: 10px 20px;
+}
+.jobs-cta.loud:hover {
+  color: var(--text);
+  background: rgba(196,146,42,0.14);
+  border-color: rgba(196,146,42,0.55);
+}
+@media (max-width: 480px) {
+  .jobs-cta { font-size: 10px; padding: 7px 12px; }
+  .jobs-cta.loud { font-size: 12px; padding: 9px 16px; }
+}
+
 /* ─── AMBIENT AUDIO CONTROLS ─── */
 .audio-toggle {
   position: fixed; top: 16px; left: 16px; z-index: 200;
@@ -671,6 +710,11 @@ body::before {
 
   <!-- DISMISS — always visible per §4.3 -->
   <button class="dismiss" id="dismissBtn" aria-label="Close">&times;</button>
+
+  <!-- JOBS CTA — persistent; refreshes feed with a generic query -->
+  <button class="jobs-cta" id="jobsCta" type="button" aria-label="Back to job search">
+    <span id="jobsCtaLabel">show me better matches &rarr;</span>
+  </button>
 
   <!-- AUDIO TOGGLE — §4.8: never autoplay -->
   <button class="audio-toggle" id="audioToggle" aria-label="Toggle ambient sound">
