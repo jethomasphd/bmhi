@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CLOSING_TEXT = 'That person exists. That\u2019s not nothing.';
+  var CLOSING_TEXT = 'Someone\u2019s in your corner. Carry that into the next search.';
   var timers = [];
   var running = false;
 

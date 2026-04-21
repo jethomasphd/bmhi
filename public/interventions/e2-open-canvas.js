@@ -18,7 +18,7 @@
     { value: '#c4922a', name: 'amber' },
     { value: '#7a9e8e', name: 'sage' }
   ];
-  var CLOSING_TEXT = 'That was yours.';
+  var CLOSING_TEXT = 'Head clear. Ready for a better match.';
 
   var timers = [];
   var interval = null;
@@ -56,7 +56,7 @@
         'font-family:var(--serif);font-size:16px;font-weight:300;' +
         'font-style:italic;color:var(--dim);margin-bottom:16px;' +
         'opacity:0;transition:opacity 1s ease;';
-      prompt.textContent = 'Draw whatever comes. No one will see this.';
+      prompt.textContent = 'Sketch anything. A quick reset before the next search.';
       container.appendChild(prompt);
 
       // Canvas wrapper

@@ -757,7 +757,7 @@ p em { color: var(--text2); }
   var cta = document.getElementById('jobsCta');
   if (!cta) return;
   cta.addEventListener('click', function () {
-    var url = 'https://thesejobs.net/jobs';
+    var url = (window.BMHI_CONFIG && window.BMHI_CONFIG.jobsUrl) || 'https://thesejobs.net/jobs';
     try {
       if (window.top && window.top !== window.self) {
         window.top.location.href = url; return;

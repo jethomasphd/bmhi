@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CLOSING_TEXT = 'Data collected. See you tomorrow.';
+  var CLOSING_TEXT = 'Data collected. Fresh search, sharper eye.';
 
   var timers = [];
   var running = false;

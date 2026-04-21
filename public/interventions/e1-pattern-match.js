@@ -23,7 +23,7 @@
     { shape: '\u25A1', color: '#a69076' }  // sand square outline
   ];
 
-  var CLOSING_TEXT = 'That\u2019s your brain doing what it\u2019s good at.';
+  var CLOSING_TEXT = 'Mind cleared. Let\u2019s find you a better match.';
   var AUTO_END = 90000; // 90 seconds
 
   var timers = [];
@@ -58,6 +58,12 @@
     render: function (container, helpers) {
       running = true;
       container.innerHTML = '';
+
+      var prompt = document.createElement('div');
+      prompt.className = 'prompt-text';
+      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.textContent = 'Quick pattern reset. We\u2019re freshening your feed.';
+      container.appendChild(prompt);
 
       // Build deck: 8 pairs = 16 cards
       var deck = [];

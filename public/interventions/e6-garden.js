@@ -40,7 +40,7 @@
   var SPROUT_INTERVAL = 1500;
   var PLANT_COLORS = ['#7a9e8e', '#6aaa8e', '#b8856e', '#8e7299', '#c4a35a', '#b07a7a'];
   var AUTO_END = 120000;
-  var CLOSING_TEXT = 'You tended something. That matters more than you think.';
+  var CLOSING_TEXT = 'You tended something small. Now tend the search.';
 
   function pCol() { return PLANT_COLORS[Math.floor(Math.random() * PLANT_COLORS.length)]; }
 
@@ -80,7 +80,7 @@
         'font-family:var(--serif);font-size:16px;font-weight:300;' +
         'font-style:italic;color:var(--dim);margin-bottom:12px;' +
         'opacity:0;transition:opacity 1s ease;';
-      prompt.textContent = 'Tap the growing flowers to help them bloom.';
+      prompt.textContent = 'Tap the flowers. A quick reset while we refresh your feed.';
       container.appendChild(prompt);
 
       // Calculate dimensions

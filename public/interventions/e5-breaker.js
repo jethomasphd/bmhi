@@ -38,7 +38,7 @@
   var BALL_SPEED = 1.6;
   var BRICK_ROWS = 5, BRICK_COLS = 8;
   var AUTO_END = 120000;
-  var CLOSING_TEXT = 'Rhythm and focus. Your mind knows how to find calm.';
+  var CLOSING_TEXT = 'Rhythm and focus. Ready for a better match.';
 
   var ICON = {
     left: '<polyline points="15 18 9 12 15 6"/>',
@@ -69,6 +69,12 @@
     render: function (container, helpers) {
       running = true;
       container.innerHTML = '';
+
+      var prompt = document.createElement('div');
+      prompt.className = 'prompt-text';
+      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.textContent = 'Quick rhythm reset. We\u2019re freshening your feed.';
+      container.appendChild(prompt);
 
       var W, H, paddle, ball, bricks, brickW, brickH;
       var floatingWords = [];
