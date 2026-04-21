@@ -200,6 +200,37 @@
   }
 
   // ═══════════════════════════════════════════════════════════
+  // JOBS CTA — persistent "back to job search" that refreshes
+  // the user's feed with a generic, high-relevance query.
+  // Breaks out of any iframe embed.
+  // ═══════════════════════════════════════════════════════════
+
+  var JOBS_URL = 'https://thesejobs.net/jobs';
+
+  function goToJobs() {
+    try {
+      if (window.top && window.top !== window.self) {
+        window.top.location.href = JOBS_URL;
+        return;
+      }
+    } catch (e) { /* cross-origin read blocked is fine — setting is allowed */ }
+    window.location.href = JOBS_URL;
+  }
+
+  function showJobsCta(loud) {
+    var cta = $('jobsCta');
+    if (!cta) return;
+    cta.classList.add('vis');
+    cta.classList.toggle('loud', !!loud);
+    var label = $('jobsCtaLabel');
+    if (label) {
+      label.innerHTML = loud
+        ? 'show me better matches &rarr;'
+        : 'back to job search &rarr;';
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // STAGE TRANSITIONS
   // ═══════════════════════════════════════════════════════════
 
@@ -227,6 +258,10 @@
 
   function showPost() {
     state.stage = 'post';
+
+    // Escalate the persistent jobs CTA — the reset is done,
+    // the next click should land them on a fresh job feed.
+    showJobsCta(true);
 
     if (embeddedMode) {
       // Embedded: show "try another" button, no suite nav
@@ -280,6 +315,9 @@
     state.activeIntervention = interventionId;
     var container = $('interventionContent');
     container.innerHTML = '';
+
+    // Reset the jobs CTA to subtle for the duration of the intervention.
+    showJobsCta(false);
 
     log('Launching:', interventionId, intervention.name);
 
@@ -453,6 +491,10 @@
 
     $('dismissBtn').addEventListener('click', handleDismiss);
     $('audioToggle').addEventListener('click', toggleAudio);
+    $('jobsCta').addEventListener('click', goToJobs);
+
+    // Persistent, subtle on every stage; becomes loud on post-intervention.
+    showJobsCta(false);
 
     var selectedId = selectRandom();
     var selectedIntervention = selectedId ? window.BMHI_INTERVENTIONS[selectedId] : null;
