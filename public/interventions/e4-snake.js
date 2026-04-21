@@ -35,7 +35,7 @@
   var COLS = 12, ROWS = 12;
   var SPEED = 180;
   var AUTO_END = 120000;
-  var CLOSING_TEXT = 'Steady rhythm. Steady you.';
+  var CLOSING_TEXT = 'Steady rhythm. Now for a steadier search.';
 
   var ICON = {
     left: '<polyline points="15 18 9 12 15 6"/>',
@@ -68,6 +68,12 @@
     render: function (container, helpers) {
       running = true;
       container.innerHTML = '';
+
+      var prompt = document.createElement('div');
+      prompt.className = 'prompt-text';
+      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.textContent = 'Quick flow reset. We\u2019re freshening your feed.';
+      container.appendChild(prompt);
 
       var cell, body, dir, food, moveTimer;
       var floatingWords = [];

@@ -16,7 +16,7 @@
     { text: 'Let them drop.', pause: 4500 },
     { text: 'Your jaw. Unclench it.', pause: 4500 },
     { text: 'Your hands. Open them.', pause: 4500 },
-    { text: 'You\u2019re still here. That matters.', pause: 0 }
+    { text: 'You\u2019re still at it. That matters.', pause: 0 }
   ];
 
   // Subtle hue shifts per body region

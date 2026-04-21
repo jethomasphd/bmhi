@@ -18,7 +18,7 @@
     B: 'See it differently',
     C: 'Try something small',
     D: 'Let something go',
-    E: 'Play for a moment',
+    E: 'Quick mental reset',
     F: 'Check in with yourself'
   };
 
@@ -28,7 +28,7 @@
     B: 'Quiet my mind',
     C: 'Do something small',
     D: 'Feel what I feel',
-    E: 'Get out of my head',
+    E: 'Reset before the next search',
     F: 'Get help'
   };
 
@@ -205,16 +205,22 @@
   // Breaks out of any iframe embed.
   // ═══════════════════════════════════════════════════════════
 
-  var JOBS_URL = 'https://thesejobs.net/jobs';
+  // Host job boards override this via window.BMHI_CONFIG before
+  // loading app.js. See CLAUDE.md for integration details.
+  function jobsUrl() {
+    var cfg = window.BMHI_CONFIG || {};
+    return cfg.jobsUrl || 'https://thesejobs.net/jobs';
+  }
 
   function goToJobs() {
+    var url = jobsUrl();
     try {
       if (window.top && window.top !== window.self) {
-        window.top.location.href = JOBS_URL;
+        window.top.location.href = url;
         return;
       }
     } catch (e) { /* cross-origin read blocked is fine — setting is allowed */ }
-    window.location.href = JOBS_URL;
+    window.location.href = url;
   }
 
   function showJobsCta(loud) {
@@ -259,40 +265,84 @@
   function showPost() {
     state.stage = 'post';
 
-    // Escalate the persistent jobs CTA — the reset is done,
-    // the next click should land them on a fresh job feed.
-    showJobsCta(true);
+    // Keep the persistent jobs CTA subtle at the top — the
+    // primary action now lives in the in-flow post UI below
+    // as a large amber button, so no need to compete.
+    showJobsCta(false);
 
-    if (embeddedMode) {
-      // Embedded: show "try another" button, no suite nav
-      showTryAnother();
-      return;
-    }
+    // Build the in-flow post UI (same in every mode) — the
+    // primary action is always "show me better matches →".
+    renderPostContent();
+    transitionTo('stagePost');
 
-    // Standalone: show suite nav
-    showSuiteNav();
-
-    if (!state.firstCompleted) {
-      state.firstCompleted = true;
-      var reveal = $('postReveal');
-      if (reveal) {
-        setTimeout(function () { reveal.classList.add('vis'); }, 800);
-        setTimeout(function () { reveal.classList.remove('vis'); }, 7000);
+    // Standalone: also reveal the suite nav so they can explore.
+    if (!embeddedMode) {
+      showSuiteNav();
+      if (!state.firstCompleted) {
+        state.firstCompleted = true;
+        var reveal = $('postReveal');
+        if (reveal) {
+          setTimeout(function () { reveal.classList.add('vis'); }, 1200);
+          setTimeout(function () { reveal.classList.remove('vis'); }, 8000);
+        }
       }
     }
   }
 
+  function renderPostContent() {
+    var post = $('postContent');
+    if (!post) return;
+    post.innerHTML = '';
+
+    var wrap = document.createElement('div');
+    wrap.className = 'post-wrap';
+
+    var head = document.createElement('div');
+    head.className = 'post-head';
+    head.textContent = 'Ready for a fresh search?';
+    wrap.appendChild(head);
+
+    var sub = document.createElement('div');
+    sub.className = 'post-sub';
+    sub.textContent = 'We’ll refresh your feed with new matches.';
+    wrap.appendChild(sub);
+
+    var primary = document.createElement('button');
+    primary.type = 'button';
+    primary.className = 'post-primary';
+    primary.innerHTML = 'Show me better matches &rarr;';
+    primary.addEventListener('click', goToJobs);
+    wrap.appendChild(primary);
+
+    var secondary = document.createElement('button');
+    secondary.type = 'button';
+    secondary.className = 'post-secondary';
+    secondary.textContent = 'Another quick reset first';
+    secondary.addEventListener('click', function () {
+      var id = selectRandom();
+      if (id) {
+        launchIntervention(id);
+        if (!embeddedMode) updateActiveTab(id);
+      }
+    });
+    wrap.appendChild(secondary);
+
+    // Sponsored clinical partner — quiet, single card, dismissible.
+    if (window.BMHI_ADS && typeof window.BMHI_ADS.render === 'function') {
+      window.BMHI_ADS.render(wrap);
+    }
+
+    post.appendChild(wrap);
+  }
+
   function returnToSuite() {
     var id = selectRandom();
-    if (embeddedMode) {
-      // Embedded: just launch another, no suite nav
-      if (id) launchIntervention(id);
-      return;
-    }
-    showSuiteNav();
     if (id) {
       launchIntervention(id);
-      updateActiveTab(id);
+      if (!embeddedMode) {
+        showSuiteNav();
+        updateActiveTab(id);
+      }
     }
   }
 
@@ -351,10 +401,6 @@
     }
 
     if (audioPlaying) stopAudio();
-
-    // Remove any floating buttons
-    var tryAnother = document.getElementById('tryAnother');
-    if (tryAnother) tryAnother.remove();
 
     if (embeddedMode) {
       // Tell parent to close the overlay — user is done
@@ -426,59 +472,13 @@
   }
 
   // ═══════════════════════════════════════════════════════════
-  // EMBEDDED MODE — intervention only, no suite nav, "try another"
+  // EMBEDDED MODE — same flow as standalone (welcome → intervention
+  // → post). The only difference: embedded hides the suite nav so
+  // the post-intervention UI keeps a single clear CTA path back
+  // into the job search.
   // ═══════════════════════════════════════════════════════════
 
   var embeddedMode = false;
-
-  function showTryAnother() {
-    var existing = document.getElementById('tryAnother');
-    if (existing) existing.remove();
-
-    var wrap = document.createElement('div');
-    wrap.id = 'tryAnother';
-    wrap.style.cssText =
-      'position:fixed;bottom:16px;left:0;right:0;display:flex;gap:10px;' +
-      'justify-content:center;z-index:150;opacity:0;transition:opacity 0.8s ease;';
-
-    // Primary: close / return to site
-    var doneBtn = document.createElement('button');
-    doneBtn.style.cssText =
-      'font-family:var(--sans);font-size:12px;font-weight:500;' +
-      'color:var(--text2);background:rgba(240,236,228,0.06);' +
-      'border:1px solid rgba(240,236,228,0.12);border-radius:20px;' +
-      'padding:10px 20px;cursor:pointer;transition:all 0.3s;' +
-      'backdrop-filter:blur(8px);';
-    doneBtn.textContent = 'done';
-    doneBtn.addEventListener('click', function () {
-      // Tell parent frame to close the overlay
-      try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
-      wrap.style.opacity = '0';
-    });
-
-    // Secondary: try another intervention
-    var anotherBtn = document.createElement('button');
-    anotherBtn.style.cssText =
-      'font-family:var(--serif);font-size:13px;font-weight:400;font-style:italic;' +
-      'color:var(--amber);background:rgba(196,146,42,0.06);' +
-      'border:1px solid rgba(196,146,42,0.2);border-radius:20px;' +
-      'padding:10px 20px;cursor:pointer;transition:all 0.3s;' +
-      'backdrop-filter:blur(8px);';
-    anotherBtn.textContent = 'try another';
-    anotherBtn.addEventListener('click', function () {
-      wrap.style.opacity = '0';
-      setTimeout(function () {
-        wrap.remove();
-        var id = selectRandom();
-        if (id) launchIntervention(id);
-      }, 300);
-    });
-
-    wrap.appendChild(doneBtn);
-    wrap.appendChild(anotherBtn);
-    document.body.appendChild(wrap);
-    setTimeout(function () { wrap.style.opacity = '1'; }, 400);
-  }
 
   // ═══════════════════════════════════════════════════════════
   // INIT — welcome every visit, random selection, zero storage
@@ -499,22 +499,16 @@
     var selectedId = selectRandom();
     var selectedIntervention = selectedId ? window.BMHI_INTERVENTIONS[selectedId] : null;
 
-    // ─── EMBEDDED MODE: intervention only, no welcome, no suite nav ──
-    if (embeddedMode) {
-      log('Embedded mode');
-      $('stageWelcome').classList.remove('active');
-      if (selectedId) launchIntervention(selectedId);
-      return;
-    }
-
-    // ─── STANDALONE MODE: welcome screen → intervention → suite ──
+    // Every visit — embedded or standalone — starts at the welcome.
     var btn = $('welcomeBtn');
     if (selectedIntervention && TIER_CTA[selectedIntervention.tier]) {
       btn.textContent = TIER_CTA[selectedIntervention.tier];
     }
 
-    buildSuiteNav();
-    state.suiteRevealed = true;
+    if (!embeddedMode) {
+      buildSuiteNav();
+      state.suiteRevealed = true;
+    }
 
     showWelcome();
 
@@ -524,11 +518,11 @@
 
       setTimeout(function () {
         welcome.classList.remove('active', 'exiting');
-        showSuiteNav();
+        if (!embeddedMode) showSuiteNav();
 
         if (selectedId) {
           launchIntervention(selectedId);
-          updateActiveTab(selectedId);
+          if (!embeddedMode) updateActiveTab(selectedId);
         }
       }, 600);
     });

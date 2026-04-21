@@ -37,7 +37,7 @@
   var COLS = 8, ROWS = 14;
   var DROP = 1000;
   var AUTO_END = 120000; // 2 minutes
-  var CLOSING_TEXT = 'Your mind just did something remarkable — it chose focus over worry.';
+  var CLOSING_TEXT = 'Focus over worry. Now let’s find the match.';
 
   var PIECES = [
     { s: [[1, 1], [1, 1]], c: '#c4a35a' },
@@ -81,6 +81,12 @@
     render: function (container, helpers) {
       running = true;
       container.innerHTML = '';
+
+      var prompt = document.createElement('div');
+      prompt.className = 'prompt-text';
+      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.textContent = 'Quick rhythm reset. We\u2019re freshening your feed.';
+      container.appendChild(prompt);
 
       var cell, grid, piece, dropTimer, linesCleared;
       var floatingWords = [];
