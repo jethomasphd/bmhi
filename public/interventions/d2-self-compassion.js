@@ -92,6 +92,13 @@
         input.setAttribute('spellcheck', 'false');
         el.appendChild(input);
 
+        var doneBtn = document.createElement('button');
+        doneBtn.type = 'button';
+        doneBtn.className = 'submit-btn';
+        doneBtn.textContent = 'done \u2192';
+        doneBtn.disabled = true;
+        el.appendChild(doneBtn);
+
         timers.push(setTimeout(function () {
           if (running) input.focus();
         }, 1000));
@@ -109,6 +116,7 @@
         input.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { e.preventDefault(); submit(); }
         });
+        doneBtn.addEventListener('click', submit);
 
         // Auto-advance after 45s if they typed
         var autoTimer = setTimeout(function () {
@@ -117,6 +125,8 @@
         timers.push(autoTimer);
 
         input.addEventListener('input', function () {
+          doneBtn.disabled = !input.value.trim();
+          doneBtn.classList.toggle('ready', !!input.value.trim());
           clearTimeout(autoTimer);
           autoTimer = setTimeout(function () {
             if (running && input.value.trim()) submit();

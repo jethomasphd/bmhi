@@ -127,6 +127,13 @@
         input.setAttribute('spellcheck', 'false');
         el.appendChild(input);
 
+        var doneBtn = document.createElement('button');
+        doneBtn.type = 'button';
+        doneBtn.className = 'submit-btn';
+        doneBtn.textContent = 'done \u2192';
+        doneBtn.disabled = true;
+        el.appendChild(doneBtn);
+
         // Focus after fade-in
         timers.push(setTimeout(function () {
           if (running) input.focus();
@@ -151,6 +158,11 @@
 
         input.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { e.preventDefault(); submit(); }
+        });
+        doneBtn.addEventListener('click', submit);
+        input.addEventListener('input', function () {
+          doneBtn.disabled = !input.value.trim();
+          doneBtn.classList.toggle('ready', !!input.value.trim());
         });
 
         // Auto-advance 15s after first keystroke

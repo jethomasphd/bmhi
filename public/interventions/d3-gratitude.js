@@ -53,6 +53,14 @@
       input.style.transition = 'opacity 1s ease';
       container.appendChild(input);
 
+      var doneBtn = document.createElement('button');
+      doneBtn.type = 'button';
+      doneBtn.className = 'submit-btn ready';
+      doneBtn.textContent = 'done \u2192';
+      doneBtn.style.opacity = '0';
+      doneBtn.style.transition = 'opacity 1s ease';
+      container.appendChild(doneBtn);
+
       var closing = document.createElement('div');
       closing.className = 'closing-text';
       closing.style.marginTop = '32px';
@@ -62,8 +70,10 @@
       timers.push(setTimeout(function () { prompt.style.opacity = '1'; }, 300));
       timers.push(setTimeout(function () {
         input.style.opacity = '1';
+        doneBtn.style.opacity = '1';
         if (running) input.focus();
       }, 1800));
+      doneBtn.addEventListener('click', function () { finish(); });
 
       var finished = false;
       function finish() {

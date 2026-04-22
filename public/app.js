@@ -271,12 +271,12 @@
 
     var head = document.createElement('div');
     head.className = 'post-head';
-    head.textContent = 'Ready for a fresh search?';
+    head.textContent = 'Your matches are ready.';
     wrap.appendChild(head);
 
     var sub = document.createElement('div');
     sub.className = 'post-sub';
-    sub.textContent = 'We’ll refresh your feed with new matches.';
+    sub.textContent = 'Fresh matches are loaded. Step back into the search whenever you’re ready.';
     wrap.appendChild(sub);
 
     var primary = document.createElement('button');
@@ -339,15 +339,25 @@
 
     // Reset the jobs CTA to subtle for the duration of the intervention.
     showJobsCta(false);
+    hideReadyPill();
 
     log('Launching:', interventionId, intervention.name);
 
     var completed = false;
 
+    function finishEarly() {
+      if (completed || state.activeIntervention !== interventionId) return;
+      completed = true;
+      if (intervention.cleanup) intervention.cleanup();
+      hideReadyPill();
+      showPost();
+    }
+
     intervention.render(container, {
       complete: function (closingMessage, depthScore, textChars) {
         if (completed || state.activeIntervention !== interventionId) return;
         completed = true;
+        hideReadyPill();
         showPost();
       },
       engage: function () {
@@ -355,7 +365,65 @@
       }
     });
 
+    // E-tier: games can run for 60–120s. After 15s of play, surface
+    // a "matches ready" pill so the user knows they can exit whenever
+    // they're done. Non-E interventions don't need this because they
+    // either auto-complete on time or already have a submit button.
+    if (interventionId.charAt(0) === 'E') {
+      scheduleReadyPill(finishEarly);
+    }
+
     showIntervention();
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // READY PILL — "Matches ready" during long game interventions.
+  // Appears at 15s; tapping it closes the intervention and goes
+  // to the post stage. The user can also keep playing and finish
+  // in their own time.
+  // ═══════════════════════════════════════════════════════════
+
+  var _readyTimer = null;
+
+  function scheduleReadyPill(onTap) {
+    clearReadyTimer();
+    _readyTimer = setTimeout(function () {
+      showReadyPill(onTap);
+    }, 15000);
+  }
+
+  function clearReadyTimer() {
+    if (_readyTimer) { clearTimeout(_readyTimer); _readyTimer = null; }
+  }
+
+  function showReadyPill(onTap) {
+    var existing = document.getElementById('readyPill');
+    if (existing) existing.remove();
+
+    var pill = document.createElement('button');
+    pill.type = 'button';
+    pill.id = 'readyPill';
+    pill.className = 'ready-pill';
+    pill.setAttribute('aria-label', 'Your matches are ready — tap to continue');
+    pill.innerHTML =
+      '<span class="ready-pulse" aria-hidden="true"></span>' +
+      '<span>Matches ready &mdash; continue when you’re done</span>';
+    pill.addEventListener('click', function () {
+      if (typeof onTap === 'function') onTap();
+    });
+    document.body.appendChild(pill);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { pill.classList.add('vis'); });
+    });
+  }
+
+  function hideReadyPill() {
+    clearReadyTimer();
+    var pill = document.getElementById('readyPill');
+    if (pill) {
+      pill.classList.remove('vis');
+      setTimeout(function () { if (pill.parentNode) pill.remove(); }, 500);
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -372,13 +440,11 @@
     }
 
     if (audioPlaying) stopAudio();
+    hideReadyPill();
 
-    if (embeddedMode) {
-      // Tell parent to close the overlay — user is done
-      try { window.parent.postMessage({ bmhi: 'close' }, '*'); } catch (e) {}
-      return;
-    }
-
+    // Refresh icon = swap in a new intervention. In embedded mode the
+    // outer popup/iframe still has its own close affordance; this
+    // button is strictly a "try a different reset" action.
     returnToSuite();
   }
 

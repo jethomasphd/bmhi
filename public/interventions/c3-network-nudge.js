@@ -75,6 +75,14 @@
       input.style.transition = 'opacity 1s ease';
       container.appendChild(input);
 
+      var doneBtn = document.createElement('button');
+      doneBtn.type = 'button';
+      doneBtn.className = 'submit-btn ready';
+      doneBtn.textContent = 'done \u2192';
+      doneBtn.style.opacity = '0';
+      doneBtn.style.transition = 'opacity 1s ease';
+      container.appendChild(doneBtn);
+
       // Closing text
       var closing = document.createElement('div');
       closing.className = 'closing-text';
@@ -88,7 +96,9 @@
       timers.push(setTimeout(function () { prompt.style.opacity = '1'; }, 2200));
       timers.push(setTimeout(function () {
         input.style.opacity = '1';
+        doneBtn.style.opacity = '1';
       }, 3200));
+      doneBtn.addEventListener('click', function () { finish(); });
 
       // Show closing after pause (whether or not they typed)
       var finished = false;
