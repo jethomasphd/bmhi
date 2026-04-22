@@ -164,11 +164,11 @@
         }
       }
 
-      // Calculate dimensions
-      var maxW = Math.min(container.offsetWidth || 320, 320);
-      var maxH = Math.min(window.innerHeight * 0.5, 450);
+      // Calculate dimensions — reserve ~180px for prompt + controls + closing.
+      var maxW = Math.min(container.offsetWidth || window.innerWidth, 300);
+      var maxH = Math.min(window.innerHeight - 220, 440);
       cell = Math.floor(Math.min(maxW / COLS, maxH / ROWS));
-      cell = clamp(cell, 18, 32);
+      cell = clamp(cell, 16, 30);
       var cw = COLS * cell, ch = ROWS * cell;
 
       // Initialize grid
@@ -214,19 +214,28 @@
         { icon: ICON.slam, label: 'Drop' }
       ];
       var ctrlRow = document.createElement('div');
-      ctrlRow.style.cssText = 'display:flex;gap:8px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
+      ctrlRow.style.cssText = 'display:flex;gap:12px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
       for (var ci = 0; ci < controls.length; ci++) {
         (function (idx) {
           var btn = document.createElement('button');
+          btn.type = 'button';
           btn.style.cssText =
-            'width:52px;height:52px;border-radius:50%;background:rgba(42,36,28,0.5);' +
-            'border:1px solid rgba(240,236,228,0.07);color:rgba(154,147,132,0.7);' +
+            'width:58px;height:58px;border-radius:50%;background:rgba(42,36,28,0.5);' +
+            'border:1px solid rgba(240,236,228,0.12);color:rgba(196,146,42,0.85);' +
             'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-            'transition:all 0.2s;-webkit-tap-highlight-color:transparent;';
-          btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + controls[idx].icon + '</svg>';
+            'transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;' +
+            'user-select:none;';
+          btn.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + controls[idx].icon + '</svg>';
           btn.setAttribute('aria-label', controls[idx].label);
-          btn.addEventListener('click', function () { onControl(idx); });
-          btn.addEventListener('touchstart', function (e) { e.preventDefault(); onControl(idx); });
+          btn.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            btn.style.background = 'rgba(196,146,42,0.15)';
+            onControl(idx);
+          });
+          var reset = function () { btn.style.background = 'rgba(42,36,28,0.5)'; };
+          btn.addEventListener('pointerup', reset);
+          btn.addEventListener('pointerleave', reset);
+          btn.addEventListener('pointercancel', reset);
           ctrlRow.appendChild(btn);
         })(ci);
       }

@@ -8,7 +8,7 @@ Read this end to end before you change anything.
 
 ## What BMHI is
 
-A self-contained, static web app that delivers a single brief mental health intervention to a job seeker at the moment their search didn't go the way they hoped. Nineteen interventions, randomly selected, each grounded in peer-reviewed research. No backend. No build step. No framework. No cookies. No storage. No tracking.
+A self-contained, static web app that delivers a single brief mental health intervention to a job seeker at the moment their search didn't go the way they hoped. Seventeen interventions, randomly selected, each grounded in peer-reviewed research. No backend. No build step. No framework. No cookies. No storage. No tracking.
 
 **The whole unit lives in `public/`:**
 
@@ -19,7 +19,7 @@ public/
   ads.js                Single-slot clinical partner unit (placeholder copy)
   delivery.js           The four host-page delivery mechanisms
   about.html            The science, for users who want it
-  interventions/        19 self-contained intervention modules
+  interventions/        17 self-contained intervention modules
   _headers              Security + framing headers (Cloudflare/Netlify format)
   embed.html            DEMO PAGE ONLY — not part of the unit you ship
 ```
@@ -103,7 +103,7 @@ All four live in `delivery.js`. They all eventually point the user at the same `
 Every trigger loads the same flow. Do not short-circuit any of it.
 
 1. **Welcome** — `Before you go.` / `You searched today. That counts.` / single CTA button.
-2. **Intervention** — One of 19 modules, randomly selected. Late-night traffic (10 pm–5 am) gets a 50% somatic weighting.
+2. **Intervention** — One of 17 modules, randomly selected. Late-night traffic (10 pm–5 am) gets a 50% somatic weighting.
 3. **Post** — `Ready for a fresh search?` with a prominent `Show me better matches →` button that navigates `window.top.location` to `BMHI_CONFIG.jobsUrl`. Secondary option: another quick reset.
 
 A persistent amber pill at the top of the frame reads `back to job search →` at every stage. Clicking it does the same `window.top.location` navigation. This is the **one path** out, and it always lands the user on a fresh search query.

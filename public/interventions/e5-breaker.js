@@ -105,13 +105,13 @@
         else if (i === 1) paddle.x = Math.min(W - paddle.w / 2, paddle.x + 20);
       }
 
-      // Calculate dimensions
-      var maxW = Math.min(container.offsetWidth || 320, 280);
-      var maxH = Math.min(window.innerHeight * 0.55, 400);
-      W = maxW;
-      H = Math.min(maxH, 400);
+      // Calculate dimensions — keep room for controls + closing on mobile.
+      var vw = Math.min(container.offsetWidth || window.innerWidth, 320);
+      var vh = window.innerHeight || 640;
+      W = Math.min(vw, 300);
+      H = Math.min(Math.floor(vh * 0.48), 360);
       brickW = Math.floor(W / BRICK_COLS);
-      brickH = 14;
+      brickH = Math.max(12, Math.floor(H / 28));
       paddle = { x: W / 2, w: PADDLE_W };
       resetBall();
       initBricks();
@@ -124,34 +124,79 @@
       canvas.style.height = H + 'px';
       canvas.style.borderRadius = '8px';
       canvas.style.display = 'block';
-      canvas.style.margin = '0 auto 10px';
+      canvas.style.margin = '0 auto 14px';
       canvas.style.opacity = '0';
       canvas.style.transition = 'opacity 0.8s ease';
+      canvas.style.touchAction = 'none'; // we handle touch directly
       var ctx = canvas.getContext('2d');
       ctx.scale(2, 2);
       container.appendChild(canvas);
 
-      // Controls (only left and right)
+      // Direct paddle drag — the natural mobile interaction for breaker.
+      function movePaddleToClientX(clientX) {
+        if (finished) return;
+        var rect = canvas.getBoundingClientRect();
+        var x = (clientX - rect.left) * (W / rect.width);
+        paddle.x = clamp(x, paddle.w / 2, W - paddle.w / 2);
+      }
+      var dragging = false;
+      canvas.addEventListener('pointerdown', function (e) {
+        dragging = true; canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+        movePaddleToClientX(e.clientX);
+      });
+      canvas.addEventListener('pointermove', function (e) {
+        if (dragging) movePaddleToClientX(e.clientX);
+      });
+      canvas.addEventListener('pointerup', function () { dragging = false; });
+      canvas.addEventListener('pointercancel', function () { dragging = false; });
+
+      // Hint line, shown briefly.
+      var hint = document.createElement('div');
+      hint.textContent = 'Drag the paddle — or use the arrows below.';
+      hint.style.cssText = 'font-family:var(--sans);font-size:11px;color:var(--faint);text-align:center;margin-bottom:10px;opacity:0;transition:opacity 0.8s ease;';
+      container.appendChild(hint);
+
+      // Control buttons — generous tap targets, always present.
       var controls = [
-        { icon: ICON.left, label: 'Left' },
-        { icon: ICON.right, label: 'Right' }
+        { icon: ICON.left, label: 'Left', dir: -1 },
+        { icon: ICON.right, label: 'Right', dir: 1 }
       ];
       var ctrlRow = document.createElement('div');
-      ctrlRow.style.cssText = 'display:flex;gap:16px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
+      ctrlRow.style.cssText = 'display:flex;gap:20px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
       for (var ci = 0; ci < controls.length; ci++) {
-        (function (idx) {
+        (function (spec) {
           var btn = document.createElement('button');
+          btn.type = 'button';
           btn.style.cssText =
-            'width:60px;height:52px;border-radius:26px;background:rgba(42,36,28,0.5);' +
-            'border:1px solid rgba(240,236,228,0.07);color:rgba(154,147,132,0.7);' +
+            'width:72px;height:56px;border-radius:28px;background:rgba(42,36,28,0.5);' +
+            'border:1px solid rgba(240,236,228,0.12);color:rgba(196,146,42,0.85);' +
             'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-            'transition:all 0.2s;-webkit-tap-highlight-color:transparent;';
-          btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + controls[idx].icon + '</svg>';
-          btn.setAttribute('aria-label', controls[idx].label);
-          btn.addEventListener('click', function () { onControl(idx); });
-          btn.addEventListener('touchstart', function (e) { e.preventDefault(); onControl(idx); });
+            'transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:none;' +
+            'font-family:inherit;user-select:none;';
+          btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + spec.icon + '</svg>';
+          btn.setAttribute('aria-label', spec.label);
+
+          // Press-and-hold to move continuously.
+          var holdId = null;
+          function startHold() {
+            if (holdId || finished) return;
+            paddle.x = clamp(paddle.x + spec.dir * 20, paddle.w / 2, W - paddle.w / 2);
+            btn.style.background = 'rgba(196,146,42,0.15)';
+            holdId = setInterval(function () {
+              paddle.x = clamp(paddle.x + spec.dir * 18, paddle.w / 2, W - paddle.w / 2);
+            }, 60);
+          }
+          function endHold() {
+            if (holdId) { clearInterval(holdId); holdId = null; }
+            btn.style.background = 'rgba(42,36,28,0.5)';
+          }
+          btn.addEventListener('pointerdown', function (e) { e.preventDefault(); startHold(); });
+          btn.addEventListener('pointerup', endHold);
+          btn.addEventListener('pointerleave', endHold);
+          btn.addEventListener('pointercancel', endHold);
+
           ctrlRow.appendChild(btn);
-        })(ci);
+        })(controls[ci]);
       }
       container.appendChild(ctrlRow);
 
@@ -162,7 +207,12 @@
       container.appendChild(closing);
 
       // Fade in
-      timers.push(setTimeout(function () { canvas.style.opacity = '1'; ctrlRow.style.opacity = '1'; }, 300));
+      timers.push(setTimeout(function () {
+        canvas.style.opacity = '1';
+        ctrlRow.style.opacity = '1';
+        hint.style.opacity = '1';
+      }, 300));
+      timers.push(setTimeout(function () { hint.style.opacity = '0'; }, 5000));
 
       function draw() {
         ctx.fillStyle = '#141820';

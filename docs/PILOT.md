@@ -7,7 +7,7 @@
 | **Domains** | thesejobs.net, jobcafes.com |
 | **Population** | ~12,588 recoverable exits/week |
 | **Delivery** | Inline iframe embed |
-| **Interventions** | 19 interventions, randomly selected per page load |
+| **Interventions** | 17 interventions, randomly selected per page load |
 | **Storage** | None — zero cookies, zero localStorage, zero tracking |
 | **Success Criteria** | Qualitative feedback; dwell time on intervention iframe |
 

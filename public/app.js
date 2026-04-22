@@ -32,10 +32,9 @@
     F: 'Get help'
   };
 
-  // SVG icon markup for Play tier games (consistent stroke-based, 16x16)
+  // SVG icon markup for reset-tier games (consistent stroke-based, 16x16)
   var GAME_ICONS = {
     E1: '<rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/>',
-    E2: '<line x1="4" y1="12" x2="7" y2="4"/><line x1="7" y1="4" x2="12" y2="8"/><circle cx="12" cy="8" r="1.5"/>',
     E3: '<rect x="2" y="6" width="4" height="4" rx="0.5"/><rect x="6" y="6" width="4" height="4" rx="0.5"/><rect x="10" y="6" width="4" height="4" rx="0.5"/><rect x="4" y="2" width="4" height="4" rx="0.5"/>',
     E4: '<circle cx="4" cy="8" r="1.5"/><circle cx="7" cy="8" r="1.5"/><circle cx="10" cy="8" r="2"/><circle cx="14" cy="5" r="1"/>',
     E5: '<rect x="2" y="2" width="3" height="2" rx="0.5"/><rect x="6" y="2" width="3" height="2" rx="0.5"/><rect x="10" y="2" width="3" height="2" rx="0.5"/><circle cx="8" cy="9" r="1.5"/><rect x="4" y="13" width="8" height="2" rx="1"/>',

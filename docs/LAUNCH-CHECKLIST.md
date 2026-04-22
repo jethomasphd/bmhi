@@ -1,16 +1,15 @@
 # Launch Checklist
 
-## Interventions (19 total)
+## Interventions (17 total)
 
 ### Calm my body
 - [ ] A1 Breath Reset: circle animates, 3 cycles (3-1-4 timing), progress dots, closes cleanly
 - [ ] A2 Body Scan: 5-phase text sequence with glow shifts, auto-completes
-- [ ] A3 Quiet Reset: countdown works, rain/white noise/silence toggle
+- [ ] A3 Quiet Reset: 1-minute countdown, rain/white noise/silence toggle
 
 ### Quiet my mind
 - [ ] B1 Reality Check: card displays, auto-completes after 15s
 - [ ] B2 Step Back: 3-screen sequence, text input, echo works
-- [ ] B3 Fresh Eyes: prompt + input + closing text
 
 ### Do something small
 - [ ] C1 One Small Step: 3 chips, checkmark animation
@@ -21,9 +20,8 @@
 - [ ] D2 Self-Kindness: friend text bubble, user response echoed back
 - [ ] D3 Gratitude: single field, closing text
 
-### Get out of my head
+### Reset before the next search
 - [ ] E1 Match: 4x4 grid, pairs match, NO score/timer/counter
-- [ ] E2 Draw: drawing works (mouse + touch), 3 colors, save to PNG
 - [ ] E3 Blocks: pieces drop, rotate, lock; lines clear with affirmation words; no game-over
 - [ ] E4 Serpent: snake moves, wraps edges, self-collision trims tail; food produces affirmations
 - [ ] E5 Breaker: ball bounces off paddle/walls/bricks; ball resets on miss; bricks regenerate
@@ -40,8 +38,8 @@
 - [ ] Late-night (after 10pm): somatic weighting active
 - [ ] Suite navigator appears after first intervention completes
 - [ ] "There's more here if you want it" + "Why does this work?" shows on first completion
-- [ ] Suite nav shows all 19 interventions grouped by felt-experience category
-- [ ] Play tier shows SVG icons (not text labels)
+- [ ] Suite nav shows all 17 interventions grouped by felt-experience category
+- [ ] Reset tier shows SVG icons (not text labels)
 - [ ] Can switch freely between any intervention via suite nav
 - [ ] Dismiss (x) button works at any point, returns to suite
 - [ ] No orphan timers/animations after dismiss or intervention switch
@@ -67,8 +65,7 @@
 - [ ] Text inputs: virtual keyboard doesn't break layout
 - [ ] Touch targets: minimum 44px for all interactive elements
 - [ ] Suite navigator scrolls/wraps on narrow screens
-- [ ] Drawing canvas works with touch
-- [ ] Game controls are thumb-friendly
+- [ ] Game controls are thumb-friendly (paddle, tetris, snake)
 
 ## Clinical & Ethical
 - [ ] Crisis Text Line: Text HOME to 741741
