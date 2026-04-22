@@ -83,12 +83,12 @@
       prompt.textContent = 'Tap the flowers. A quick reset while we refresh your feed.';
       container.appendChild(prompt);
 
-      // Calculate dimensions
-      var maxW = Math.min(container.offsetWidth || 320, 320);
-      var maxH = Math.min(window.innerHeight * 0.5, 320);
+      // Calculate dimensions — leave room for prompt + closing on mobile.
+      var maxW = Math.min(container.offsetWidth || window.innerWidth, 300);
+      var maxH = Math.min(window.innerHeight - 200, 320);
       var sq = Math.min(maxW, maxH);
       cell = Math.floor(sq / COLS);
-      cell = clamp(cell, 40, 70);
+      cell = clamp(cell, 36, 64);
       var cw = COLS * cell, ch = ROWS * cell;
 
       // Initialize plots

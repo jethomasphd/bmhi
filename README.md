@@ -10,15 +10,15 @@ No accounts. No tracking. No cookies. No data stored. Just a quiet pause, then b
 
 ### What it does
 
-Nineteen exercises across six categories, each grounded in peer-reviewed research:
+Seventeen exercises across six categories, each grounded in peer-reviewed research:
 
 | | Category | What it helps with |
 |---|---|---|
 | **Calm my body** | Breathing, body scan, quiet reset | Settling the nervous system |
-| **Quiet my mind** | Reality check, step back, fresh eyes | Interrupting negative thought spirals |
+| **Quiet my mind** | Reality check, step back | Interrupting negative thought spirals |
 | **Do something small** | One small step, reach out | Restoring a sense of agency |
 | **Feel what I feel** | Let it out, self-kindness, gratitude | Processing difficult emotions safely |
-| **Reset before the next search** | Match, draw, blocks, serpent, breaker, garden | Flow states that crowd out rumination |
+| **Reset before the next search** | Match, blocks, serpent, breaker, garden | Flow states that crowd out rumination |
 | **Get help** | Check in, you're not alone | Screening and crisis resources |
 
 Every exercise ends. Every click leads somewhere. Every session loops the user back to a fresh job search with a prominent `Show me better matches →` CTA.
@@ -32,7 +32,7 @@ bmhi/
   CLAUDE.md             Integration guide for the tech team's coding agent
   README.md             You are here
   docs/
-    LAUNCH-CHECKLIST.md QA passes for each of the 19 interventions
+    LAUNCH-CHECKLIST.md QA passes for each of the 17 interventions
     PILOT.md            Phase 1 pilot parameters
   public/               The live, shippable unit
     index.html            App shell (welcome → intervention → post)
@@ -41,7 +41,7 @@ bmhi/
     delivery.js           Four host-page delivery mechanisms
     about.html            The science, in plain language
     embed.html            DEMO — mock job board showing all four triggers
-    interventions/        19 self-contained intervention modules
+    interventions/        17 self-contained intervention modules
     _headers              Security / framing headers
   cold-storage/         Archival: seeds, position papers, older prototypes
 ```

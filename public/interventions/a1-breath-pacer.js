@@ -107,9 +107,9 @@
       // Micro-encouragement text
       var micro = document.createElement('div');
       micro.style.cssText =
-        'font-family:var(--serif);font-size:14px;font-weight:300;' +
-        'font-style:italic;color:var(--faint);opacity:0;' +
-        'transition:opacity 0.8s ease;min-height:20px;';
+        'font-family:var(--serif);font-size:clamp(14px,4vw,16px);font-weight:400;' +
+        'font-style:italic;color:var(--dim);opacity:0;' +
+        'transition:opacity 0.8s ease;min-height:22px;';
       container.appendChild(micro);
 
       // Closing text

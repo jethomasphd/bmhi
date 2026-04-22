@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════
-// A3 — Two-Minute Reset
+// A3 — Quiet Reset (60 seconds)
 // Mechanism: Parasympathetic + positive effort reattribution
 // Evidence:  T2
-// Time:      2 minutes
+// Time:      1 minute
 //
 // Visible countdown. Optional ambient sound. At 0:00:
 // "You spent time looking. That is not nothing."
@@ -13,7 +13,7 @@
 (function () {
   'use strict';
 
-  var DURATION = 120; // seconds
+  var DURATION = 60; // seconds
   var CLOSING_TEXT = 'You spent time looking. That is not nothing.';
 
   var timers = [];
@@ -178,7 +178,7 @@
     tier: 'A',
     mechanism: 'Parasympathetic + positive effort reattribution',
     evidence: 'T2',
-    time: '2min',
+    time: '60s',
 
     render: function (container, helpers) {
       running = true;

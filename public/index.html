@@ -183,16 +183,23 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 
 .breath-label {
-  font-family: var(--serif); font-size: 18px; font-weight: 300;
-  font-style: italic; color: var(--dim); opacity: 0;
-  transition: opacity 1s ease; min-height: 28px;
+  font-family: var(--serif);
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 400;
+  font-style: italic; color: var(--text2); opacity: 0;
+  transition: opacity 1s ease; min-height: 32px;
+  letter-spacing: 0.2px;
+  padding: 0 16px;
 }
 .breath-label.vis { opacity: 1; }
 
 .breath-closing {
-  font-family: var(--serif); font-size: 20px; font-weight: 400;
+  font-family: var(--serif);
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 400;
   color: var(--text); opacity: 0;
   transition: opacity 1.5s ease; margin-top: 32px;
+  line-height: 1.4; padding: 0 16px;
 }
 .breath-closing.vis { opacity: 1; }
 
@@ -508,21 +515,23 @@ body.demo-mode .stage { padding-bottom: 80px; }
   display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
 .suite-tier-label {
-  font-family: var(--mono); font-size: 7px; font-weight: 400;
-  letter-spacing: 1.2px; text-transform: uppercase;
-  color: var(--faint); white-space: nowrap;
+  font-family: var(--mono); font-size: 8px; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--dim); white-space: nowrap;
 }
 .suite-tier-tabs {
-  display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;
+  display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
 }
 .suite-tab {
-  font-family: var(--sans); font-size: 9px; font-weight: 400;
-  letter-spacing: 0.2px; color: var(--faint);
-  background: transparent; border: 1px solid var(--border);
-  border-radius: 12px; padding: 6px 10px; cursor: pointer;
-  transition: all 0.25s ease; white-space: nowrap;
-  min-height: 30px; text-align: center;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.2px; color: var(--dim);
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 14px; padding: 8px 12px; cursor: pointer;
+  transition: all 0.2s ease; white-space: nowrap;
+  min-height: 36px; min-width: 36px; text-align: center;
   position: relative; -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  display: inline-flex; align-items: center; justify-content: center;
 }
 .suite-tab:hover, .suite-tab:active { color: var(--dim); border-color: var(--border2); }
 .suite-tab:active { transform: scale(0.94); }
@@ -767,18 +776,25 @@ body::before {
 /* ─── RESPONSIVE ─── */
 @media (max-width: 480px) {
   .stage { padding: 28px 16px; }
+  body.demo-mode .stage { padding-bottom: 140px; }
   .emoji-scale { gap: 8px; }
-  .emoji-btn { width: 48px; height: 48px; font-size: 22px; }
+  .emoji-btn { width: 52px; height: 52px; font-size: 24px; }
   .match-grid { gap: 6px; max-width: min(280px, 85vw); }
   .mhi-input { font-size: 16px; } /* prevents iOS zoom on focus */
   .mhi-textarea { font-size: 16px; } /* prevents iOS zoom on focus */
   .breath-circle { width: 100px; height: 100px; }
-  .suite-tier-label { font-size: 6px; letter-spacing: 1px; }
-  .suite-tab { font-size: 8px; padding: 5px 8px; min-height: 28px; }
+  .prompt-text { font-size: clamp(16px, 4.5vw, 18px); }
+  .suite-tiers { gap: 8px; padding: 2px 0; }
+  .suite-tier-label { font-size: 8px; letter-spacing: 0.8px; }
+  .suite-tab { font-size: 11px; padding: 8px 12px; min-height: 40px; min-width: 40px; }
+  .post-head { font-size: clamp(20px, 5.5vw, 24px); }
+  .post-sub  { font-size: clamp(13px, 3.8vw, 15px); }
+  .post-primary { font-size: 15px; padding: 15px 24px; }
 }
 @media (max-width: 360px) {
   .stage { padding: 24px 14px; }
-  .suite-tab { font-size: 7px; padding: 4px 6px; min-height: 26px; }
+  .suite-tiers { gap: 6px; }
+  .suite-tab { font-size: 10px; padding: 7px 10px; min-height: 38px; }
 }
 @media (min-width: 768px) {
   .stage { padding: 48px 40px; }
@@ -866,14 +882,12 @@ body::before {
 <script src="interventions/a3-two-minute-reset.js"></script>
 <script src="interventions/b1-data-reframe.js"></script>
 <script src="interventions/b2-defusion.js"></script>
-<script src="interventions/b3-reappraisal.js"></script>
 <script src="interventions/c1-one-small-thing.js"></script>
 <script src="interventions/c3-network-nudge.js"></script>
 <script src="interventions/d1-release.js"></script>
 <script src="interventions/d2-self-compassion.js"></script>
 <script src="interventions/d3-gratitude.js"></script>
 <script src="interventions/e1-pattern-match.js"></script>
-<script src="interventions/e2-open-canvas.js"></script>
 <script src="interventions/e3-tetris.js"></script>
 <script src="interventions/e4-snake.js"></script>
 <script src="interventions/e5-breaker.js"></script>
