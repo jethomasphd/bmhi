@@ -88,8 +88,7 @@ html, body {
   min-height: 60vh;
 }
 
-/* Account for suite nav at bottom in demo mode */
-body.demo-mode .stage { padding-bottom: 80px; }
+/* (suite nav is now an on-demand modal; no persistent bottom bar) */
 
 /* ─── WELCOME SCREEN (first visit) ─── */
 .welcome { overflow: hidden; }
@@ -493,94 +492,100 @@ body.demo-mode .stage { padding-bottom: 80px; }
 }
 .confirm-anim.done .check-path { stroke-dashoffset: 0; }
 
-/* ─── SUITE NAVIGATOR ─── */
-.suite-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  padding: 8px 12px 10px;
-  background: linear-gradient(transparent, var(--bg) 20%);
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.5s ease;
+/* ─── ALL-RESETS MODAL ─── */
+.nav-modal {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(10,8,6,0);
+  backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+  pointer-events: none;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
-.suite-nav.vis { opacity: 1; pointer-events: auto; }
+.nav-modal.open {
+  pointer-events: auto;
+  background: rgba(10,8,6,0.7);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
 
-.suite-tiers {
-  display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;
-  max-width: 720px; margin: 0 auto;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; -ms-overflow-style: none;
+.nav-modal-sheet {
+  width: 100%; max-width: 520px;
+  max-height: 82vh; overflow-y: auto;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 22px 22px 32px;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-overflow-scrolling: touch;
 }
-.suite-tiers::-webkit-scrollbar { display: none; }
+.nav-modal.open .nav-modal-sheet { transform: translateY(0); }
+@media (min-width: 768px) {
+  .nav-modal { align-items: center; }
+  .nav-modal-sheet {
+    max-height: 78vh;
+    border-radius: 20px;
+    padding: 28px 28px 32px;
+  }
+}
 
-.suite-tier-group {
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+.nav-modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 14px; margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
-.suite-tier-label {
-  font-family: var(--mono); font-size: 8px; font-weight: 500;
-  letter-spacing: 1px; text-transform: uppercase;
-  color: var(--dim); white-space: nowrap;
+.nav-modal-title {
+  font-family: var(--serif); font-size: 20px; font-weight: 500;
+  color: var(--text); letter-spacing: -0.2px;
 }
-.suite-tier-tabs {
-  display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+.nav-modal-close {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--dim); font-size: 20px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
-.suite-tab {
-  font-family: var(--sans); font-size: 11px; font-weight: 500;
-  letter-spacing: 0.2px; color: var(--dim);
-  background: transparent; border: 1px solid var(--border2);
-  border-radius: 14px; padding: 8px 12px; cursor: pointer;
-  transition: all 0.2s ease; white-space: nowrap;
-  min-height: 36px; min-width: 36px; text-align: center;
-  position: relative; -webkit-tap-highlight-color: transparent;
+.nav-modal-close:hover { color: var(--text); border-color: var(--border2); }
+
+.nav-modal-foot {
+  margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.nav-list { display: flex; flex-direction: column; gap: 18px; }
+.nav-tier {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.nav-tier-heading {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 1.3px;
+  text-transform: uppercase; color: var(--dim);
+  padding: 6px 6px 6px; margin-bottom: 2px;
+}
+.nav-tier[data-tier="a"] .nav-tier-heading { color: var(--sage); }
+.nav-tier[data-tier="b"] .nav-tier-heading { color: var(--water); }
+.nav-tier[data-tier="c"] .nav-tier-heading { color: var(--clay); }
+.nav-tier[data-tier="d"] .nav-tier-heading { color: var(--rose); }
+.nav-tier[data-tier="e"] .nav-tier-heading { color: var(--plum); }
+.nav-tier[data-tier="f"] .nav-tier-heading { color: var(--amber); }
+
+.nav-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 14px; border-radius: 10px;
+  cursor: pointer; border: 1px solid transparent; background: transparent;
+  color: var(--text2);
+  font-family: var(--sans); font-size: 15px; font-weight: 500;
+  text-align: left; width: 100%;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  display: inline-flex; align-items: center; justify-content: center;
 }
-.suite-tab:hover, .suite-tab:active { color: var(--dim); border-color: var(--border2); }
-.suite-tab:active { transform: scale(0.94); }
-.suite-tab[data-tier="a"] { color: var(--sage); }
-.suite-tab[data-tier="b"] { color: var(--water); }
-.suite-tab[data-tier="c"] { color: var(--clay); }
-.suite-tab[data-tier="d"] { color: var(--rose); }
-.suite-tab[data-tier="e"] { color: var(--plum); }
-.suite-tab[data-tier="f"] { color: var(--amber); }
-.suite-tab.active {
-  background: rgba(240,236,228,0.04);
-  border-color: rgba(240,236,228,0.2);
-}
-.suite-tab.active[data-tier="a"] { border-color: rgba(122,158,142,0.5); background: rgba(122,158,142,0.06); }
-.suite-tab.active[data-tier="b"] { border-color: rgba(106,143,167,0.5); background: rgba(106,143,167,0.06); }
-.suite-tab.active[data-tier="c"] { border-color: rgba(184,133,110,0.5); background: rgba(184,133,110,0.06); }
-.suite-tab.active[data-tier="d"] { border-color: rgba(176,122,122,0.5); background: rgba(176,122,122,0.06); }
-.suite-tab.active[data-tier="e"] { border-color: rgba(142,114,153,0.5); background: rgba(142,114,153,0.06); }
-.suite-tab.active[data-tier="f"] { border-color: rgba(196,146,42,0.5); background: rgba(196,146,42,0.06); }
-
-/* Tooltip on hover */
-.suite-tab .tab-tip {
-  display: none; position: absolute; bottom: calc(100% + 8px); left: 50%;
-  transform: translateX(-50%); white-space: nowrap;
-  background: var(--surface); border: 1px solid var(--border2);
-  border-radius: 8px; padding: 8px 12px;
-  font-family: var(--sans); font-size: 10px; font-weight: 300;
-  color: var(--dim); line-height: 1.5; text-align: left;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4); pointer-events: none;
-  z-index: 200;
-}
-.suite-tab .tab-tip strong { color: var(--text2); font-weight: 400; }
-.suite-tab:hover .tab-tip,
-.suite-tab:focus .tab-tip { display: block; }
-@media (hover: none) {
-  .suite-tab .tab-tip { display: none !important; }
-}
-
-/* Info bar showing current intervention + about link */
-.suite-info {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  margin: 5px auto 0; max-width: 720px; min-height: 16px;
-}
-.suite-info-text {
-  font-family: var(--mono); font-size: 9px; color: var(--faint);
-  letter-spacing: 0.3px;
-}
-.suite-info-sep {
-  width: 1px; height: 10px; background: var(--border2);
+.nav-item:hover { background: rgba(240,236,228,0.04); color: var(--text); border-color: var(--border); }
+.nav-item:active { background: rgba(240,236,228,0.08); }
+.nav-item-name { font-weight: 500; }
+.nav-item-time {
+  font-family: var(--mono); font-size: 11px; font-weight: 400;
+  color: var(--faint); letter-spacing: 0.3px;
 }
 
 /* ─── POST-INTERVENTION ─── */
@@ -685,6 +690,16 @@ body.demo-mode .stage { padding-bottom: 80px; }
   -webkit-tap-highlight-color: transparent;
 }
 .post-secondary:hover { color: var(--text2); }
+.post-explore {
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.4px; color: var(--faint);
+  background: transparent; border: none;
+  padding: 10px 12px; margin-top: 4px;
+  cursor: pointer; transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  text-transform: uppercase;
+}
+.post-explore:hover { color: var(--dim); }
 
 /* ─── SPONSORED PARTNER SLOT ─── */
 .bmhi-ad {
@@ -776,7 +791,6 @@ body::before {
 /* ─── RESPONSIVE ─── */
 @media (max-width: 480px) {
   .stage { padding: 28px 16px; }
-  body.demo-mode .stage { padding-bottom: 140px; }
   .emoji-scale { gap: 8px; }
   .emoji-btn { width: 52px; height: 52px; font-size: 24px; }
   .match-grid { gap: 6px; max-width: min(280px, 85vw); }
@@ -784,17 +798,14 @@ body::before {
   .mhi-textarea { font-size: 16px; } /* prevents iOS zoom on focus */
   .breath-circle { width: 100px; height: 100px; }
   .prompt-text { font-size: clamp(16px, 4.5vw, 18px); }
-  .suite-tiers { gap: 8px; padding: 2px 0; }
-  .suite-tier-label { font-size: 8px; letter-spacing: 0.8px; }
-  .suite-tab { font-size: 11px; padding: 8px 12px; min-height: 40px; min-width: 40px; }
   .post-head { font-size: clamp(20px, 5.5vw, 24px); }
   .post-sub  { font-size: clamp(13px, 3.8vw, 15px); }
   .post-primary { font-size: 15px; padding: 15px 24px; }
+  .nav-item { font-size: 14px; padding: 14px 12px; }
+  .nav-modal-title { font-size: 18px; }
 }
 @media (max-width: 360px) {
   .stage { padding: 24px 14px; }
-  .suite-tiers { gap: 6px; }
-  .suite-tab { font-size: 10px; padding: 7px 10px; min-height: 38px; }
 }
 @media (min-width: 768px) {
   .stage { padding: 48px 40px; }
@@ -866,13 +877,17 @@ body::before {
   <a href="about.html" class="post-reveal-why">Why does this work?</a>
 </div>
 
-<!-- SUITE NAVIGATOR -->
-<div class="suite-nav" id="suiteNav">
-  <div class="suite-tiers" id="suiteTiers"></div>
-  <div class="suite-info" id="suiteInfo">
-    <span class="suite-info-text" id="suiteInfoText"></span>
-    <span class="suite-info-sep"></span>
-    <a href="about.html" class="about-link">why this works</a>
+<!-- ALL-RESETS MODAL (hidden until user taps "See all resets") -->
+<div class="nav-modal" id="suiteNav" aria-hidden="true">
+  <div class="nav-modal-sheet" role="dialog" aria-label="All resets">
+    <div class="nav-modal-head">
+      <div class="nav-modal-title">All resets</div>
+      <button class="nav-modal-close" id="suiteNavClose" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="nav-list" id="navList"></div>
+    <div class="nav-modal-foot">
+      <a href="about.html" class="about-link">why this works</a>
+    </div>
   </div>
 </div>
 

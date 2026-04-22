@@ -107,7 +107,8 @@
   // ═══════════════════════════════════════════════════════════
 
   function buildSuiteNav() {
-    var container = $('suiteTiers');
+    var container = $('navList');
+    if (!container) return;
     container.innerHTML = '';
     var available = getAvailableInterventions();
     available.sort();
@@ -125,77 +126,62 @@
       var tierKey = tierOrder[t];
       if (!tiers[tierKey]) continue;
 
-      var group = document.createElement('div');
-      group.className = 'suite-tier-group';
+      var tierEl = document.createElement('div');
+      tierEl.className = 'nav-tier';
+      tierEl.setAttribute('data-tier', tierKey.toLowerCase());
 
-      var label = document.createElement('div');
-      label.className = 'suite-tier-label';
-      label.textContent = TIER_LABELS[tierKey] || tierKey;
-      group.appendChild(label);
-
-      var tabRow = document.createElement('div');
-      tabRow.className = 'suite-tier-tabs';
+      var heading = document.createElement('div');
+      heading.className = 'nav-tier-heading';
+      heading.textContent = TIER_LABELS[tierKey] || tierKey;
+      tierEl.appendChild(heading);
 
       for (var j = 0; j < tiers[tierKey].length; j++) {
         (function (interventionId) {
           var intervention = window.BMHI_INTERVENTIONS[interventionId];
-          var btn = document.createElement('button');
-          btn.className = 'suite-tab';
-          btn.setAttribute('data-tier', tierKey.toLowerCase());
-          btn.setAttribute('data-id', interventionId);
-          btn.setAttribute('aria-label', intervention.name + ' \u2014 ' + intervention.mechanism);
+          var item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'nav-item';
+          item.setAttribute('data-id', interventionId);
+          item.setAttribute('aria-label', intervention.name + ' \u2014 ' + intervention.mechanism);
 
-          if (tierKey === 'E' && GAME_ICONS[interventionId]) {
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">' +
-              GAME_ICONS[interventionId] + '</svg>';
-            btn.setAttribute('title', intervention.name);
-          } else {
-            btn.textContent = intervention.name;
-          }
+          var name = document.createElement('span');
+          name.className = 'nav-item-name';
+          name.textContent = intervention.name;
+          item.appendChild(name);
 
-          var tip = document.createElement('div');
-          tip.className = 'tab-tip';
-          tip.innerHTML = '<strong>' + intervention.name + '</strong><br>' +
-            intervention.mechanism + '<br>' +
-            intervention.evidence + ' \u00B7 ' + intervention.time;
-          btn.appendChild(tip);
+          var time = document.createElement('span');
+          time.className = 'nav-item-time';
+          time.textContent = intervention.time;
+          item.appendChild(time);
 
-          btn.addEventListener('click', function () {
+          item.addEventListener('click', function () {
+            closeSuiteNav();
             launchIntervention(interventionId);
-            updateActiveTab(interventionId);
           });
-          tabRow.appendChild(btn);
+          tierEl.appendChild(item);
         })(tiers[tierKey][j]);
       }
 
-      group.appendChild(tabRow);
-      container.appendChild(group);
+      container.appendChild(tierEl);
     }
   }
 
-  function updateActiveTab(interventionId) {
-    var all = document.querySelectorAll('.suite-tab');
-    for (var k = 0; k < all.length; k++) {
-      all[k].classList.toggle('active', all[k].getAttribute('data-id') === interventionId);
-    }
-    var infoText = $('suiteInfoText');
-    if (infoText) {
-      var intervention = window.BMHI_INTERVENTIONS[interventionId];
-      if (intervention) {
-        infoText.textContent = (TIER_LABELS[intervention.tier] || intervention.tier) +
-          ' \u00B7 ' + intervention.name;
-      }
-    }
-  }
-
-  function showSuiteNav() {
+  function openSuiteNav() {
     if (!state.suiteRevealed) {
       buildSuiteNav();
       state.suiteRevealed = true;
     }
-    document.body.classList.add('demo-mode');
-    $('suiteNav').classList.add('vis');
-    $('dismissBtn').classList.add('vis');
+    var modal = $('suiteNav');
+    if (!modal) return;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeSuiteNav() {
+    var modal = $('suiteNav');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -273,19 +259,6 @@
     // primary action is always "show me better matches →".
     renderPostContent();
     transitionTo('stagePost');
-
-    // Standalone: also reveal the suite nav so they can explore.
-    if (!embeddedMode) {
-      showSuiteNav();
-      if (!state.firstCompleted) {
-        state.firstCompleted = true;
-        var reveal = $('postReveal');
-        if (reveal) {
-          setTimeout(function () { reveal.classList.add('vis'); }, 1200);
-          setTimeout(function () { reveal.classList.remove('vis'); }, 8000);
-        }
-      }
-    }
   }
 
   function renderPostContent() {
@@ -319,10 +292,7 @@
     secondary.textContent = 'Another quick reset first';
     secondary.addEventListener('click', function () {
       var id = selectRandom();
-      if (id) {
-        launchIntervention(id);
-        if (!embeddedMode) updateActiveTab(id);
-      }
+      if (id) launchIntervention(id);
     });
     wrap.appendChild(secondary);
 
@@ -331,18 +301,20 @@
       window.BMHI_ADS.render(wrap);
     }
 
+    // Tertiary: open the list modal for users who want to pick.
+    var explore = document.createElement('button');
+    explore.type = 'button';
+    explore.className = 'post-explore';
+    explore.textContent = 'See all resets';
+    explore.addEventListener('click', openSuiteNav);
+    wrap.appendChild(explore);
+
     post.appendChild(wrap);
   }
 
   function returnToSuite() {
     var id = selectRandom();
-    if (id) {
-      launchIntervention(id);
-      if (!embeddedMode) {
-        showSuiteNav();
-        updateActiveTab(id);
-      }
-    }
+    if (id) launchIntervention(id);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -492,6 +464,21 @@
     $('audioToggle').addEventListener('click', toggleAudio);
     $('jobsCta').addEventListener('click', goToJobs);
 
+    // Modal: close button, backdrop click, and Escape key.
+    var modal = $('suiteNav');
+    var closeBtn = $('suiteNavClose');
+    if (closeBtn) closeBtn.addEventListener('click', closeSuiteNav);
+    if (modal) {
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeSuiteNav();
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal && modal.classList.contains('open')) {
+        closeSuiteNav();
+      }
+    });
+
     // Persistent, subtle on every stage; becomes loud on post-intervention.
     showJobsCta(false);
 
@@ -504,10 +491,9 @@
       btn.textContent = TIER_CTA[selectedIntervention.tier];
     }
 
-    if (!embeddedMode) {
-      buildSuiteNav();
-      state.suiteRevealed = true;
-    }
+    // Build the list now so the modal opens instantly on first tap.
+    buildSuiteNav();
+    state.suiteRevealed = true;
 
     showWelcome();
 
@@ -517,12 +503,7 @@
 
       setTimeout(function () {
         welcome.classList.remove('active', 'exiting');
-        if (!embeddedMode) showSuiteNav();
-
-        if (selectedId) {
-          launchIntervention(selectedId);
-          if (!embeddedMode) updateActiveTab(selectedId);
-        }
+        if (selectedId) launchIntervention(selectedId);
       }, 600);
     });
   }
