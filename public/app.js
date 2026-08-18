@@ -32,7 +32,8 @@
     F: 'Get help'
   };
 
-  // SVG icon markup for reset-tier games (consistent stroke-based, 16x16)
+  // SVG icon markup for reset-tier games (consistent stroke-based, 16x16),
+  // shown beside E-tier entries in the all-resets list.
   var GAME_ICONS = {
     E1: '<rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/>',
     E3: '<rect x="2" y="6" width="4" height="4" rx="0.5"/><rect x="6" y="6" width="4" height="4" rx="0.5"/><rect x="10" y="6" width="4" height="4" rx="0.5"/><rect x="4" y="2" width="4" height="4" rx="0.5"/>',
@@ -146,7 +147,20 @@
 
           var name = document.createElement('span');
           name.className = 'nav-item-name';
-          name.textContent = intervention.name;
+          if (GAME_ICONS[interventionId]) {
+            var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('width', '16');
+            icon.setAttribute('height', '16');
+            icon.setAttribute('viewBox', '0 0 16 16');
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+            icon.setAttribute('stroke-width', '1.3');
+            icon.setAttribute('stroke-linecap', 'round');
+            icon.setAttribute('aria-hidden', 'true');
+            icon.innerHTML = GAME_ICONS[interventionId];
+            name.appendChild(icon);
+          }
+          name.appendChild(document.createTextNode(intervention.name));
           item.appendChild(name);
 
           var time = document.createElement('span');
@@ -166,6 +180,8 @@
     }
   }
 
+  var navReturnFocus = null;
+
   function openSuiteNav() {
     if (!state.suiteRevealed) {
       buildSuiteNav();
@@ -173,8 +189,11 @@
     }
     var modal = $('suiteNav');
     if (!modal) return;
+    navReturnFocus = document.activeElement;
     modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
+    var closeBtn = $('suiteNavClose');
+    if (closeBtn) closeBtn.focus({ preventScroll: true });
   }
 
   function closeSuiteNav() {
@@ -182,6 +201,11 @@
     if (!modal) return;
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
+    if (navReturnFocus && typeof navReturnFocus.focus === 'function' &&
+        document.contains(navReturnFocus)) {
+      navReturnFocus.focus({ preventScroll: true });
+    }
+    navReturnFocus = null;
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -225,12 +249,18 @@
   // STAGE TRANSITIONS
   // ═══════════════════════════════════════════════════════════
 
+  var transitionTimer = null;
+
   function transitionTo(stageId) {
     var stages = document.querySelectorAll('.stage');
     for (var i = 0; i < stages.length; i++) {
       stages[i].classList.remove('active');
     }
-    setTimeout(function () {
+    // Cancel any pending activation so rapid stage switches can
+    // never leave two stages active at once.
+    if (transitionTimer) clearTimeout(transitionTimer);
+    transitionTimer = setTimeout(function () {
+      transitionTimer = null;
       $(stageId).classList.add('active');
     }, 200);
   }
@@ -308,6 +338,13 @@
     explore.textContent = 'See all resets';
     explore.addEventListener('click', openSuiteNav);
     wrap.appendChild(explore);
+
+    // Quiet doorway to the science, for users who want it.
+    var why = document.createElement('a');
+    why.className = 'post-why';
+    why.href = 'about.html';
+    why.textContent = 'Why does this work?';
+    wrap.appendChild(why);
 
     post.appendChild(wrap);
   }

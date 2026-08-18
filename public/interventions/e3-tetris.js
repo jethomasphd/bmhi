@@ -83,8 +83,7 @@
       container.innerHTML = '';
 
       var prompt = document.createElement('div');
-      prompt.className = 'prompt-text';
-      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.className = 'game-intro';
       prompt.textContent = 'Quick rhythm reset. We\u2019re freshening your feed.';
       container.appendChild(prompt);
 
@@ -193,15 +192,12 @@
 
       // Canvas
       var canvas = document.createElement('canvas');
+      canvas.className = 'game-canvas';
       canvas.width = cw * 2;
       canvas.height = ch * 2;
       canvas.style.width = cw + 'px';
       canvas.style.height = ch + 'px';
-      canvas.style.borderRadius = '8px';
-      canvas.style.display = 'block';
-      canvas.style.margin = '0 auto 10px';
-      canvas.style.opacity = '0';
-      canvas.style.transition = 'opacity 0.8s ease';
+      canvas.style.marginBottom = '10px';
       var ctx = canvas.getContext('2d');
       ctx.scale(2, 2);
       container.appendChild(canvas);
@@ -214,25 +210,20 @@
         { icon: ICON.slam, label: 'Drop' }
       ];
       var ctrlRow = document.createElement('div');
-      ctrlRow.style.cssText = 'display:flex;gap:12px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
+      ctrlRow.className = 'game-controls';
       for (var ci = 0; ci < controls.length; ci++) {
         (function (idx) {
           var btn = document.createElement('button');
           btn.type = 'button';
-          btn.style.cssText =
-            'width:58px;height:58px;border-radius:50%;background:rgba(42,36,28,0.5);' +
-            'border:1px solid rgba(240,236,228,0.12);color:rgba(196,146,42,0.85);' +
-            'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-            'transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;' +
-            'user-select:none;';
+          btn.className = 'game-btn';
           btn.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + controls[idx].icon + '</svg>';
           btn.setAttribute('aria-label', controls[idx].label);
           btn.addEventListener('pointerdown', function (e) {
             e.preventDefault();
-            btn.style.background = 'rgba(196,146,42,0.15)';
+            btn.classList.add('pressed');
             onControl(idx);
           });
-          var reset = function () { btn.style.background = 'rgba(42,36,28,0.5)'; };
+          var reset = function () { btn.classList.remove('pressed'); };
           btn.addEventListener('pointerup', reset);
           btn.addEventListener('pointerleave', reset);
           btn.addEventListener('pointercancel', reset);
@@ -264,11 +255,11 @@
       }
 
       function draw() {
-        // Background
-        ctx.fillStyle = '#141820';
+        // Background — same warm room as the suite
+        ctx.fillStyle = '#221c13';
         ctx.fillRect(0, 0, cw, ch);
         // Grid lines
-        ctx.strokeStyle = 'rgba(37,42,56,0.25)';
+        ctx.strokeStyle = 'rgba(240,236,228,0.05)';
         ctx.lineWidth = 0.5;
         for (var c = 0; c <= COLS; c++) { ctx.beginPath(); ctx.moveTo(c * cell, 0); ctx.lineTo(c * cell, ch); ctx.stroke(); }
         for (var r = 0; r <= ROWS; r++) { ctx.beginPath(); ctx.moveTo(0, r * cell); ctx.lineTo(cw, r * cell); ctx.stroke(); }

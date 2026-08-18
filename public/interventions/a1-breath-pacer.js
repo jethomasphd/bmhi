@@ -63,18 +63,11 @@
 
       // Outer glow wrapper
       var glow = document.createElement('div');
-      glow.style.cssText =
-        'width:clamp(120px,40vw,180px);height:clamp(120px,40vw,180px);' +
-        'border-radius:50%;position:relative;' +
-        'display:flex;align-items:center;justify-content:center;' +
-        'margin-bottom:32px;';
+      glow.className = 'breath-halo';
 
       // Ambient glow
       var glowBg = document.createElement('div');
-      glowBg.style.cssText =
-        'position:absolute;inset:-20px;border-radius:50%;' +
-        'background:radial-gradient(circle,rgba(122,158,142,0.06),transparent 70%);' +
-        'transition:opacity 2s ease;';
+      glowBg.className = 'breath-glow';
       glow.appendChild(glowBg);
 
       // Main breath circle
@@ -90,15 +83,11 @@
 
       // Progress dots — visual cycle tracker
       var dotsWrap = document.createElement('div');
-      dotsWrap.style.cssText =
-        'display:flex;gap:8px;margin-top:20px;margin-bottom:12px;';
+      dotsWrap.className = 'breath-dots';
       var dots = [];
       for (var d = 0; d < TOTAL_CYCLES; d++) {
         var dot = document.createElement('div');
-        dot.style.cssText =
-          'width:8px;height:8px;border-radius:50%;' +
-          'border:1px solid rgba(122,158,142,0.3);' +
-          'background:transparent;transition:all 0.5s ease;';
+        dot.className = 'breath-dot';
         dotsWrap.appendChild(dot);
         dots.push(dot);
       }
@@ -106,10 +95,7 @@
 
       // Micro-encouragement text
       var micro = document.createElement('div');
-      micro.style.cssText =
-        'font-family:var(--serif);font-size:clamp(14px,4vw,16px);font-weight:400;' +
-        'font-style:italic;color:var(--dim);opacity:0;' +
-        'transition:opacity 0.8s ease;min-height:22px;';
+      micro.className = 'micro-note';
       container.appendChild(micro);
 
       // Closing text
@@ -173,8 +159,7 @@
           if (!running) return;
           // Mark completed dot
           if (cycleCount < dots.length) {
-            dots[cycleCount].style.background = 'rgba(122,158,142,0.6)';
-            dots[cycleCount].style.borderColor = 'rgba(122,158,142,0.8)';
+            dots[cycleCount].classList.add('done');
           }
           // Show encouragement
           if (cycleCount < CYCLE_WORDS.length) {
@@ -197,7 +182,6 @@
         circle.style.transform = 'scale(0.6)';
         circle.style.opacity = '0.5';
         label.classList.remove('vis');
-        dotsWrap.style.transition = 'opacity 1s ease';
         dotsWrap.style.opacity = '0.3';
 
         timers.push(setTimeout(function () {

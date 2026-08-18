@@ -2,133 +2,197 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <title>Software Engineer Jobs — TheseJobs.net</title>
+<meta name="robots" content="noindex">
+<!-- ═══════════════════════════════════════════════════════════
+     DEMO PAGE ONLY — a mock job board for showing the four BMHI
+     delivery mechanisms in context. Not part of the shipped unit.
+     Deliberately NOT in the BMHI design language: the intervention
+     is a different room, and the demo shows that contrast.
+     ═══════════════════════════════════════════════════════════ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Open Sans', sans-serif; background: #f2f2f2; color: #454545; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    background: #f3f4f6; color: #40444b;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid #1265A2; outline-offset: 2px; border-radius: 4px; }
 
   .topbar {
-    background: #1265A2; color: #fff; font-size: 12px;
-    padding: 6px 0; text-align: center; letter-spacing: 0.3px;
+    background: #0d4f80; color: rgba(255,255,255,0.92); font-size: 12px;
+    padding: 7px 16px; text-align: center; letter-spacing: 0.2px;
   }
   .header {
-    background: #fff; border-bottom: 1px solid #ddd;
-    padding: 14px 24px; display: flex; align-items: center;
-    justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    background: #fff; border-bottom: 1px solid #e3e5e8;
+    padding: 13px 20px; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px;
   }
   .logo {
     font-size: 20px; font-weight: 700; color: #1265A2;
     text-decoration: none; display: flex; align-items: center; gap: 6px;
+    letter-spacing: -0.3px; white-space: nowrap;
   }
   .logo span { color: #F68B0C; }
-  .header-nav { display: flex; gap: 20px; font-size: 13px; }
-  .header-nav a { color: #666; text-decoration: none; transition: color 0.2s; }
+  .header-nav { display: flex; gap: 22px; font-size: 13.5px; }
+  .header-nav a { color: #5c6470; text-decoration: none; transition: color 0.2s; font-weight: 500; }
   .header-nav a:hover { color: #1265A2; }
 
-  .search-section { background: #1265A2; padding: 28px 24px; }
+  .search-section {
+    background: linear-gradient(180deg, #1265A2, #0f5588);
+    padding: 30px 20px 34px;
+  }
   .search-wrap {
-    max-width: 780px; margin: 0 auto;
-    display: flex; gap: 8px; flex-wrap: wrap;
+    max-width: 800px; margin: 0 auto;
+    display: flex; gap: 10px; flex-wrap: wrap;
   }
   .search-field {
-    flex: 1; min-width: 160px; padding: 11px 14px;
-    font-size: 14px; font-family: inherit;
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
-    background: rgba(255,255,255,0.95); color: #333; outline: none;
+    flex: 1; min-width: 170px; padding: 12px 16px;
+    font-size: 15px; font-family: inherit;
+    border: 1px solid rgba(255,255,255,0.25); border-radius: 8px;
+    background: #fff; color: #333; outline: none;
+    box-shadow: 0 1px 4px rgba(9, 48, 76, 0.18);
+    transition: box-shadow 0.2s, border-color 0.2s;
   }
-  .search-field:focus { border-color: #F68B0C; }
+  .search-field:focus { border-color: #F68B0C; box-shadow: 0 0 0 3px rgba(246,139,12,0.22); }
   .search-btn {
-    padding: 11px 28px; font-size: 14px; font-weight: 600;
+    padding: 12px 30px; font-size: 15px; font-weight: 600;
     font-family: inherit; background: #F68B0C; color: #fff;
-    border: none; border-radius: 6px; cursor: pointer;
-    transition: background 0.2s;
+    border: none; border-radius: 8px; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 1px 4px rgba(9, 48, 76, 0.18);
   }
   .search-btn:hover { background: #e07d08; }
+  .search-btn:active { transform: scale(0.98); }
 
-  .results-wrap { max-width: 780px; margin: 0 auto; padding: 20px 24px 140px; }
-  .results-meta {
-    font-size: 13px; color: #888; margin-bottom: 16px;
-    display: flex; justify-content: space-between; align-items: center;
+  .results-wrap {
+    max-width: 800px; margin: 0 auto;
+    padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 210px);
   }
+  .results-meta {
+    font-size: 13px; color: #7a828c; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    flex-wrap: wrap;
+  }
+  .results-meta strong { color: #40444b; }
 
   .job-card {
-    background: #fff; border: 1px solid #ddd; border-radius: 6px;
-    padding: 16px 20px; margin-bottom: 10px; cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s, opacity 0.4s; position: relative;
+    background: #fff; border: 1px solid #e3e5e8; border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 10px; cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, opacity 0.4s, transform 0.2s;
+    position: relative;
+    display: flex; gap: 14px; align-items: flex-start;
   }
-  .job-card:hover { border-color: #F68B0C; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .job-card h3 { font-size: 16px; font-weight: 600; color: #1265A2; margin-bottom: 4px; padding-right: 60px; }
-  .job-card .company { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 2px; }
-  .job-card .location { font-size: 12px; color: #888; margin-bottom: 6px; }
-  .job-card .salary { font-size: 13px; font-weight: 600; color: #2a8a4a; }
-  .job-card .posted { font-size: 11px; color: #aaa; margin-top: 6px; }
+  .job-card:hover {
+    border-color: #c9d4de; box-shadow: 0 4px 14px rgba(15, 40, 68, 0.08);
+    transform: translateY(-1px);
+  }
+  .job-card .avatar {
+    flex: none; width: 44px; height: 44px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 700; color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .job-card .jc-main { min-width: 0; flex: 1; }
+  .job-card h3 {
+    font-size: 15.5px; font-weight: 600; color: #14568c;
+    margin-bottom: 3px; padding-right: 52px; line-height: 1.35;
+  }
+  .job-card .company { font-size: 13px; font-weight: 600; color: #4d545e; margin-bottom: 1px; }
+  .job-card .location { font-size: 12.5px; color: #7a828c; margin-bottom: 7px; }
+  .job-card .salary {
+    display: inline-block;
+    font-size: 12.5px; font-weight: 600; color: #1e7a43;
+    background: #edf7f1; border-radius: 6px; padding: 3px 9px;
+  }
+  .job-card .posted { font-size: 11.5px; color: #9aa1ab; margin-top: 8px; }
   .job-card .badge {
-    position: absolute; top: 16px; right: 16px;
-    font-size: 10px; font-weight: 700; color: #F68B0C;
-    background: rgba(246,139,12,0.1); padding: 2px 8px;
-    border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px;
+    position: absolute; top: 14px; right: 14px;
+    font-size: 10px; font-weight: 700; color: #e07d08;
+    background: rgba(246,139,12,0.12); padding: 3px 9px;
+    border-radius: 999px; text-transform: uppercase; letter-spacing: 0.4px;
   }
   .job-card.refreshing { opacity: 0; transform: translateY(4px); }
 
   #embedTarget { min-height: 0; }
 
-  .pagination {
-    display: flex; justify-content: center; gap: 4px; margin-top: 24px;
-  }
+  .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 26px; flex-wrap: wrap; }
   .pagination a {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 32px; height: 32px; border-radius: 4px;
-    font-size: 13px; color: #666; text-decoration: none;
-    border: 1px solid #ddd; transition: all 0.2s;
+    min-width: 36px; height: 36px; padding: 0 6px; border-radius: 8px;
+    font-size: 13.5px; color: #5c6470; text-decoration: none;
+    border: 1px solid #dfe2e6; background: #fff;
+    transition: border-color 0.2s, color 0.2s;
   }
   .pagination a:hover { border-color: #1265A2; color: #1265A2; }
   .pagination a.active { background: #1265A2; color: #fff; border-color: #1265A2; }
 
-  /* Demo controls */
+  /* ─── Demo controls — the only non-“job board” chrome ─── */
   .controls {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 99998;
-    background: rgba(10,10,20,0.95); backdrop-filter: blur(12px);
-    padding: 14px 20px;
+    background: rgba(13, 15, 20, 0.94);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    padding: 12px 16px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    border-top: 1px solid rgba(255,255,255,0.09);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.25);
+  }
+  .controls-inner {
+    max-width: 800px; margin: 0 auto;
     display: flex; flex-wrap: wrap; gap: 8px;
     align-items: center; justify-content: center;
-    border-top: 1px solid rgba(255,255,255,0.08);
   }
   .controls .label {
-    font-size: 9px; color: #666; text-transform: uppercase;
-    letter-spacing: 1.5px; width: 100%; text-align: center;
-    margin-bottom: 2px;
+    font-size: 9.5px; color: #8a919e; text-transform: uppercase;
+    letter-spacing: 1.6px; width: 100%; text-align: center;
+    margin-bottom: 4px; font-weight: 600;
   }
+  .controls .label strong { color: #c4922a; font-weight: 600; }
   .ctrl-btn {
-    padding: 8px 18px; font-size: 11px; font-weight: 500;
-    border: 1px solid rgba(255,255,255,0.12); border-radius: 20px;
-    background: transparent; color: #aaa; cursor: pointer;
-    transition: all 0.25s; font-family: inherit; letter-spacing: 0.3px;
+    padding: 9px 18px; font-size: 12px; font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.14); border-radius: 999px;
+    background: transparent; color: #b9bfc9; cursor: pointer;
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+    font-family: inherit; letter-spacing: 0.2px;
+    min-height: 38px;
+    -webkit-tap-highlight-color: transparent;
   }
   .ctrl-btn:hover {
-    background: rgba(255,255,255,0.06); color: #fff;
-    border-color: rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.07); color: #fff;
+    border-color: rgba(255,255,255,0.28);
   }
   .ctrl-btn.active {
-    background: rgba(196,146,42,0.12); color: #c4922a;
-    border-color: rgba(196,146,42,0.35);
+    background: rgba(196,146,42,0.16); color: #d9a63e;
+    border-color: rgba(196,146,42,0.45);
   }
-  .controls .info {
-    font-size: 10px; color: #555; width: 100%; text-align: center;
-    margin-top: 4px; line-height: 1.5;
-  }
-  .controls .info strong { color: #c4922a; font-weight: 500; }
   .controls .toggle {
-    font-size: 10px; color: #666; display: inline-flex; align-items: center;
-    gap: 6px; cursor: pointer; user-select: none; margin-left: 8px;
+    font-size: 11px; color: #8a919e; display: inline-flex; align-items: center;
+    gap: 7px; cursor: pointer; user-select: none; margin-left: 6px;
+    min-height: 38px; padding: 0 4px;
   }
-  .controls .toggle input { accent-color: #c4922a; }
+  .controls .toggle input { accent-color: #c4922a; width: 15px; height: 15px; }
+  .controls .info {
+    font-size: 10.5px; color: #767d89; width: 100%; text-align: center;
+    margin-top: 6px; line-height: 1.55;
+  }
+  .controls .info strong { color: #d9a63e; font-weight: 600; }
 
-  @media (max-width: 600px) {
+  @media (max-width: 640px) {
     .header-nav { display: none; }
     .search-wrap { flex-direction: column; }
     .search-field { min-width: 100%; }
+    .search-btn { width: 100%; }
+    .job-card { padding: 14px; gap: 12px; }
+    .job-card .avatar { width: 40px; height: 40px; font-size: 15px; }
+    .results-wrap { padding-left: 14px; padding-right: 14px; }
+    .controls .toggle { margin-left: 0; }
   }
 </style>
 </head>
@@ -136,54 +200,57 @@
 
 <div class="topbar">Find your next opportunity &mdash; 12,847 new jobs posted today</div>
 
-<div class="header">
+<header class="header">
   <a href="#" class="logo">These<span>Jobs</span>.net</a>
-  <nav class="header-nav">
+  <nav class="header-nav" aria-label="Site">
     <a href="#">Browse Jobs</a>
     <a href="#">Companies</a>
     <a href="#">Salary Guide</a>
     <a href="#">Post a Job</a>
   </nav>
-</div>
+</header>
 
 <div class="search-section">
   <div class="search-wrap">
-    <input class="search-field" id="searchTitle" type="text" value="software engineer" placeholder="Job title, keywords">
-    <input class="search-field" id="searchLocation" type="text" value="Austin, TX" placeholder="City, state, or remote">
+    <input class="search-field" id="searchTitle" type="text" value="software engineer" placeholder="Job title, keywords" aria-label="Job title or keywords">
+    <input class="search-field" id="searchLocation" type="text" value="Austin, TX" placeholder="City, state, or remote" aria-label="Location">
     <button class="search-btn" id="searchBtn">Find Jobs</button>
   </div>
 </div>
 
-<div class="results-wrap">
+<main class="results-wrap">
   <div class="results-meta" id="resultsMeta">
-    Showing 1&ndash;8 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong>
+    <span>Showing 1&ndash;8 of 2,341 results for <strong>software engineer</strong> in <strong>Austin, TX</strong></span>
+    <span>Sort: Relevance</span>
   </div>
 
   <div id="jobList"></div>
 
   <div id="embedTarget"></div>
 
-  <div class="pagination">
+  <nav class="pagination" aria-label="Pagination">
     <a href="#" class="active">1</a>
     <a href="#">2</a>
     <a href="#">3</a>
     <a href="#">4</a>
     <a href="#">5</a>
     <a href="#">&raquo;</a>
-  </div>
-</div>
+  </nav>
+</main>
 
 <!-- Demo controls -->
 <div class="controls">
-  <div class="label">BMHI Delivery Mechanisms &middot; Demo</div>
-  <button class="ctrl-btn" id="btnPopup">Popup</button>
-  <button class="ctrl-btn" id="btnPopunder">Pop-Under</button>
-  <button class="ctrl-btn" id="btnEmbedded">Embedded</button>
-  <button class="ctrl-btn" id="btnEmail">Email CTA</button>
-  <label class="toggle"><input type="checkbox" id="exitIntent"> auto-trigger Popup on exit intent</label>
-  <div class="info">
-    Every BMHI session ends with <strong>Show me better matches &rarr;</strong> which refreshes the user's job feed.
-    No cookies &middot; no tracking.
+  <div class="controls-inner">
+    <div class="label"><strong>BMHI</strong> delivery mechanisms &middot; demo</div>
+    <button class="ctrl-btn" id="btnPopup" type="button">Popup</button>
+    <button class="ctrl-btn" id="btnPopunder" type="button">Pop-Under</button>
+    <button class="ctrl-btn" id="btnEmbedded" type="button">Embedded</button>
+    <button class="ctrl-btn" id="btnEmail" type="button">Email CTA</button>
+    <label class="toggle"><input type="checkbox" id="exitIntent"> auto-trigger Popup on exit intent</label>
+    <div class="info">
+      Every BMHI session ends with <strong>Show me better matches &rarr;</strong> which refreshes the user's job feed.
+      No cookies &middot; no tracking.
+    </div>
   </div>
 </div>
 
@@ -216,6 +283,8 @@
     { title: 'QA Automation Engineer', company: 'Dell Technologies', location: 'Austin, TX · Remote', salary: '$95,000 – $130,000/yr', posted: 'Posted 4 days ago', badge: '' }
   ];
 
+  var AVATAR_HUES = ['#1265A2', '#7a5ea8', '#2a8a4a', '#c26a1f', '#a84a5e', '#3a7f8a', '#5b6ac4', '#8a6d3a'];
+
   function shuffle(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) {
@@ -223,6 +292,18 @@
       var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
     }
     return a;
+  }
+
+  function initials(name) {
+    var parts = name.replace(/\(.*\)/, '').trim().split(/[\s\/]+/);
+    var s = parts[0].charAt(0) + (parts[1] ? parts[1].charAt(0) : '');
+    return s.toUpperCase();
+  }
+
+  function hueFor(name) {
+    var h = 0;
+    for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 997;
+    return AVATAR_HUES[h % AVATAR_HUES.length];
   }
 
   function renderJobs(jobs) {
@@ -241,11 +322,14 @@
 
         var html = '';
         if (j.badge) html += '<span class="badge">' + j.badge + '</span>';
+        html += '<span class="avatar" style="background:' + hueFor(j.company) + '" aria-hidden="true">' + initials(j.company) + '</span>';
+        html += '<div class="jc-main">';
         html += '<h3>' + j.title + '</h3>';
         html += '<div class="company">' + j.company + '</div>';
         html += '<div class="location">' + j.location + '</div>';
-        html += '<div class="salary">' + j.salary + '</div>';
+        html += '<span class="salary">' + j.salary + '</span>';
         html += '<div class="posted">' + j.posted + '</div>';
+        html += '</div>';
         card.innerHTML = html;
         list.appendChild(card);
 
@@ -296,6 +380,14 @@
     if (type === 'popunder') BMHI_DELIVERY.showPopunder();
     if (type === 'embedded') BMHI_DELIVERY.embedBMHI('#embedTarget');
     if (type === 'email')    BMHI_DELIVERY.showEmailOptIn();
+
+    // Demo-only: lift the email banner above this demo control bar
+    // (a real host page has no bar, so the banner sits at the bottom).
+    if (type === 'email') {
+      var banner = document.querySelector('.bmhi-email-banner');
+      var bar = document.querySelector('.controls');
+      if (banner && bar) banner.style.bottom = bar.offsetHeight + 'px';
+    }
   }
 
   btns.popup.addEventListener('click', function () { trigger('popup'); });

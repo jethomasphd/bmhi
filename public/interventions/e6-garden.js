@@ -76,10 +76,8 @@
 
       // Prompt
       var prompt = document.createElement('div');
-      prompt.style.cssText =
-        'font-family:var(--serif);font-size:16px;font-weight:300;' +
-        'font-style:italic;color:var(--dim);margin-bottom:12px;' +
-        'opacity:0;transition:opacity 1s ease;';
+      prompt.className = 'game-intro';
+      prompt.style.cssText = 'margin-bottom:12px;opacity:0;transition:opacity 1s ease;';
       prompt.textContent = 'Tap the flowers. A quick reset while we refresh your feed.';
       container.appendChild(prompt);
 
@@ -108,15 +106,12 @@
 
       // Canvas
       var canvas = document.createElement('canvas');
+      canvas.className = 'game-canvas';
       canvas.width = cw * 2;
       canvas.height = ch * 2;
       canvas.style.width = cw + 'px';
       canvas.style.height = ch + 'px';
-      canvas.style.borderRadius = '8px';
-      canvas.style.display = 'block';
-      canvas.style.margin = '0 auto 12px';
-      canvas.style.opacity = '0';
-      canvas.style.transition = 'opacity 0.8s ease';
+      canvas.style.marginBottom = '12px';
       canvas.style.cursor = 'pointer';
       var ctx = canvas.getContext('2d');
       ctx.scale(2, 2);
@@ -163,7 +158,8 @@
       timers.push(setTimeout(function () { canvas.style.opacity = '1'; }, 800));
 
       function draw() {
-        ctx.fillStyle = '#141820';
+        // Background — same warm room as the suite
+        ctx.fillStyle = '#221c13';
         ctx.fillRect(0, 0, cw, ch);
 
         for (var r = 0; r < ROWS; r++) {
@@ -171,13 +167,13 @@
             var px = c * cell, py = r * cell;
             var p = plots[r][c];
 
-            // Plot background
-            ctx.fillStyle = '#1a1f2a';
+            // Plot background — warm soil
+            ctx.fillStyle = '#2a2318';
             ctx.beginPath();
             if (ctx.roundRect) ctx.roundRect(px + 3, py + 3, cell - 6, cell - 6, 6);
             else ctx.rect(px + 3, py + 3, cell - 6, cell - 6);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(37,42,56,0.5)';
+            ctx.strokeStyle = 'rgba(240,236,228,0.06)';
             ctx.lineWidth = 0.5;
             ctx.stroke();
 
@@ -234,7 +230,7 @@
               ctx.globalAlpha = 1;
             } else if (p.state === 'wilted') {
               var wFade = 1 - p.age / 1000;
-              ctx.fillStyle = '#3a3a3a';
+              ctx.fillStyle = '#4a4237';
               ctx.globalAlpha = wFade * 0.5;
               ctx.beginPath();
               ctx.arc(cx, cy, 4, 0, Math.PI * 2);

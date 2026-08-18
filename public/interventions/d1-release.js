@@ -54,10 +54,8 @@
 
       // Prompt
       var prompt = document.createElement('div');
-      prompt.style.cssText =
-        'font-family:var(--serif);font-size:clamp(16px,4vw,20px);' +
-        'font-weight:400;font-style:italic;color:var(--text);' +
-        'margin-bottom:24px;opacity:0;transition:opacity 1.2s ease;';
+      prompt.className = 'prompt-lead';
+      prompt.style.cssText = 'opacity:0;transition:opacity 1.2s ease;';
       prompt.textContent = 'Write 3 sentences about how today\u2019s search made you feel.';
       container.appendChild(prompt);
 
