@@ -38,6 +38,7 @@
   var BALL_SPEED = 1.6;
   var BRICK_ROWS = 5, BRICK_COLS = 8;
   var AUTO_END = 120000;
+  var RELIEF_DELAY = 15000;  // quiet path onward appears here
   var CLOSING_TEXT = 'Rhythm and focus. Ready for a better match.';
 
   var ICON = {
@@ -195,9 +196,18 @@
       }
       container.appendChild(ctrlRow);
 
+      // Relief point — after 15s, a quiet way to move on
+      var relief = document.createElement('button');
+      relief.type = 'button';
+      relief.className = 'relief-btn';
+      relief.innerHTML = 'Ready for a fresh search? &rarr;';
+      relief.addEventListener('click', function () { finishGame(true); });
+      container.appendChild(relief);
+
       // Closing text
       var closing = document.createElement('div');
       closing.className = 'closing-text';
+      closing.style.marginTop = '18px';
       closing.textContent = CLOSING_TEXT;
       container.appendChild(closing);
 
@@ -208,6 +218,11 @@
         hint.style.opacity = '1';
       }, 300));
       timers.push(setTimeout(function () { hint.style.opacity = '0'; }, 5000));
+
+      // Offer the relief path
+      timers.push(setTimeout(function () {
+        if (running && !finished) relief.classList.add('vis');
+      }, RELIEF_DELAY));
 
       function draw() {
         // Background — same warm room as the suite
@@ -302,24 +317,28 @@
         finishGame();
       }, AUTO_END));
 
-      function finishGame() {
+      // fast=true: user asked to move on — shorten the outro
+      function finishGame(fast) {
         if (finished || !running) return;
         finished = true;
 
-        canvas.style.transition = 'opacity 1.5s ease';
+        relief.classList.remove('vis');
+        hint.style.opacity = '0';
+
+        canvas.style.transition = 'opacity ' + (fast ? 0.7 : 1.5) + 's ease';
         canvas.style.opacity = '0.15';
-        ctrlRow.style.transition = 'opacity 1s ease';
+        ctrlRow.style.transition = 'opacity ' + (fast ? 0.5 : 1) + 's ease';
         ctrlRow.style.opacity = '0';
 
         timers.push(setTimeout(function () {
           if (!running) return;
           closing.classList.add('vis');
-        }, 1500));
+        }, fast ? 500 : 1500));
 
         timers.push(setTimeout(function () {
           if (!running) return;
           helpers.complete(CLOSING_TEXT, bricksHit > 0 ? 3 : 2, 0);
-        }, 5000));
+        }, fast ? 2300 : 5000));
 
         if (helpers.engage) {
           helpers.engage({
