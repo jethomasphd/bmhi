@@ -72,6 +72,8 @@
         var choices = document.createElement('div');
         choices.className = 'defusion-thoughts';
 
+        var picked = false;
+
         for (var i = 0; i < THOUGHTS.length; i++) {
           (function (text, idx) {
             var btn = document.createElement('button');
@@ -83,6 +85,8 @@
               for (var j = 0; j < all.length; j++) all[j].classList.remove('selected');
               btn.classList.add('selected');
               selectedThought = text;
+              picked = true;
+              relief.classList.remove('vis');
 
               // Auto-advance after pause
               timers.push(setTimeout(function () {
@@ -95,6 +99,24 @@
         }
 
         el.appendChild(choices);
+
+        // Relief point — if none of these thoughts fit, offer a quiet
+        // way onward after 15s so no one is ever held here.
+        var relief = document.createElement('button');
+        relief.type = 'button';
+        relief.className = 'relief-btn';
+        relief.style.marginTop = '6px';
+        relief.innerHTML = 'Ready for a fresh search? &rarr;';
+        relief.addEventListener('click', function () {
+          if (picked || !running) return;
+          picked = true;
+          helpers.complete('', 2, 0);
+        });
+        el.appendChild(relief);
+
+        timers.push(setTimeout(function () {
+          if (running && !picked) relief.classList.add('vis');
+        }, 15000));
 
         // Fade in
         el.style.opacity = '0';
@@ -146,6 +168,7 @@
           userText = input.value.trim();
           if (!userText) return;
           submitted = true;
+          relief.classList.remove('vis');
           crossfade(container, buildScreen3);
         }
 
@@ -162,6 +185,24 @@
           }, 15000);
           timers.push(autoTimer);
         });
+
+        // Relief point — typing is optional; after 15s offer a quiet
+        // way onward so no one is ever held here.
+        var relief = document.createElement('button');
+        relief.type = 'button';
+        relief.className = 'relief-btn';
+        relief.style.marginTop = '30px';
+        relief.innerHTML = 'Ready for a fresh search? &rarr;';
+        relief.addEventListener('click', function () {
+          if (submitted || !running) return;
+          submitted = true;
+          helpers.complete('', 2, 0);
+        });
+        el.appendChild(relief);
+
+        timers.push(setTimeout(function () {
+          if (running && !submitted) relief.classList.add('vis');
+        }, 15000));
       }
 
       // ─── SCREEN 3: Reflect their words back ─────────────

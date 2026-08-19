@@ -36,7 +36,8 @@
 
   var COLS = 8, ROWS = 14;
   var DROP = 1000;
-  var AUTO_END = 120000; // 2 minutes
+  var AUTO_END = 120000;     // 2 minutes
+  var RELIEF_DELAY = 15000;  // quiet path onward appears here
   var CLOSING_TEXT = 'Focus over worry. Now let’s find the match.';
 
   var PIECES = [
@@ -232,14 +233,28 @@
       }
       container.appendChild(ctrlRow);
 
+      // Relief point — after 15s, a quiet way to move on
+      var relief = document.createElement('button');
+      relief.type = 'button';
+      relief.className = 'relief-btn';
+      relief.innerHTML = 'Ready for a fresh search? &rarr;';
+      relief.addEventListener('click', function () { finishGame(true); });
+      container.appendChild(relief);
+
       // Closing text
       var closing = document.createElement('div');
       closing.className = 'closing-text';
+      closing.style.marginTop = '18px';
       closing.textContent = CLOSING_TEXT;
       container.appendChild(closing);
 
       // Fade in
       timers.push(setTimeout(function () { canvas.style.opacity = '1'; ctrlRow.style.opacity = '1'; }, 300));
+
+      // Offer the relief path
+      timers.push(setTimeout(function () {
+        if (running && !finished) relief.classList.add('vis');
+      }, RELIEF_DELAY));
 
       // Drawing
       function blk(x, y, s, color) {
@@ -321,24 +336,27 @@
         finishGame();
       }, AUTO_END));
 
-      function finishGame() {
+      // fast=true: user asked to move on — shorten the outro
+      function finishGame(fast) {
         if (finished || !running) return;
         finished = true;
 
-        canvas.style.transition = 'opacity 1.5s ease';
+        relief.classList.remove('vis');
+
+        canvas.style.transition = 'opacity ' + (fast ? 0.7 : 1.5) + 's ease';
         canvas.style.opacity = '0.15';
-        ctrlRow.style.transition = 'opacity 1s ease';
+        ctrlRow.style.transition = 'opacity ' + (fast ? 0.5 : 1) + 's ease';
         ctrlRow.style.opacity = '0';
 
         timers.push(setTimeout(function () {
           if (!running) return;
           closing.classList.add('vis');
-        }, 1500));
+        }, fast ? 500 : 1500));
 
         timers.push(setTimeout(function () {
           if (!running) return;
           helpers.complete(CLOSING_TEXT, linesCleared > 0 ? 3 : 2, 0);
-        }, 5000));
+        }, fast ? 2300 : 5000));
 
         if (helpers.engage) {
           helpers.engage({

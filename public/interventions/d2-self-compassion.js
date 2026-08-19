@@ -96,6 +96,7 @@
           userResponse = input.value.trim();
           if (!userResponse) return;
           submitted = true;
+          relief.classList.remove('vis');
           crossfade(container, buildScreen2);
         }
 
@@ -116,6 +117,24 @@
           }, 15000);
           timers.push(autoTimer);
         });
+
+        // Relief point — typing is optional; after 15s offer a quiet
+        // way onward so no one is ever held here.
+        var relief = document.createElement('button');
+        relief.type = 'button';
+        relief.className = 'relief-btn';
+        relief.style.marginTop = '30px';
+        relief.innerHTML = 'Ready for a fresh search? &rarr;';
+        relief.addEventListener('click', function () {
+          if (submitted || !running) return;
+          submitted = true;
+          helpers.complete('', 2, 0);
+        });
+        el.appendChild(relief);
+
+        timers.push(setTimeout(function () {
+          if (running && !submitted) relief.classList.add('vis');
+        }, 15000));
       }
 
       // ─── SCREEN 2: The mirror ────────────────────────────

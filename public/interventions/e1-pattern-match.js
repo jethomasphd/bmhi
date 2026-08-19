@@ -24,7 +24,8 @@
   ];
 
   var CLOSING_TEXT = 'Mind cleared. Let\u2019s find you a better match.';
-  var AUTO_END = 90000; // 90 seconds
+  var AUTO_END = 90000;      // 90 seconds
+  var RELIEF_DELAY = 15000;  // quiet path onward appears here
 
   var timers = [];
   var running = false;
@@ -149,15 +150,29 @@
 
       container.appendChild(grid);
 
+      // Relief point — after 15s, a quiet way to move on
+      var relief = document.createElement('button');
+      relief.type = 'button';
+      relief.className = 'relief-btn';
+      relief.style.marginTop = '8px';
+      relief.innerHTML = 'Ready for a fresh search? &rarr;';
+      relief.addEventListener('click', function () { finishGame(true); });
+      container.appendChild(relief);
+
       // Closing text
       var closing = document.createElement('div');
       closing.className = 'closing-text';
-      closing.style.marginTop = '32px';
+      closing.style.marginTop = '24px';
       closing.textContent = CLOSING_TEXT;
       container.appendChild(closing);
 
       // Fade in grid
       timers.push(setTimeout(function () { grid.style.opacity = '1'; }, 300));
+
+      // Offer the relief path
+      timers.push(setTimeout(function () {
+        if (running && !finished) relief.classList.add('vis');
+      }, RELIEF_DELAY));
 
       // Auto-end after 90s
       timers.push(setTimeout(function () {
@@ -168,25 +183,28 @@
 
       var finished = false;
 
-      function finishGame() {
+      // fast=true: user asked to move on — shorten the outro
+      function finishGame(fast) {
         if (finished || !running) return;
         finished = true;
 
+        relief.classList.remove('vis');
+
         // Fade out grid
-        grid.style.transition = 'opacity 1.5s ease';
+        grid.style.transition = 'opacity ' + (fast ? 0.7 : 1.5) + 's ease';
         grid.style.opacity = '0.15';
 
         timers.push(setTimeout(function () {
           if (!running) return;
           closing.classList.add('vis');
-        }, 1500));
+        }, fast ? 500 : 1500));
 
         timers.push(setTimeout(function () {
           if (!running) return;
           // depth: 3 if all matched, 2 if partial
           var depth = pairsMatched >= SYMBOLS.length ? 3 : 2;
           helpers.complete(CLOSING_TEXT, depth, 0);
-        }, 6000));
+        }, fast ? 2300 : 6000));
 
         if (helpers.engage) {
           helpers.engage({

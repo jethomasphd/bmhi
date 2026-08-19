@@ -40,6 +40,7 @@
   var SPROUT_INTERVAL = 1500;
   var PLANT_COLORS = ['#7a9e8e', '#6aaa8e', '#b8856e', '#8e7299', '#c4a35a', '#b07a7a'];
   var AUTO_END = 120000;
+  var RELIEF_DELAY = 15000;  // quiet path onward appears here
   var CLOSING_TEXT = 'You tended something small. Now tend the search.';
 
   function pCol() { return PLANT_COLORS[Math.floor(Math.random() * PLANT_COLORS.length)]; }
@@ -147,15 +148,30 @@
       canvas.addEventListener('click', handleTap);
       canvas.addEventListener('touchstart', handleTap);
 
+      // Relief point — after 15s, a quiet way to move on
+      var relief = document.createElement('button');
+      relief.type = 'button';
+      relief.className = 'relief-btn';
+      relief.style.marginTop = '4px';
+      relief.innerHTML = 'Ready for a fresh search? &rarr;';
+      relief.addEventListener('click', function () { finishGame(true); });
+      container.appendChild(relief);
+
       // Closing text
       var closing = document.createElement('div');
       closing.className = 'closing-text';
+      closing.style.marginTop = '18px';
       closing.textContent = CLOSING_TEXT;
       container.appendChild(closing);
 
       // Fade in
       timers.push(setTimeout(function () { prompt.style.opacity = '1'; }, 300));
       timers.push(setTimeout(function () { canvas.style.opacity = '1'; }, 800));
+
+      // Offer the relief path
+      timers.push(setTimeout(function () {
+        if (running && !finished) relief.classList.add('vis');
+      }, RELIEF_DELAY));
 
       function draw() {
         // Background — same warm room as the suite
@@ -302,24 +318,27 @@
         finishGame();
       }, AUTO_END));
 
-      function finishGame() {
+      // fast=true: user asked to move on — shorten the outro
+      function finishGame(fast) {
         if (finished || !running) return;
         finished = true;
 
-        canvas.style.transition = 'opacity 1.5s ease';
+        relief.classList.remove('vis');
+
+        canvas.style.transition = 'opacity ' + (fast ? 0.7 : 1.5) + 's ease';
         canvas.style.opacity = '0.15';
-        prompt.style.transition = 'opacity 1s ease';
+        prompt.style.transition = 'opacity ' + (fast ? 0.5 : 1) + 's ease';
         prompt.style.opacity = '0';
 
         timers.push(setTimeout(function () {
           if (!running) return;
           closing.classList.add('vis');
-        }, 1500));
+        }, fast ? 500 : 1500));
 
         timers.push(setTimeout(function () {
           if (!running) return;
           helpers.complete(CLOSING_TEXT, blooms > 0 ? 3 : 2, 0);
-        }, 5000));
+        }, fast ? 2300 : 5000));
 
         if (helpers.engage) {
           helpers.engage({
