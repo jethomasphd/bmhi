@@ -134,6 +134,7 @@ The `cold-storage/` directory contains archival materials from the development p
 - `seeds/` — build-sequence specification files
 - `seed.md` — master clinical specification
 - `from_beyond/` — COMPANION protocol design sessions
+- `companion_insel_summoning.html` — *The Insel Summoning* (March 2026), the COMPANION protocol session that produced the master clinical specification; the dialogue passages quoted in `public/about.html` originate here
 - `RecursiveMarketing-main/` — original prototype
 - `removed-interventions/` — interventions deprecated during clinical review
 

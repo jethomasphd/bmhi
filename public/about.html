@@ -157,6 +157,24 @@ p {
 }
 p strong { color: var(--text2); font-weight: 500; }
 p em { color: var(--text2); }
+p a {
+  color: var(--amber-2); text-decoration: none;
+  border-bottom: 1px solid rgba(196, 146, 42, 0.35);
+  transition: color 0.2s, border-color 0.2s;
+}
+p a:hover { color: var(--text); border-color: rgba(196, 146, 42, 0.7); }
+
+/* imprint — the maker's mark, barely above a whisper */
+.imprint {
+  text-align: center; margin-top: 40px;
+}
+.imprint a {
+  font-family: var(--mono); font-size: 10px !important;
+  letter-spacing: 0.16em; text-transform: lowercase;
+  color: var(--faint); text-decoration: none; border-bottom: none;
+  transition: color 0.3s;
+}
+.imprint a:hover { color: var(--amber-2); }
 
 .lead {
   font-family: var(--serif); font-size: clamp(19px, 4.8vw, 23px);
@@ -335,7 +353,7 @@ p em { color: var(--text2); }
   <p>"The mental health field spent the last twenty years building beautiful
   interventions and deploying them to no one. The evidence base is real.
   The reach was never real."</p>
-  <p class="attr">— T.R. Insel, MD, former Director, National Institute of Mental Health (2002–2015)</p>
+  <p class="attr">— from <em>The Insel Summoning</em>, a design dialogue held in latent space · March 2026</p>
 </div>
 
 <p>
@@ -404,7 +422,7 @@ p em { color: var(--text2); }
   <p>"You're telling me Jacob has 4.54 million of those people. Per week.
   At the exact moment the evidence base was designed for. That is the most
   credible solution to the detection problem I have heard since I left government."</p>
-  <p class="attr">— T.R. Insel, MD, March 2026</p>
+  <p class="attr">— <em>The Insel Summoning</em> · March 2026</p>
 </div>
 
 <!-- ════════════════════════════════════════════
@@ -764,20 +782,35 @@ p em { color: var(--text2); }
 </p>
 
 <p>
-  <strong>Clinical Framework:</strong> Thomas R. Insel, MD — former Director of the
-  National Institute of Mental Health (2002–2015), where he oversaw $20 billion in
-  neuroscience research. Author of <em>Healing: Our Path from Mental Illness to
-  Mental Health</em> (Penguin Press, 2022). Dr. Insel's central insight — that the
-  mental health crisis is primarily a <strong>detection and access problem</strong>,
-  not a neuroscience problem — is the foundation on which this suite is built.
+  <strong>Clinical framework:</strong> grounded in the published work of
+  Thomas R. Insel, MD — former Director of the National Institute of Mental
+  Health (2002–2015) and author of <em>Healing: Our Path from Mental Illness
+  to Mental Health</em> (Penguin Press, 2022). The central insight of that
+  book — that the mental health crisis is primarily a <strong>detection and
+  access problem</strong>, not a neuroscience problem — is the foundation on
+  which this suite is built.
 </p>
 
 <p>
   The clinical architecture draws on the SBIRT model (Screening, Brief Intervention,
   and Referral to Treatment), originally developed for emergency medicine by Babor
   et al. and adapted here for naturalistic digital contexts. The measurement framework
-  follows Insel's insistence on measurement-based care: <em>"If you don't measure
-  it, you didn't do it."</em>
+  follows the discipline <em>Healing</em> argues for — measurement-based care:
+  if you don't measure it, you didn't do it.
+</p>
+
+<h3>A Note on Method</h3>
+
+<p>
+  The dialogue passages set apart on this page are drawn from
+  <em>The Insel Summoning</em> (March 2026) — a structured design session,
+  preserved in the project archive, in which an AI-rendered voice built from
+  Dr. Insel's published record was asked to interrogate this suite's clinical
+  architecture before a line of it was written. Those passages are artifacts
+  of that method. They are not statements by Dr. Insel, who was not consulted
+  on and has no affiliation with this project; his actual writing is cited in
+  the references below. The practice itself has a name and a lineage:
+  <a href="https://the-companion-dossier.com/Latent_Dialogic_Space/" rel="noopener">latent dialogic space</a>.
 </p>
 
 <div class="quote">
@@ -785,7 +818,7 @@ p em { color: var(--text2); }
   condition in any given year. About 20 million get any treatment at all. The other
   30 million — the missing middle — never get through the door. Not because care
   doesn't exist. Because no one finds them before the moment of crisis."</p>
-  <p class="attr">— T.R. Insel, MD</p>
+  <p class="attr">— <em>The Insel Summoning</em> · March 2026</p>
 </div>
 
 <p>
@@ -800,7 +833,7 @@ p em { color: var(--text2); }
   health intervention, and the people on the other end deserve the same rigor we would
   bring to a clinical trial. But do not be small about it. They searched today. They
   found nothing. Give them something."</p>
-  <p class="attr">— T.R. Insel, MD, March 2026</p>
+  <p class="attr">— <em>The Insel Summoning</em> · March 2026</p>
 </div>
 
 <div class="sep"></div>
@@ -844,6 +877,10 @@ p em { color: var(--text2); }
   The interventions in this suite are evidence-grounded wellness tools, not
   clinical treatment. If you need clinical care, please contact
   a mental health professional or use the crisis resources listed above.
+</p>
+
+<p class="imprint">
+  <a href="https://the-companion-dossier.com/Latent_Dialogic_Space/" rel="noopener">built using latent dialogic space</a>
 </p>
 
 </div>
