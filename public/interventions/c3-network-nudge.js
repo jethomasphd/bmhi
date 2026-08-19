@@ -38,19 +38,15 @@
 
       // Statistic
       var stat = document.createElement('div');
-      stat.style.cssText =
-        'font-family:var(--mono);font-size:clamp(36px,9vw,52px);' +
-        'font-weight:300;color:var(--amber);letter-spacing:1px;' +
-        'margin-bottom:8px;opacity:0;transition:opacity 1.2s ease;';
+      stat.className = 'stat-figure';
+      stat.style.cssText = 'opacity:0;transition:opacity 1.2s ease;';
       stat.textContent = '70%';
       container.appendChild(stat);
 
       // Context
       var context = document.createElement('div');
-      context.style.cssText =
-        'font-family:var(--mono);font-size:11px;color:var(--faint);' +
-        'letter-spacing:0.5px;margin-bottom:32px;opacity:0;' +
-        'transition:opacity 1s ease;';
+      context.className = 'stat-caption';
+      context.style.cssText = 'opacity:0;transition:opacity 1s ease;';
       context.textContent = 'of jobs are filled through referrals \u2014 not listings.';
       container.appendChild(context);
 

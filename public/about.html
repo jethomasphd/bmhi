@@ -2,188 +2,282 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1612">
+<meta name="color-scheme" content="dark">
 <title>About — The Exit Window</title>
 <meta name="description" content="The detection problem, the exit window, and the science behind brief mental health interventions for job seekers.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231a1612'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23c4922a' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23c4922a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════════════════════
+   BMHI — About / The Exit Window
+   A quiet monograph. Same room as the suite: warm dark, serif
+   voice, mono data. Set for long reading on any screen.
+   ═══════════════════════════════════════════════════════════════ */
 :root {
-  --bg: #1a1612; --surface: #2a241c; --border: rgba(240,236,228,0.07);
-  --border2: rgba(240,236,228,0.12); --text: #f0ece4; --text2: #d4cfc5;
-  --dim: #9a9384; --faint: #5a554a; --amber: #c4922a;
-  --sage: #7a9e8e; --water: #6a8fa7; --clay: #b8856e;
-  --rose: #b07a7a; --plum: #8e7299;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --bg: #1a1612;
+  --bg2: #201a13;
+  --surface: #282117;
+  --border: rgba(240, 236, 228, 0.08);
+  --border2: rgba(240, 236, 228, 0.14);
+  --text: #f2eee6;
+  --text2: #d8d2c6;
+  --dim: #a89f8f;
+  --faint: #918878;
+  --amber: #c4922a;
+  --amber-2: #d9a63e;
+  --sage: #8fb3a2;
+  --water: #85a9c0;
+  --clay: #c99a82;
+  --rose: #c69090;
+  --plum: #a98fb5;
+  --serif: 'Cormorant Garamond', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --shadow-soft: 0 8px 30px rgba(8, 6, 4, 0.35);
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
   background: var(--bg); color: var(--text);
-  font-family: var(--sans); -webkit-font-smoothing: antialiased;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
-::selection { background: rgba(196,146,42,0.25); }
+::selection { background: rgba(196, 146, 42, 0.3); color: var(--text); }
+* { scrollbar-width: thin; scrollbar-color: #453e33 transparent; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #453e33; border-radius: 2px; }
+
 body::before {
-  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  content: ''; position: fixed; inset: 0; z-index: 2; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  opacity: 0.3;
+  opacity: 0.28;
 }
 
-.wrap { max-width: 620px; margin: 0 auto; padding: 60px 28px 120px; position: relative; z-index: 1; }
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid rgba(217, 166, 62, 0.75);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
-/* Jobs CTA — persistent, matches index.html */
+.wrap {
+  max-width: 640px; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 96px) 28px calc(env(safe-area-inset-bottom, 0px) + 120px);
+  position: relative; z-index: 1;
+}
+@media (max-width: 480px) {
+  .wrap { padding-left: 22px; padding-right: 22px; }
+}
+
+/* Jobs CTA — persistent, matches the suite */
 .jobs-cta {
-  position: fixed; top: 16px; left: 50%;
+  position: fixed; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 50%;
   transform: translateX(-50%); z-index: 200;
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--sans); font-size: 11px; font-weight: 500;
-  letter-spacing: 0.3px; color: var(--dim);
-  background: rgba(26,22,18,0.75); backdrop-filter: blur(8px);
-  border: 1px solid var(--border);
-  border-radius: 20px; padding: 8px 16px;
+  font-family: var(--sans); font-size: 11.5px; font-weight: 500;
+  letter-spacing: 0.4px; color: var(--dim);
+  background: rgba(26, 22, 18, 0.72);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border2);
+  border-radius: 999px; padding: 9px 17px;
   text-decoration: none; cursor: pointer;
-  transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.2s;
+  transition: color 0.3s, border-color 0.3s, background 0.3s;
   -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
 }
 .jobs-cta:hover {
-  color: var(--amber);
-  border-color: rgba(196,146,42,0.35);
-  background: rgba(196,146,42,0.06);
+  color: var(--amber-2);
+  border-color: rgba(196, 146, 42, 0.4);
+  background: rgba(196, 146, 42, 0.07);
 }
 .jobs-cta:active { transform: translateX(-50%) scale(0.97); }
 
 /* Back link */
 .back {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 10px; color: var(--faint);
-  text-decoration: none; letter-spacing: 0.5px; margin-bottom: 48px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--faint);
+  text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 56px;
+  padding: 6px 0;
   transition: color 0.3s;
 }
-.back:hover { color: var(--amber); }
+.back:hover { color: var(--amber-2); }
 
+/* ─── Editorial scale ─── */
+.eyebrow {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber-2); margin-bottom: 18px;
+}
 h1 {
-  font-family: var(--serif); font-size: clamp(28px, 6vw, 40px);
-  font-weight: 300; color: var(--text); line-height: 1.2;
-  margin-bottom: 12px; letter-spacing: -0.5px;
+  font-family: var(--serif); font-size: clamp(38px, 9vw, 60px);
+  font-weight: 300; color: var(--text); line-height: 1.08;
+  margin-bottom: 18px; letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 .subtitle {
-  font-family: var(--serif); font-size: 18px; font-weight: 300;
-  font-style: italic; color: var(--dim); margin-bottom: 48px;
-  line-height: 1.5;
+  font-family: var(--serif); font-size: clamp(18px, 4.6vw, 22px);
+  font-weight: 300; font-style: italic; color: var(--dim);
+  margin-bottom: 54px; line-height: 1.55; max-width: 26em;
+  text-wrap: balance;
 }
 
+/* numbered section headings — set by counter, not copy */
+.wrap { counter-reset: sect; }
 h2 {
-  font-family: var(--serif); font-size: 24px; font-weight: 400;
-  color: var(--text); margin-top: 56px; margin-bottom: 16px;
-  line-height: 1.3; letter-spacing: -0.2px;
+  font-family: var(--serif); font-size: clamp(25px, 5.6vw, 31px);
+  font-weight: 400; color: var(--text);
+  margin-top: 76px; margin-bottom: 20px;
+  line-height: 1.25; letter-spacing: -0.01em;
+  text-wrap: balance;
 }
-
+h2::before {
+  counter-increment: sect;
+  content: counter(sect, decimal-leading-zero);
+  display: block;
+  font-family: var(--mono); font-size: 11px; font-weight: 400;
+  letter-spacing: 0.2em; color: var(--faint);
+  margin-bottom: 10px;
+}
 h3 {
-  font-family: var(--serif); font-size: 17px; font-weight: 400;
-  font-style: italic; color: var(--amber);
-  margin-top: 36px; margin-bottom: 12px;
+  font-family: var(--serif); font-size: clamp(18px, 4.4vw, 20px);
+  font-weight: 400; font-style: italic; color: var(--amber-2);
+  margin-top: 40px; margin-bottom: 12px;
 }
 
 p {
-  font-size: 14px; font-weight: 300; color: var(--dim);
-  line-height: 1.85; margin-bottom: 16px; letter-spacing: 0.1px;
+  font-size: 15px; font-weight: 300; color: var(--dim);
+  line-height: 1.9; margin-bottom: 18px; letter-spacing: 0.005em;
 }
-p strong { color: var(--text2); font-weight: 400; }
+p strong { color: var(--text2); font-weight: 500; }
 p em { color: var(--text2); }
 
 .lead {
-  font-family: var(--serif); font-size: 18px; font-weight: 300;
-  font-style: italic; color: var(--dim); line-height: 1.7;
+  font-family: var(--serif); font-size: clamp(19px, 4.8vw, 23px);
+  font-weight: 300; font-style: italic; color: var(--text2);
+  line-height: 1.7;
 }
 
-/* Separator */
-.sep { width: 40px; height: 1px; background: var(--border2); margin: 40px 0; }
+/* Separator — a small breath between rooms */
+.sep {
+  width: 44px; height: 1px; background: var(--border2);
+  margin: 56px 0;
+}
 
 /* Stat callout */
 .stat {
-  font-family: var(--mono); font-size: clamp(32px, 8vw, 48px);
-  font-weight: 300; color: var(--amber); letter-spacing: -1px;
-  margin: 8px 0 4px;
+  font-family: var(--mono); font-size: clamp(36px, 8.5vw, 54px);
+  font-weight: 300; color: var(--amber-2); letter-spacing: -0.01em;
+  margin: 30px 0 6px;
+  font-variant-numeric: tabular-nums;
 }
 .stat-label {
-  font-family: var(--mono); font-size: 10px; color: var(--faint);
-  letter-spacing: 0.5px; margin-bottom: 20px;
+  font-family: var(--mono); font-size: 11px; color: var(--faint);
+  letter-spacing: 0.06em; line-height: 1.6; margin-bottom: 30px;
 }
 
 /* Quote block */
 .quote {
-  margin: 28px 0; padding: 20px 24px;
-  border-left: 2px solid rgba(196,146,42,0.3);
-  background: linear-gradient(90deg, rgba(196,146,42,0.03), transparent 50%);
+  margin: 34px 0; padding: 24px 26px;
+  border-left: 2px solid rgba(196, 146, 42, 0.4);
+  background: linear-gradient(90deg, rgba(196, 146, 42, 0.045), transparent 60%);
+  border-radius: 0 12px 12px 0;
 }
 .quote p {
-  font-family: var(--serif); font-size: 16px; font-style: italic;
-  color: var(--text2); line-height: 1.7; margin-bottom: 8px;
+  font-family: var(--serif); font-size: clamp(17px, 4.4vw, 19px);
+  font-style: italic; color: var(--text2); line-height: 1.7;
+  margin-bottom: 10px;
 }
 .quote .attr {
-  font-family: var(--mono); font-size: 9px; color: var(--faint);
-  font-style: normal; letter-spacing: 0.3px;
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  font-style: normal; letter-spacing: 0.04em; margin-bottom: 0;
 }
 
 /* Evidence card */
 .ev {
-  margin: 20px 0; padding: 18px 20px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px;
+  margin: 22px 0; padding: 20px 22px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-soft);
 }
 .ev-tier {
-  display: inline-block; margin-bottom: 10px;
-  font-family: var(--mono); font-size: 9px; font-weight: 500;
-  letter-spacing: 0.8px; text-transform: uppercase;
-  padding: 3px 9px; border-radius: 10px;
+  display: inline-block; margin-bottom: 12px;
+  font-family: var(--mono); font-size: 9.5px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
 }
-.ev-tier.t1 { background: rgba(122,158,142,0.12); color: var(--sage); }
-.ev-tier.t2 { background: rgba(106,143,167,0.12); color: var(--water); }
-.ev-tier.t3 { background: rgba(184,133,110,0.12); color: var(--clay); }
+.ev-tier.t1 { background: rgba(122, 158, 142, 0.14); color: var(--sage); }
+.ev-tier.t2 { background: rgba(106, 143, 167, 0.14); color: var(--water); }
+.ev-tier.t3 { background: rgba(184, 133, 110, 0.14); color: var(--clay); }
 .ev-name {
-  font-family: var(--serif); font-size: 16px; font-weight: 400;
-  color: var(--text); margin-bottom: 6px;
+  font-family: var(--serif); font-size: 19px; font-weight: 500;
+  color: var(--text); margin-bottom: 8px; letter-spacing: -0.01em;
 }
-.ev p { font-size: 13px; margin-bottom: 8px; }
+.ev p { font-size: 13.5px; line-height: 1.75; margin-bottom: 12px; }
 .ev-cite {
-  font-family: var(--mono); font-size: 9px; color: var(--faint);
-  line-height: 1.5;
+  font-family: var(--mono); font-size: 10px; color: var(--faint);
+  line-height: 1.7; letter-spacing: 0.01em;
+  padding-top: 10px; border-top: 1px solid var(--border);
 }
 
 /* Tier color labels */
 .tier-label {
-  display: inline-block; font-family: var(--mono); font-size: 9px;
-  font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-  padding: 3px 10px; border-radius: 10px; margin-bottom: 8px;
+  display: inline-block; font-family: var(--mono); font-size: 9.5px;
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 11px; border-radius: 999px; margin-bottom: 10px;
 }
-.tier-a { background: rgba(122,158,142,0.1); color: var(--sage); }
-.tier-b { background: rgba(106,143,167,0.1); color: var(--water); }
-.tier-c { background: rgba(184,133,110,0.1); color: var(--clay); }
-.tier-d { background: rgba(176,122,122,0.1); color: var(--rose); }
-.tier-e { background: rgba(142,114,153,0.1); color: var(--plum); }
-.tier-f { background: rgba(196,146,42,0.1); color: var(--amber); }
+.tier-a { background: rgba(122, 158, 142, 0.12); color: var(--sage); }
+.tier-b { background: rgba(106, 143, 167, 0.12); color: var(--water); }
+.tier-c { background: rgba(184, 133, 110, 0.12); color: var(--clay); }
+.tier-d { background: rgba(176, 122, 122, 0.12); color: var(--rose); }
+.tier-e { background: rgba(142, 114, 153, 0.12); color: var(--plum); }
+.tier-f { background: rgba(196, 146, 42, 0.12); color: var(--amber-2); }
 
 /* Crisis info */
 .crisis {
-  margin: 28px 0; padding: 20px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 10px;
+  margin: 34px 0; padding: 22px;
+  background: var(--bg2);
+  border: 1px solid rgba(198, 144, 144, 0.25);
+  border-radius: 14px;
+  box-shadow: var(--shadow-soft);
 }
 .crisis-title {
-  font-family: var(--mono); font-size: 10px; color: var(--rose);
-  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--rose);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px;
 }
 .crisis a {
-  display: block; color: var(--text2); text-decoration: none;
-  font-size: 14px; margin-bottom: 8px; transition: color 0.2s;
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  color: var(--text2); text-decoration: none;
+  font-size: 14px; padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
 }
-.crisis a:hover { color: var(--amber); }
-.crisis a span { font-family: var(--mono); font-size: 12px; color: var(--amber); }
+.crisis a:last-child { border-bottom: none; padding-bottom: 0; }
+.crisis a:hover { color: var(--amber-2); }
+.crisis a span { font-family: var(--mono); font-size: 12.5px; color: var(--amber-2); white-space: nowrap; }
+
+/* References */
+.refs {
+  font-size: 11.5px !important; color: var(--faint) !important;
+  line-height: 1.85 !important;
+}
+.refs em { color: var(--dim); }
+
+.footnote {
+  color: var(--faint); font-size: 12.5px; line-height: 1.7;
+}
 
 @media (max-width: 480px) {
-  .wrap { padding: 40px 20px 100px; }
+  .wrap { padding-top: calc(env(safe-area-inset-top, 0px) + 84px); padding-bottom: 100px; }
+  .sep { margin: 44px 0; }
+  h2 { margin-top: 60px; }
 }
 </style>
 </head>
@@ -195,6 +289,7 @@ p em { color: var(--text2); }
 
 <a href="index.html" class="back">&larr; Back to interventions</a>
 
+<div class="eyebrow">The science, in plain language</div>
 <h1>The Exit Window</h1>
 <p class="subtitle">
   Why this pause exists, what it does, and the
@@ -412,7 +507,7 @@ p em { color: var(--text2); }
   <strong>Meditative Serpent</strong> (E4) induces Csikszentmihalyi's flow state through
   sustained, rhythmic attention. <strong>Rhythmic Breaker</strong> (E5) engages smooth
   pursuit eye tracking — an EMDR-adjacent mechanism that taxes visuospatial working
-  memory, reducing the vividness of negative imagery (van den Hout & Engelhard 2012).
+  memory, reducing the vividness of negative imagery (van den Hout &amp; Engelhard 2012).
   <strong>Mindful Garden</strong> (E6) activates the tend-and-befriend response
   (Taylor et al. 2000) and leverages Kaplan's Attention Restoration Theory through
   digital nature interaction.
@@ -457,7 +552,7 @@ p em { color: var(--text2); }
   measurable cortisol reduction and immune function improvement. Replicated
   in 200+ studies across cultures over 30 years.</p>
   <div class="ev-cite">
-    Pennebaker, J.W. & Smyth, J.M. (2016). Opening Up by Writing It Down.
+    Pennebaker, J.W. &amp; Smyth, J.M. (2016). Opening Up by Writing It Down.
     Guilford Press.<br>
     Frattaroli, J. (2006). "Experimental Disclosure and Its Moderators:
     A Meta-Analysis." Psychological Bulletin, 132(6), 823-865.
@@ -471,7 +566,7 @@ p em { color: var(--text2); }
   follow-through by 2-3x compared to general goal-setting. Over 200
   replications in health, education, and employment contexts.</p>
   <div class="ev-cite">
-    Gollwitzer, P.M. & Sheeran, P. (2006). "Implementation Intentions and
+    Gollwitzer, P.M. &amp; Sheeran, P. (2006). "Implementation Intentions and
     Goal Achievement: A Meta-Analysis." Advances in Experimental Social
     Psychology, 38, 69-119.
   </div>
@@ -488,7 +583,7 @@ p em { color: var(--text2); }
     while Playing Bejeweled II." Annual Review of CyberTherapy and
     Telemedicine, 7, 189-192.<br>
     Russoniello, C.V. et al. (2013). "The Effectiveness of Casual Video Games
-    in Improving Mood and Decreasing Stress." Journal of CyberTherapy &
+    in Improving Mood and Decreasing Stress." Journal of CyberTherapy &amp;
     Rehabilitation, 6(1).
   </div>
 </div>
@@ -517,7 +612,7 @@ p em { color: var(--text2); }
   EMDR (Eye Movement Desensitization and Reprocessing), one of the most
   validated trauma treatments.</p>
   <div class="ev-cite">
-    van den Hout, M.A. & Engelhard, I.M. (2012). "How does EMDR work?"
+    van den Hout, M.A. &amp; Engelhard, I.M. (2012). "How does EMDR work?"
     Journal of Experimental Psychopathology, 3(5), 724–738.<br>
     Kavanagh, D.J. et al. (2001). "Effects of visuospatial tasks on
     desensitization to emotive memories." British Journal of Clinical
@@ -553,7 +648,7 @@ p em { color: var(--text2); }
   <div class="ev-cite">
     Neff, K.D. (2003). "Self-Compassion: An Alternative Conceptualization
     of a Healthy Attitude Toward Oneself." Self and Identity, 2(2), 85-101.<br>
-    Neff, K.D. & Germer, C.K. (2013). "A Pilot Study and Randomized
+    Neff, K.D. &amp; Germer, C.K. (2013). "A Pilot Study and Randomized
     Controlled Trial of the Mindful Self-Compassion Program." Journal of
     Clinical Psychology, 69(1), 28-44.
   </div>
@@ -583,7 +678,7 @@ p em { color: var(--text2); }
   search persistence.</p>
   <div class="ev-cite">
     Dweck, C.S. (2006). Mindset: The New Psychology of Success. Random House.<br>
-    Van Hooft, E.A.J. et al. (2021). ""; Motivation in Job Search: A Meta-Analysis."
+    Van Hooft, E.A.J. et al. (2021). "Motivation in Job Search: A Meta-Analysis."
     Journal of Applied Psychology, 106(2), 209-229.
   </div>
 </div>
@@ -629,9 +724,9 @@ p em { color: var(--text2); }
 
 <div class="crisis">
   <div class="crisis-title">Free, immediate support</div>
-  <a href="sms:741741&body=HOME">Crisis Text Line — <span>Text HOME to 741741</span></a>
-  <a href="tel:18006624357">SAMHSA Helpline — <span>1-800-662-4357</span></a>
-  <a href="tel:988">988 Suicide &amp; Crisis Lifeline — <span>Call or text 988</span></a>
+  <a href="sms:741741">Crisis Text Line <span>Text HOME to 741741</span></a>
+  <a href="tel:18006624357">SAMHSA Helpline <span>1-800-662-4357</span></a>
+  <a href="tel:988">988 Suicide &amp; Crisis Lifeline <span>Call or text 988</span></a>
 </div>
 
 <div class="sep"></div>
@@ -712,16 +807,16 @@ p em { color: var(--text2); }
 
 <h2>References</h2>
 
-<p style="font-size:11px;color:var(--faint);line-height:1.8;">
-  Abramson, L.Y., Seligman, M.E.P. & Teasdale, J.D. (1978). Learned helplessness in humans: Critique and reformulation. <em>Journal of Abnormal Psychology</em>, 87(1), 49–74.<br><br>
+<p class="refs">
+  Abramson, L.Y., Seligman, M.E.P. &amp; Teasdale, J.D. (1978). Learned helplessness in humans: Critique and reformulation. <em>Journal of Abnormal Psychology</em>, 87(1), 49–74.<br><br>
   Babor, T.F. et al. (2007). Screening, Brief Intervention, and Referral to Treatment (SBIRT). <em>Substance Abuse</em>, 28(3), 7–30.<br><br>
   Bandura, A. (1997). <em>Self-Efficacy: The Exercise of Control</em>. W.H. Freeman.<br><br>
-  Csikszentmihalyi, M. (1990). <em>Flow: The Psychology of Optimal Experience</em>. Harper & Row.<br><br>
+  Csikszentmihalyi, M. (1990). <em>Flow: The Psychology of Optimal Experience</em>. Harper &amp; Row.<br><br>
   Dweck, C.S. (2006). <em>Mindset: The New Psychology of Success</em>. Random House.<br><br>
   Fitzpatrick, K.K. et al. (2017). Delivering Cognitive Behavior Therapy to young adults with symptoms of depression via a fully automated conversational agent (Woebot). <em>JMIR Mental Health</em>, 4(2), e19.<br><br>
   Frattaroli, J. (2006). Experimental Disclosure and Its Moderators: A Meta-Analysis. <em>Psychological Bulletin</em>, 132(6), 823–865.<br><br>
   Gollwitzer, P.M. (1999). Implementation intentions: Strong effects of simple plans. <em>American Psychologist</em>, 54(7), 493–503.<br><br>
-  Gollwitzer, P.M. & Sheeran, P. (2006). Implementation Intentions and Goal Achievement: A Meta-Analysis. <em>Advances in Experimental Social Psychology</em>, 38, 69–119.<br><br>
+  Gollwitzer, P.M. &amp; Sheeran, P. (2006). Implementation Intentions and Goal Achievement: A Meta-Analysis. <em>Advances in Experimental Social Psychology</em>, 38, 69–119.<br><br>
   Hayes, S.C. et al. (2006). Acceptance and Commitment Therapy: Model, Processes, and Outcomes. <em>Behaviour Research and Therapy</em>, 44(1), 1–25.<br><br>
   Holmes, E.A. et al. (2009). Can playing the computer game "Tetris" reduce the build-up of flashback-like images? <em>PLoS ONE</em>, 4(1), e4153.<br><br>
   Holmes, E.A. et al. (2010). Key steps in developing a cognitive vaccine against traumatic flashbacks. <em>PLoS ONE</em>, 5(11), e13706.<br><br>
@@ -730,22 +825,22 @@ p em { color: var(--text2); }
   Ma, X. et al. (2017). The Effect of Diaphragmatic Breathing on Attention, Negative Affect and Stress. <em>Frontiers in Psychology</em>, 8, 874.<br><br>
   McKee-Ryan, F.M. et al. (2005). Psychological and physical well-being during unemployment: A meta-analytic study. <em>Journal of Applied Psychology</em>, 90(1), 53–76.<br><br>
   Neff, K.D. (2003). Self-Compassion: An Alternative Conceptualization of a Healthy Attitude Toward Oneself. <em>Self and Identity</em>, 2(2), 85–101.<br><br>
-  Neff, K.D. & Germer, C.K. (2013). A Pilot Study and Randomized Controlled Trial of the Mindful Self-Compassion Program. <em>Journal of Clinical Psychology</em>, 69(1), 28–44.<br><br>
-  Pennebaker, J.W. & Smyth, J.M. (2016). <em>Opening Up by Writing It Down</em>. Guilford Press.<br><br>
+  Neff, K.D. &amp; Germer, C.K. (2013). A Pilot Study and Randomized Controlled Trial of the Mindful Self-Compassion Program. <em>Journal of Clinical Psychology</em>, 69(1), 28–44.<br><br>
+  Pennebaker, J.W. &amp; Smyth, J.M. (2016). <em>Opening Up by Writing It Down</em>. Guilford Press.<br><br>
   Kaplan, S. (1995). The restorative benefits of nature: Toward an integrative framework. <em>Journal of Environmental Psychology</em>, 15(3), 169–182.<br><br>
   Kavanagh, D.J. et al. (2001). Effects of visuospatial tasks on desensitization to emotive memories. <em>British Journal of Clinical Psychology</em>, 40, 267–280.<br><br>
   Russoniello, C.V. et al. (2009). EEG, HRV and Psychological Correlates while Playing Bejeweled II. <em>Annual Review of CyberTherapy and Telemedicine</em>, 7, 189–192.<br><br>
   Seligman, M.E.P. (1975). <em>Helplessness: On Depression, Development, and Death</em>. W.H. Freeman.<br><br>
   Taylor, S.E. et al. (2000). Biobehavioral responses to stress in females: Tend-and-befriend. <em>Psychological Review</em>, 107(3), 411–429.<br><br>
   Ulrich, R.S. et al. (1991). Stress recovery during exposure to natural and urban environments. <em>Journal of Environmental Psychology</em>, 11(3), 201–230.<br><br>
-  van den Hout, M.A. & Engelhard, I.M. (2012). How does EMDR work? <em>Journal of Experimental Psychopathology</em>, 3(5), 724–738.<br><br>
+  van den Hout, M.A. &amp; Engelhard, I.M. (2012). How does EMDR work? <em>Journal of Experimental Psychopathology</em>, 3(5), 724–738.<br><br>
   Yang, T.C. et al. (2024). Unemployment and mental health: A fixed-effects analysis across 201 countries. <em>The Lancet Public Health</em>.<br><br>
   Zaccaro, A. et al. (2018). How Breath-Control Can Change Your Life. <em>Frontiers in Human Neuroscience</em>, 12, 353.
 </p>
 
 <div class="sep"></div>
 
-<p style="color:var(--faint);font-size:12px;line-height:1.6;">
+<p class="footnote">
   The interventions in this suite are evidence-grounded wellness tools, not
   clinical treatment. If you need clinical care, please contact
   a mental health professional or use the crisis resources listed above.

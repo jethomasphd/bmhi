@@ -65,10 +65,8 @@
 
       // Context
       var context = document.createElement('div');
-      context.style.cssText =
-        'font-family:var(--sans);font-size:13px;font-weight:300;' +
-        'color:var(--dim);line-height:1.6;max-width:380px;' +
-        'opacity:0;transition:opacity 1s ease;';
+      context.className = 'pop-context';
+      context.style.cssText = 'opacity:0;transition:opacity 1s ease;';
       context.textContent = 'people used a job site today without clicking a single listing.';
       container.appendChild(context);
 

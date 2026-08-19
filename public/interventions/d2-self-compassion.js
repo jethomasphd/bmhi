@@ -58,12 +58,7 @@
 
         // Text message bubble
         var bubble = document.createElement('div');
-        bubble.style.cssText =
-          'max-width:min(320px,90vw);width:100%;padding:16px 20px;' +
-          'background:var(--surface);border:1px solid var(--border);' +
-          'border-radius:16px 16px 16px 4px;text-align:left;' +
-          'font-family:var(--sans);font-size:14px;font-weight:300;' +
-          'color:var(--dim);line-height:1.6;margin-bottom:28px;';
+        bubble.className = 'chat-bubble';
         bubble.innerHTML =
           '\u201cI spent the afternoon job searching.<br>' +
           'Found nothing. Feel like a failure.\u201d';
@@ -71,10 +66,8 @@
 
         // Question
         var question = document.createElement('div');
-        question.style.cssText =
-          'font-family:var(--serif);font-size:clamp(16px,4vw,20px);' +
-          'font-weight:400;font-style:italic;color:var(--text);' +
-          'margin-bottom:20px;';
+        question.className = 'prompt-lead';
+        question.style.marginBottom = '20px';
         question.textContent = 'What would you say back to them?';
         el.appendChild(question);
 

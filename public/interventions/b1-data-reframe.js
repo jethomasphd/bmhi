@@ -44,10 +44,6 @@
       card.style.transform = 'translateY(12px)';
       card.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
 
-      // Subtle left accent (water blue for cognitive tier)
-      card.style.borderLeft = '2px solid rgba(106,143,167,0.3)';
-      card.style.paddingLeft = '24px';
-
       // Prefix
       var note = document.createElement('div');
       note.className = 'rf-note';

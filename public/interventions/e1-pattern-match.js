@@ -60,8 +60,7 @@
       container.innerHTML = '';
 
       var prompt = document.createElement('div');
-      prompt.className = 'prompt-text';
-      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.className = 'game-intro';
       prompt.textContent = 'Quick pattern reset. We\u2019re freshening your feed.';
       container.appendChild(prompt);
 

@@ -36,7 +36,7 @@
     card.innerHTML =
       '<div class="ref-intro">Some searches hit harder than others. ' +
       'If you want to talk to someone, here are free options:</div>' +
-      '<a href="sms:741741&body=HOME" class="referral-link">' +
+      '<a href="sms:741741" class="referral-link">' +
         '<div class="ref-name">Crisis Text Line</div>' +
         '<div class="ref-detail">Text HOME to 741741</div>' +
       '</a>' +

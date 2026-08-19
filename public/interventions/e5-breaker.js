@@ -71,8 +71,7 @@
       container.innerHTML = '';
 
       var prompt = document.createElement('div');
-      prompt.className = 'prompt-text';
-      prompt.style.cssText = 'font-size:14px;margin-bottom:20px;color:var(--dim);';
+      prompt.className = 'game-intro';
       prompt.textContent = 'Quick rhythm reset. We\u2019re freshening your feed.';
       container.appendChild(prompt);
 
@@ -118,15 +117,12 @@
 
       // Canvas
       var canvas = document.createElement('canvas');
+      canvas.className = 'game-canvas';
       canvas.width = W * 2;
       canvas.height = H * 2;
       canvas.style.width = W + 'px';
       canvas.style.height = H + 'px';
-      canvas.style.borderRadius = '8px';
-      canvas.style.display = 'block';
-      canvas.style.margin = '0 auto 14px';
-      canvas.style.opacity = '0';
-      canvas.style.transition = 'opacity 0.8s ease';
+      canvas.style.marginBottom = '14px';
       canvas.style.touchAction = 'none'; // we handle touch directly
       var ctx = canvas.getContext('2d');
       ctx.scale(2, 2);
@@ -152,8 +148,8 @@
 
       // Hint line, shown briefly.
       var hint = document.createElement('div');
+      hint.className = 'game-hint';
       hint.textContent = 'Drag the paddle — or use the arrows below.';
-      hint.style.cssText = 'font-family:var(--sans);font-size:11px;color:var(--faint);text-align:center;margin-bottom:10px;opacity:0;transition:opacity 0.8s ease;';
       container.appendChild(hint);
 
       // Control buttons — generous tap targets, always present.
@@ -162,33 +158,32 @@
         { icon: ICON.right, label: 'Right', dir: 1 }
       ];
       var ctrlRow = document.createElement('div');
-      ctrlRow.style.cssText = 'display:flex;gap:20px;justify-content:center;margin-bottom:16px;opacity:0;transition:opacity 0.8s ease;';
+      ctrlRow.className = 'game-controls';
+      ctrlRow.style.gap = '20px';
       for (var ci = 0; ci < controls.length; ci++) {
         (function (spec) {
           var btn = document.createElement('button');
           btn.type = 'button';
-          btn.style.cssText =
-            'width:72px;height:56px;border-radius:28px;background:rgba(42,36,28,0.5);' +
-            'border:1px solid rgba(240,236,228,0.12);color:rgba(196,146,42,0.85);' +
-            'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-            'transition:all 0.15s;-webkit-tap-highlight-color:transparent;touch-action:none;' +
-            'font-family:inherit;user-select:none;';
+          btn.className = 'game-btn wide';
           btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + spec.icon + '</svg>';
           btn.setAttribute('aria-label', spec.label);
 
-          // Press-and-hold to move continuously.
+          // Press-and-hold to move continuously. The interval id is
+          // pushed into `timers` so cleanup() also stops a live hold
+          // (clearTimeout and clearInterval share one id space).
           var holdId = null;
           function startHold() {
             if (holdId || finished) return;
             paddle.x = clamp(paddle.x + spec.dir * 20, paddle.w / 2, W - paddle.w / 2);
-            btn.style.background = 'rgba(196,146,42,0.15)';
+            btn.classList.add('pressed');
             holdId = setInterval(function () {
               paddle.x = clamp(paddle.x + spec.dir * 18, paddle.w / 2, W - paddle.w / 2);
             }, 60);
+            timers.push(holdId);
           }
           function endHold() {
             if (holdId) { clearInterval(holdId); holdId = null; }
-            btn.style.background = 'rgba(42,36,28,0.5)';
+            btn.classList.remove('pressed');
           }
           btn.addEventListener('pointerdown', function (e) { e.preventDefault(); startHold(); });
           btn.addEventListener('pointerup', endHold);
@@ -215,7 +210,8 @@
       timers.push(setTimeout(function () { hint.style.opacity = '0'; }, 5000));
 
       function draw() {
-        ctx.fillStyle = '#141820';
+        // Background — same warm room as the suite
+        ctx.fillStyle = '#221c13';
         ctx.fillRect(0, 0, W, H);
         // Bricks
         for (var i = 0; i < bricks.length; i++) {
