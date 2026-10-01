@@ -33,7 +33,7 @@
   };
 
   // SVG icon markup for reset-tier games (consistent stroke-based, 16x16),
-  // shown beside E-tier entries in the all-resets list.
+  // shown in the all-resets list and the game switcher.
   var GAME_ICONS = {
     E1: '<rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/>',
     E3: '<rect x="2" y="6" width="4" height="4" rx="0.5"/><rect x="6" y="6" width="4" height="4" rx="0.5"/><rect x="10" y="6" width="4" height="4" rx="0.5"/><rect x="4" y="2" width="4" height="4" rx="0.5"/>',
@@ -41,6 +41,19 @@
     E5: '<rect x="2" y="2" width="3" height="2" rx="0.5"/><rect x="6" y="2" width="3" height="2" rx="0.5"/><rect x="10" y="2" width="3" height="2" rx="0.5"/><circle cx="8" cy="9" r="1.5"/><rect x="4" y="13" width="8" height="2" rx="1"/>',
     E6: '<line x1="8" y1="14" x2="8" y2="7"/><circle cx="8" cy="5" r="2.5"/><line x1="5" y1="10" x2="8" y2="7"/><line x1="11" y1="10" x2="8" y2="7"/>'
   };
+
+  // ─── Active roster ─────────────────────────────────────────
+  // The live product runs the visual games only. Every other module
+  // (A–D, F) is preserved under interventions/ and still registers
+  // itself; it just isn't offered. A host can restore any of them by
+  // setting window.BMHI_CONFIG.roster to an array of ids, or to 'all'.
+  var DEFAULT_ROSTER = ['E1', 'E3', 'E4', 'E5', 'E6'];
+
+  function activeRoster() {
+    var cfg = window.BMHI_CONFIG || {};
+    if (cfg.roster === 'all') return null;
+    return (cfg.roster && cfg.roster.length) ? cfg.roster : DEFAULT_ROSTER;
+  }
 
   // ─── State ─────────────────────────────────────────────────
   var state = {
@@ -81,15 +94,23 @@
   window.BMHI_INTERVENTIONS = window.BMHI_INTERVENTIONS || {};
 
   function getAvailableInterventions() {
+    var roster = activeRoster();
     var ids = [];
     for (var id in window.BMHI_INTERVENTIONS) {
-      if (window.BMHI_INTERVENTIONS.hasOwnProperty(id)) ids.push(id);
+      if (!window.BMHI_INTERVENTIONS.hasOwnProperty(id)) continue;
+      if (roster && roster.indexOf(id) === -1) continue;
+      ids.push(id);
     }
+    ids.sort();
     return ids;
   }
 
-  function selectRandom() {
+  // excludeId: avoid handing the user the reset they just finished.
+  function selectRandom(excludeId) {
     var available = getAvailableInterventions();
+    if (available.length > 1 && excludeId) {
+      available = available.filter(function (id) { return id !== excludeId; });
+    }
     if (available.length === 0) return null;
 
     // Late-night: 50% chance to route to a somatic (A-tier) intervention
@@ -112,7 +133,6 @@
     if (!container) return;
     container.innerHTML = '';
     var available = getAvailableInterventions();
-    available.sort();
 
     var tiers = {};
     for (var i = 0; i < available.length; i++) {
@@ -147,19 +167,8 @@
 
           var name = document.createElement('span');
           name.className = 'nav-item-name';
-          if (GAME_ICONS[interventionId]) {
-            var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            icon.setAttribute('width', '16');
-            icon.setAttribute('height', '16');
-            icon.setAttribute('viewBox', '0 0 16 16');
-            icon.setAttribute('fill', 'none');
-            icon.setAttribute('stroke', 'currentColor');
-            icon.setAttribute('stroke-width', '1.3');
-            icon.setAttribute('stroke-linecap', 'round');
-            icon.setAttribute('aria-hidden', 'true');
-            icon.innerHTML = GAME_ICONS[interventionId];
-            name.appendChild(icon);
-          }
+          var icon = makeIcon(interventionId);
+          if (icon) name.appendChild(icon);
           name.appendChild(document.createTextNode(intervention.name));
           item.appendChild(name);
 
@@ -209,6 +218,111 @@
   }
 
   // ═══════════════════════════════════════════════════════════
+  // GAME SWITCHER — prev / next arrows plus one chip per reset in
+  // the active roster, so the user can move freely between games.
+  // Lives outside #interventionContent (modules clear that node).
+  // ═══════════════════════════════════════════════════════════
+
+  function makeIcon(id) {
+    if (!GAME_ICONS[id]) return null;
+    var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('width', '16');
+    icon.setAttribute('height', '16');
+    icon.setAttribute('viewBox', '0 0 16 16');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke', 'currentColor');
+    icon.setAttribute('stroke-width', '1.3');
+    icon.setAttribute('stroke-linecap', 'round');
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = GAME_ICONS[id];
+    return icon;
+  }
+
+  function stepGame(dir) {
+    var ids = getAvailableInterventions();
+    if (ids.length < 2) return;
+    var i = ids.indexOf(state.activeIntervention);
+    var next = ids[(i + dir + ids.length) % ids.length];
+    launchIntervention(next);
+  }
+
+  function buildSwitcher(container, onPick) {
+    container.innerHTML = '';
+    var ids = getAvailableInterventions();
+    if (ids.length < 2) return;
+
+    var chips = document.createElement('div');
+    chips.className = 'switcher-chips';
+    chips.setAttribute('role', 'group');
+    chips.setAttribute('aria-label', 'Choose a reset');
+
+    for (var i = 0; i < ids.length; i++) {
+      (function (id) {
+        var item = window.BMHI_INTERVENTIONS[id];
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'switcher-chip';
+        chip.setAttribute('data-id', id);
+        chip.title = item.name;
+        var icon = makeIcon(id);
+        if (icon) chip.appendChild(icon);
+        chip.appendChild(document.createTextNode(item.name));
+        chip.addEventListener('click', function () {
+          chip.blur();
+          onPick(id);
+        });
+        chips.appendChild(chip);
+      })(ids[i]);
+    }
+    container.appendChild(chips);
+  }
+
+  function buildGameBar() {
+    var bar = $('gameBar');
+    if (!bar) return;
+    bar.innerHTML = '';
+    if (getAvailableInterventions().length < 2) return;
+
+    function arrow(dir, label, glyph) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'switcher-arrow';
+      b.setAttribute('aria-label', label);
+      b.innerHTML = glyph;
+      b.addEventListener('click', function () { b.blur(); stepGame(dir); });
+      return b;
+    }
+
+    var chipsWrap = document.createElement('div');
+    chipsWrap.className = 'switcher-track';
+    buildSwitcher(chipsWrap, function (id) {
+      if (id !== state.activeIntervention) launchIntervention(id);
+    });
+
+    bar.appendChild(arrow(-1, 'Previous reset', '&larr;'));
+    bar.appendChild(chipsWrap);
+    bar.appendChild(arrow(1, 'Next reset', '&rarr;'));
+  }
+
+  function markActiveGame(id) {
+    var chips = document.querySelectorAll('#gameBar .switcher-chip');
+    for (var i = 0; i < chips.length; i++) {
+      var on = chips[i].getAttribute('data-id') === id;
+      chips[i].classList.toggle('on', on);
+      if (on) {
+        chips[i].setAttribute('aria-current', 'true');
+        // Keep the current chip in view on narrow screens.
+        var track = chips[i].parentNode;
+        if (track && track.scrollWidth > track.clientWidth) {
+          track.scrollLeft = chips[i].offsetLeft - (track.clientWidth - chips[i].offsetWidth) / 2;
+        }
+      } else {
+        chips[i].removeAttribute('aria-current');
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // JOBS CTA — persistent "back to job search" that refreshes
   // the user's feed with a generic, high-relevance query.
   // Breaks out of any iframe embed.
@@ -252,6 +366,11 @@
   var transitionTimer = null;
 
   function transitionTo(stageId) {
+    // Already showing this stage (e.g. switching games) — no fade.
+    var target = $(stageId);
+    if (!transitionTimer && target.classList.contains('active') &&
+        document.querySelectorAll('.stage.active').length === 1) return;
+
     var stages = document.querySelectorAll('.stage');
     for (var i = 0; i < stages.length; i++) {
       stages[i].classList.remove('active');
@@ -321,7 +440,7 @@
     secondary.className = 'post-secondary';
     secondary.textContent = 'Another quick reset first';
     secondary.addEventListener('click', function () {
-      var id = selectRandom();
+      var id = selectRandom(state.activeIntervention);
       if (id) launchIntervention(id);
     });
     wrap.appendChild(secondary);
@@ -349,8 +468,8 @@
     post.appendChild(wrap);
   }
 
-  function returnToSuite() {
-    var id = selectRandom();
+  function returnToSuite(prevId) {
+    var id = selectRandom(prevId);
     if (id) launchIntervention(id);
   }
 
@@ -378,6 +497,7 @@
     showJobsCta(false);
 
     log('Launching:', interventionId, intervention.name);
+    markActiveGame(interventionId);
 
     var completed = false;
 
@@ -416,7 +536,7 @@
       return;
     }
 
-    returnToSuite();
+    returnToSuite(prevId);
   }
 
   // ═══════════════════════════════════════════════════════════
@@ -531,18 +651,27 @@
     // Build the list now so the modal opens instantly on first tap.
     buildSuiteNav();
     state.suiteRevealed = true;
+    buildGameBar();
+
+    // Welcome: the main CTA starts a random game; the chips below
+    // let the user pick one directly. Both pass through this screen.
+    var welcomePick = $('welcomePick');
+    var launching = false;
+    function leaveWelcome(id) {
+      if (launching) return;
+      launching = true;
+      var welcome = $('stageWelcome');
+      welcome.classList.add('exiting');
+      setTimeout(function () {
+        welcome.classList.remove('active', 'exiting');
+        if (id) launchIntervention(id);
+      }, 600);
+    }
+    if (welcomePick) buildSwitcher(welcomePick, leaveWelcome);
 
     showWelcome();
 
-    btn.addEventListener('click', function () {
-      var welcome = $('stageWelcome');
-      welcome.classList.add('exiting');
-
-      setTimeout(function () {
-        welcome.classList.remove('active', 'exiting');
-        if (selectedId) launchIntervention(selectedId);
-      }, 600);
-    });
+    btn.addEventListener('click', function () { leaveWelcome(selectedId); });
   }
 
   // ─── Expose for interventions (minimal, no storage) ────────
