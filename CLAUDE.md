@@ -8,7 +8,7 @@ Read this end to end before you change anything.
 
 ## What BMHI is
 
-A self-contained, static web app that delivers a single brief mental health intervention to a job seeker at the moment their search didn't go the way they hoped. Seventeen interventions, randomly selected, each grounded in peer-reviewed research. No backend. No build step. No framework. No cookies. No storage. No tracking.
+A self-contained, static web app that delivers a single brief mental health intervention to a job seeker at the moment their search didn't go the way they hoped. Seventeen interventions, each grounded in peer-reviewed research. **The live roster is currently the five visual games only** (Match, Blocks, Serpent, Breaker, Garden); the other twelve modules are preserved and can be re-enabled by config. No backend. No build step. No framework. No cookies. No storage. No tracking.
 
 **The whole unit lives in `public/`:**
 
@@ -73,7 +73,12 @@ BMHI reads one optional global before `app.js` initializes. Set it on the host p
   window.BMHI_CONFIG = {
     // Where the "show me better matches" CTA sends users after
     // they finish an intervention. Defaults to thesejobs.net/jobs.
-    jobsUrl: 'https://yoursite.com/jobs?q=&loc=auto'
+    jobsUrl: 'https://yoursite.com/jobs?q=&loc=auto',
+
+    // Which modules are offered. Defaults to the five games:
+    // ['E1', 'E3', 'E4', 'E5', 'E6']. Pass an array of ids to
+    // choose, or 'all' to restore the full seventeen.
+    roster: ['E1', 'E3', 'E4', 'E5', 'E6']
   };
 </script>
 <script src="app.js"></script>
@@ -103,7 +108,7 @@ All four live in `delivery.js`. They all eventually point the user at the same `
 Every trigger loads the same flow. Do not short-circuit any of it.
 
 1. **Welcome** — `Before you go.` / `You searched today. That counts.` / single CTA button.
-2. **Intervention** — One of 17 modules, randomly selected. Late-night traffic (10 pm–5 am) gets a 50% somatic weighting.
+2. **Intervention** — One module from the active roster (default: the five games), randomly selected — or the user picks one from the game chips under the welcome button. A switcher bar above the game (chips + ← / → arrows) lets the user move between games at any time. Late-night traffic (10 pm–5 am) gets a 50% somatic weighting when A-tier modules are in the roster.
 3. **Post** — `Ready for a fresh search?` with a prominent `Show me better matches →` button that navigates `window.top.location` to `BMHI_CONFIG.jobsUrl`. Secondary option: another quick reset.
 
 A persistent amber pill at the top of the frame reads `back to job search →` at every stage. Clicking it does the same `window.top.location` navigation. This is the **one path** out, and it always lands the user on a fresh search query.
@@ -157,6 +162,7 @@ These exist for clinical and legal reasons. They are not preferences.
 These are things you can change without breaking the clinical design:
 
 - `BMHI_CONFIG.jobsUrl` — where the post-intervention CTA sends users.
+- `BMHI_CONFIG.roster` — which modules are offered (product decision; see Configuration).
 - `BMHI_ADS.configure([...])` — which partner ads render.
 - The color palette in `:root` of `index.html` — as long as contrast ratios stay above 4.5:1.
 - `delivery.js` iframe dimensions for the popup / embedded modes.

@@ -10,7 +10,7 @@ No accounts. No tracking. No cookies. No data stored. Just a quiet pause, then b
 
 ### What it does
 
-Seventeen exercises across six categories, each grounded in peer-reviewed research:
+Seventeen exercises across six categories, each grounded in peer-reviewed research. **The live product currently offers only the five visual games** (Match, Blocks, Serpent, Breaker, Garden), with a switcher so users can move between them; the other twelve are preserved in `public/interventions/` and can be restored via `BMHI_CONFIG.roster` (see `CLAUDE.md`).
 
 | | Category | What it helps with |
 |---|---|---|
